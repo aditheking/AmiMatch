@@ -5,4 +5,13 @@
         <item>Female</item>
         <item>Other</item>
     </string-array>
+
+        <string-array name="relationship_status_array">
+            <item>Single</item>
+            <item>In a Relationship</item>
+            <item>Engaged</item>
+            <item>Married</item>
+            <item>It\'s Complicated</item>
+        </string-array>
+
 </resources>
