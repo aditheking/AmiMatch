@@ -128,7 +128,9 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/textInputLayoutHobbies"
             android:layout_marginHorizontal="32dp"
-            android:layout_marginTop="16dp" />
+            android:layout_marginTop="16dp"
+            android:minHeight="48dp"
+            android:padding="8dp" />
 
         <!-- Spinner for Relationship Status -->
         <LinearLayout
@@ -150,11 +152,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/custom_spinner_background"
-                android:paddingVertical="8dp"
-                android:paddingHorizontal="16dp"/>
+                android:minHeight="48dp"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp" />
 
         </LinearLayout>
 
+        <!-- Age Preference SeekBar -->
         <SeekBar
             android:id="@+id/seekBarAgePreference"
             android:layout_width="match_parent"
@@ -175,6 +179,7 @@
             android:text="Age Preference: 18"
             android:textColor="@android:color/black" />
 
+        <!-- MaterialButtonToggleGroup for Preferred Gender -->
         <com.google.android.material.button.MaterialButtonToggleGroup
             android:id="@+id/toggleButtonGroupPreferredGender"
             android:layout_width="wrap_content"
@@ -199,6 +204,7 @@
                 android:text="Male" />
 
         </com.google.android.material.button.MaterialButtonToggleGroup>
+
 
         <!-- Save Profile Button -->
         <com.google.android.material.button.MaterialButton

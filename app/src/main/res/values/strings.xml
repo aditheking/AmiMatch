@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">AMIMATCH</string>
+    <string name="placeholder_name">Placeholder Name</string>
+    <string name="placeholder_age">XX years old</string>
+    <string name="placeholder_gender">Gender</string>
+    <string name="placeholder_hobbies">Hobbies</string>
+    <string name="placeholder_interests">Interests</string>
+    <string name="placeholder_bio">Bio</string>
+    <string name="profile_picture">Profile Picture</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
 </resources>
