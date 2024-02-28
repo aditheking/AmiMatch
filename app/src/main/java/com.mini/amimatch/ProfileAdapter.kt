@@ -38,9 +38,6 @@ class ProfileAdapter(private val listener: OnProfileSelectedListener) :
         private val profilePictureImageView: ImageView = itemView.findViewById(R.id.profilePictureImageView)
         private val nameTextView: TextView = itemView.findViewById(R.id.nameTextView)
         private val ageTextView: TextView = itemView.findViewById(R.id.ageTextView)
-        private val bioTextView: TextView = itemView.findViewById(R.id.bioTextView)
-        private val hobbiesTextView: TextView = itemView.findViewById(R.id.hobbiesTextView)
-        private val interestsTextView: TextView = itemView.findViewById(R.id.interestsTextView)
 
         init {
             itemView.setOnClickListener {
@@ -55,9 +52,6 @@ class ProfileAdapter(private val listener: OnProfileSelectedListener) :
         fun bind(profile: Profile) {
             nameTextView.text = profile.name
             ageTextView.text = profile.age.toString()
-            bioTextView.text = profile.bio
-            hobbiesTextView.text = profile.hobbies.joinToString(", ")
-            interestsTextView.text = profile.interests.joinToString(", ")
 
             Glide.with(itemView.context).load(profile.profilePictureUri).into(profilePictureImageView)
         }

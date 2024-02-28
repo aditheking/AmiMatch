@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.gms.google-services")
+    id ("kotlin-parcelize")
 }
 
 android {
@@ -70,6 +71,8 @@ dependencies {
     implementation ("com.google.firebase:firebase-firestore-ktx:23.0.3")
     implementation ("com.firebaseui:firebase-ui-firestore:8.0.0")
     implementation ("com.github.bumptech.glide:glide:4.12.0")
+    implementation ("org.jetbrains.kotlin:kotlin-stdlib:1.5.0")
+    implementation("com.google.firebase:firebase-storage-ktx:20.3.0")
     annotationProcessor ("com.github.bumptech.glide:compiler:4.12.0")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

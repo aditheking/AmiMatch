@@ -1,8 +1,10 @@
 package com.mini.amimatch
+
 import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -13,7 +15,6 @@ import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
-
 class FeedActivity : AppCompatActivity(), ProfileAdapter.OnProfileSelectedListener,
     NavigationView.OnNavigationItemSelectedListener {
 
@@ -21,6 +22,7 @@ class FeedActivity : AppCompatActivity(), ProfileAdapter.OnProfileSelectedListen
     private lateinit var adapter: ProfileAdapter
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var toggle: ActionBarDrawerToggle
+    private lateinit var recyclerView: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,7 +30,7 @@ class FeedActivity : AppCompatActivity(), ProfileAdapter.OnProfileSelectedListen
 
         firestore = FirebaseFirestore.getInstance()
 
-        val recyclerView: RecyclerView = findViewById(R.id.recyclerView)
+        recyclerView = findViewById(R.id.recyclerView)
         adapter = ProfileAdapter(this)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -68,6 +70,7 @@ class FeedActivity : AppCompatActivity(), ProfileAdapter.OnProfileSelectedListen
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_settings -> {
+                // Handle settings click
             }
             R.id.nav_sign_out -> {
                 signOut()
@@ -95,10 +98,13 @@ class FeedActivity : AppCompatActivity(), ProfileAdapter.OnProfileSelectedListen
                 adapter.setProfiles(profiles)
             }
             .addOnFailureListener { exception ->
+                Toast.makeText(this, "Failed to fetch profile data", Toast.LENGTH_SHORT).show()
             }
     }
 
     override fun onProfileSelected(profile: Profile) {
+        val expandedProfileIntent = Intent(this, ExpandedProfileActivity::class.java)
+        expandedProfileIntent.putExtra("profile", profile)
+        startActivity(expandedProfileIntent)
     }
 }
-

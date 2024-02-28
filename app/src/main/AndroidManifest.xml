@@ -36,6 +36,9 @@
         <activity
             android:name=".FeedActivity"
             android:label="Feed Activity" />
+
+        <activity android:name=".ExpandedProfileActivity" />
+
     </application>
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />

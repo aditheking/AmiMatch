@@ -78,7 +78,6 @@ class SignInActivity : AppCompatActivity() {
     }
 
     private fun linkProfileWithEmail(userId: String, email: String) {
-        // Link user profile with email (e.g., store email in Firestore along with user profile)
         val userRef = firestore.collection("profiles").document(userId)
         userRef.update("email", email)
             .addOnSuccessListener {
