@@ -69,6 +69,7 @@ dependencies {
     implementation("com.google.android.material:material:1.11.0")
     implementation("com.google.firebase:firebase-auth:22.3.1")
     implementation ("com.google.firebase:firebase-firestore-ktx:23.0.3")
+    implementation("com.github.yuyakaido:cardstackview:2.3.4")
     implementation ("com.firebaseui:firebase-ui-firestore:8.0.0")
     implementation ("com.github.bumptech.glide:glide:4.12.0")
     implementation ("org.jetbrains.kotlin:kotlin-stdlib:1.5.0")

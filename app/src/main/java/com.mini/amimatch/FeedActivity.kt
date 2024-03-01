@@ -2,27 +2,34 @@ package com.mini.amimatch
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.Gravity
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.yuyakaido.android.cardstackview.CardStackLayoutManager
+import com.yuyakaido.android.cardstackview.CardStackListener
+import com.yuyakaido.android.cardstackview.CardStackView
+import com.yuyakaido.android.cardstackview.Direction
 
-class FeedActivity : AppCompatActivity(), ProfileAdapter.OnProfileSelectedListener,
-    NavigationView.OnNavigationItemSelectedListener {
+
+
+
+class FeedActivity : AppCompatActivity(),ProfileAdapter.OnProfileSelectedListener,
+    NavigationView.OnNavigationItemSelectedListener, CardStackListener {
 
     private lateinit var firestore: FirebaseFirestore
     private lateinit var adapter: ProfileAdapter
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var toggle: ActionBarDrawerToggle
     private lateinit var recyclerView: RecyclerView
+    private lateinit var cardStackView: CardStackView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,12 +37,10 @@ class FeedActivity : AppCompatActivity(), ProfileAdapter.OnProfileSelectedListen
 
         firestore = FirebaseFirestore.getInstance()
 
-        recyclerView = findViewById(R.id.recyclerView)
+        cardStackView = findViewById(R.id.cardStackView)
         adapter = ProfileAdapter(this)
-        recyclerView.adapter = adapter
-        recyclerView.layoutManager = LinearLayoutManager(this)
-
-        fetchProfileData()
+        cardStackView.layoutManager = CardStackLayoutManager(this)
+        cardStackView.adapter = adapter
 
         drawerLayout = findViewById(R.id.drawer_layout)
         toggle = ActionBarDrawerToggle(
@@ -51,6 +56,8 @@ class FeedActivity : AppCompatActivity(), ProfileAdapter.OnProfileSelectedListen
 
         val navigationView: NavigationView = findViewById(R.id.nav_view)
         navigationView.setNavigationItemSelectedListener(this)
+
+        fetchProfileData()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -107,4 +114,34 @@ class FeedActivity : AppCompatActivity(), ProfileAdapter.OnProfileSelectedListen
         expandedProfileIntent.putExtra("profile", profile)
         startActivity(expandedProfileIntent)
     }
+
+    override fun onCardDragging(direction: Direction?, ratio: Float) {
+    }
+
+    override fun onCardSwiped(direction: Direction?) {
+        if (direction == Direction.Right) {
+            Toast.makeText(this, "Liked profile", Toast.LENGTH_SHORT).show()
+        } else if (direction == Direction.Left) {
+            Toast.makeText(this, "Disliked profile", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    override fun onCardRewound() {
+        Toast.makeText(this, "Card rewound", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onCardCanceled() {
+        Toast.makeText(this, "Card Canceled", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onCardAppeared(view: View?, position: Int) {
+        Toast.makeText(this, "Card Appeared at position $position", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onCardDisappeared(view: View?, position: Int) {
+        Toast.makeText(this, "Card Disappeared at position $position", Toast.LENGTH_SHORT).show()
+    }
+
+
+
 }
