@@ -1,65 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <ImageView
-        android:id="@+id/profileImageView"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/default_profile_picture" />
+    <!-- Include the top navigation layout -->
+    <include layout="@layout/layout_top_navigation_view" />
 
-    <TextView
-        android:id="@+id/nameTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/profileImageView"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
-        android:text="Name"
-        android:textSize="18sp" />
+    <!-- Main content layout -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/profile_bg"
+        android:orientation="vertical"
+        android:weightSum="10">
 
-    <TextView
-        android:id="@+id/ageTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/nameTextView"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="8dp"
-        android:text="Age"
-        android:textSize="16sp" />
+        <!-- Profile information section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:layout_weight="3"
+            android:gravity="center"
+            android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/bioTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/ageTextView"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="8dp"
-        android:text="Bio"
-        android:textSize="16sp" />
+            <!-- Profile image with pulsating animation -->
+            <com.mini.amimatch.PulsatorLayout
+                android:id="@+id/pulsator"
+                android:layout_width="180dp"
+                android:layout_height="180dp"
+                android:layout_centerInParent="true"
+                app:pulse_color="@color/colorAccent"
+                app:pulse_count="3"
+                app:pulse_duration="5000"
+                app:pulse_interpolator="Decelerate"
+                app:pulse_repeat="0"
+                app:pulse_startFromScratch="false">
 
-    <TextView
-        android:id="@+id/interestsTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/bioTextView"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="8dp"
-        android:text="Interests"
-        android:textSize="16sp" />
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/profileImageView"
+                    android:layout_width="151dp"
+                    android:layout_height="161dp"
+                    android:layout_centerInParent="true"
+                    android:layout_marginTop="59dp"
+                    android:src="@drawable/monkey"
+                    app:civ_border_color="@color/transparentPink"
+                    app:civ_border_width="2dp" />
+            </com.mini.amimatch.PulsatorLayout>
 
-    <TextView
-        android:id="@+id/hobbiesTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/interestsTextView"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="8dp"
-        android:text="Hobbies"
-        android:textSize="16sp" />
+            <!-- Profile name -->
+            <TextView
+                android:id="@+id/nameTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="Name"
+                android:textColor="@android:color/black"
+                android:textSize="20sp" />
 
+            <!-- Age -->
+            <TextView
+                android:id="@+id/ageTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Age"
+                android:textSize="16sp"
+                android:layout_marginTop="8dp"
+                android:visibility="visible" />
+
+            <!-- Bio -->
+            <TextView
+                android:id="@+id/bioTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bio"
+                android:textSize="16sp"
+                android:layout_marginTop="8dp"
+                android:visibility="visible" />
+
+            <!-- Interests -->
+            <TextView
+                android:id="@+id/interestsTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Interests"
+                android:textSize="16sp"
+                android:layout_marginTop="8dp"
+                android:visibility="visible" />
+
+            <!-- Hobbies -->
+            <TextView
+                android:id="@+id/hobbiesTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hobbies"
+                android:textSize="16sp"
+                android:layout_marginTop="8dp"
+                android:visibility="visible" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="3"></LinearLayout>
+    </LinearLayout>
 </RelativeLayout>

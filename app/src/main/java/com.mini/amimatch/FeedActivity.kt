@@ -82,6 +82,9 @@ class FeedActivity : AppCompatActivity(),ProfileAdapter.OnProfileSelectedListene
             R.id.nav_sign_out -> {
                 signOut()
             }
+            R.id.nav_edit_profile -> {
+                startActivity(Intent(this, EditProfileActivity::class.java))
+            }
         }
 
         drawerLayout.closeDrawer(GravityCompat.START)
