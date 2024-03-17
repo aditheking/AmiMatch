@@ -28,6 +28,7 @@ class RegisterBasicInfo : AppCompatActivity() {
     private lateinit var emailPattern: String
     private lateinit var gps: GPS
 
+
     companion object {
         private const val TAG = "RegisterActivity"
     }
