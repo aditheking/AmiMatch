@@ -77,6 +77,8 @@ dependencies {
     implementation ("com.github.ittianyu:BottomNavigationViewEx:1.2.4")
     implementation ("com.google.android.material:material:1.0.0")
     implementation ("com.lorentzos.swipecards:library:1.0.9")
+    implementation ("com.squareup.picasso:picasso:2.71828")
+    implementation ("com.yahoo.mobile.client.android.util.rangeseekbar:rangeseekbar-library:0.1.0")
     implementation ("de.hdodenhof:circleimageview:2.2.0")
     annotationProcessor ("com.github.bumptech.glide:compiler:4.12.0")
     testImplementation("junit:junit:4.13.2")

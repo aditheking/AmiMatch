@@ -25,6 +25,7 @@ import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
 import com.mini.amimatch.R
+import com.mini.amimatch.SquareImageView
 class EditProfileActivity : AppCompatActivity() {
     private lateinit var man: Button
     private lateinit var woman: Button

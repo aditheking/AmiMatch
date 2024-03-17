@@ -15,6 +15,8 @@ import android.view.animation.DecelerateInterpolator
 import android.view.animation.Interpolator
 import android.view.animation.LinearInterpolator
 import android.widget.RelativeLayout
+import com.mini.amimatch.SquareImageView
+
 
 /**
  * DatingApp

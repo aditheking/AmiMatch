@@ -107,5 +107,6 @@
     <color name="colorTex">#585858</color>
     <color name="colorblue">#4c71f5</color>
     <color name="color">#767578</color>
+    <color name="colorTabText">#000</color>
 
 </resources>

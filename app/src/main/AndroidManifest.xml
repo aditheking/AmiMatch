@@ -20,27 +20,28 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".SignInActivity" />
-        <activity
-            android:name=".SignUpActivity" />
-        <activity
-            android:name=".MainActivity" />
+        <activity android:name=".IntroductionMain"
+            android:exported="true">
 
-        <activity
-            android:name=".ProfileSetupActivity"
-            android:label="Profile Setup" >
         </activity>
+        <activity android:name=".Login" />
 
-        <!-- Add FeedActivity -->
-        <activity
-            android:name=".FeedActivity"
-            android:label="Feed Activity" />
 
+        <activity android:name=".RegisterBasicInfo" />
+        <activity android:name=".Matched_Activity" />
+        <activity android:name=".Profile_Activity" />
+        <activity android:name=".ProfileCheckinMain" />
+        <activity android:name=".ProfileCheckinMatched" />
         <activity android:name=".EditProfileActivity" />
+        <activity android:name=".MainActivity" />
+        <activity android:name=".RegisterGender" />
+        <activity android:name=".RegisterGenderPrefection" />
+        <activity android:name=".RegisterAge" />
+        <activity android:name=".RegisterHobby" />
+        <activity android:name=".SettingsActivity" />
+        <activity android:name=".BtnLikeActivity" />
+        <activity android:name=".BtnDislikeActivity"></activity>
 
-
-        <activity android:name=".ExpandedProfileActivity" />
 
     </application>
 
