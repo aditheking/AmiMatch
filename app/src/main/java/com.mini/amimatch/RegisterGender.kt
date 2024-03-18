@@ -1,10 +1,14 @@
 package com.mini.amimatch
 
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.firestore.FirebaseFirestore
 
 class RegisterGender : AppCompatActivity() {
 
@@ -14,6 +18,7 @@ class RegisterGender : AppCompatActivity() {
     private lateinit var genderContinueButton: Button
     private lateinit var maleSelectionButton: Button
     private lateinit var femaleSelectionButton: Button
+    private lateinit var firestore: FirebaseFirestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +35,8 @@ class RegisterGender : AppCompatActivity() {
         femaleSelectionButton.alpha = 0.5f
         femaleSelectionButton.setBackgroundColor(Color.GRAY)
 
+        firestore = FirebaseFirestore.getInstance()
+
         maleSelectionButton.setOnClickListener {
             maleButtonSelected()
         }
@@ -39,7 +46,7 @@ class RegisterGender : AppCompatActivity() {
         }
 
         genderContinueButton.setOnClickListener {
-            openPreferenceEntryPage()
+            saveGenderToFirestore()
         }
     }
 
@@ -59,15 +66,32 @@ class RegisterGender : AppCompatActivity() {
         maleSelectionButton.setBackgroundColor(Color.GRAY)
     }
 
-    private fun openPreferenceEntryPage() {
+    private fun saveGenderToFirestore() {
         val ownSex = if (male) "male" else "female"
         user.setSex(ownSex)
-        val defaultPhoto = if (male) "defaultMale" else "defaultFemale"
-        user.profileImageUrl = defaultPhoto
 
-        val intent = Intent(this, RegisterGenderPrefection::class.java)
-        intent.putExtra("password", password)
-        intent.putExtra("classUser", user)
-        startActivity(intent)
+        if (user.userId.isNullOrEmpty()) {
+            Log.e(TAG, "User ID is null or empty")
+            return
+        }
+            // Update Firestore with user's gender
+            firestore.collection("users")
+                .document(user.userId!!)
+                .update("basicInfo.gender", ownSex)
+                .addOnSuccessListener {
+                    // Proceed to the next step of registration
+                    val defaultPhoto = if (male) "defaultMale" else "defaultFemale"
+                    user.profileImageUrl = defaultPhoto
+
+                    val intent = Intent(this, RegisterGenderPrefection::class.java)
+                    intent.putExtra("password", password)
+                    intent.putExtra("classUser", user)
+                    startActivity(intent)
+                }
+                .addOnFailureListener { e ->
+                    Toast.makeText(this, "Failed to save gender to Firestore: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+        }
     }
-}
+
+

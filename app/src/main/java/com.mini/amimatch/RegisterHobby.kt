@@ -8,6 +8,7 @@ import android.os.Parcel
 import android.util.Log
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.firestore.FirebaseFirestore
 
 class RegisterHobby : AppCompatActivity() {
 
@@ -20,6 +21,9 @@ class RegisterHobby : AppCompatActivity() {
     private lateinit var userInfo: Users
     private lateinit var password: String
     private var append = ""
+
+    private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
+    private val hobbiesCollection = firestore.collection("hobbies")
 
     companion object {
         private const val TAG = "RegisterHobby"
@@ -44,8 +48,6 @@ class RegisterHobby : AppCompatActivity() {
         init()
     }
 
-
-
     private fun initWidgets() {
         sportsSelectionButton = findViewById(R.id.sportsSelectionButton)
         travelSelectionButton = findViewById(R.id.travelSelectionButton)
@@ -53,76 +55,66 @@ class RegisterHobby : AppCompatActivity() {
         fishingSelectionButton = findViewById(R.id.fishingSelectionButton)
         hobbiesContinueButton = findViewById(R.id.hobbiesContinueButton)
 
-        sportsSelectionButton.alpha = 0.5f
-        sportsSelectionButton.setBackgroundColor(Color.GRAY)
-
-        travelSelectionButton.alpha = 0.5f
-        travelSelectionButton.setBackgroundColor(Color.GRAY)
-
-        musicSelectionButton.alpha = 0.5f
-        musicSelectionButton.setBackgroundColor(Color.GRAY)
-
-        fishingSelectionButton.alpha = 0.5f
-        fishingSelectionButton.setBackgroundColor(Color.GRAY)
-
-        sportsSelectionButton.setOnClickListener { sportsButtonClicked() }
-        travelSelectionButton.setOnClickListener { travelButtonClicked() }
-        musicSelectionButton.setOnClickListener { musicButtonClicked() }
-        fishingSelectionButton.setOnClickListener { fishingButtonClicked() }
+        // Set onClickListeners for hobby selection buttons
+        sportsSelectionButton.setOnClickListener { toggleHobbySelection(sportsSelectionButton, "sports") }
+        travelSelectionButton.setOnClickListener { toggleHobbySelection(travelSelectionButton, "travel") }
+        musicSelectionButton.setOnClickListener { toggleHobbySelection(musicSelectionButton, "music") }
+        fishingSelectionButton.setOnClickListener { toggleHobbySelection(fishingSelectionButton, "fishing") }
     }
 
-    private fun sportsButtonClicked() {
-        if (userInfo.isSports()) {
-            sportsSelectionButton.alpha = 0.5f
-            sportsSelectionButton.setBackgroundColor(Color.GRAY)
-            userInfo.setSports(false)
+    private fun toggleHobbySelection(button: Button, hobby: String) {
+        val selected = button.alpha == 1.0f
+        if (selected) {
+            button.alpha = 0.5f
+            button.setBackgroundColor(Color.GRAY)
         } else {
-            sportsSelectionButton.setBackgroundColor(Color.parseColor("#FF4081"))
-            sportsSelectionButton.alpha = 1.0f
-            userInfo.setSports(true)
+            button.alpha = 1.0f
+            button.setBackgroundColor(Color.parseColor("#FF4081"))
         }
+        updateHobbyStatus(hobby, !selected)
     }
 
-    private fun travelButtonClicked() {
-        if (userInfo.isTravel()) {
-            travelSelectionButton.alpha = 0.5f
-            travelSelectionButton.setBackgroundColor(Color.GRAY)
-            userInfo.setTravel(false)
-        } else {
-            travelSelectionButton.setBackgroundColor(Color.parseColor("#FF4081"))
-            travelSelectionButton.alpha = 1.0f
-            userInfo.setTravel(true)
-        }
-    }
-
-    private fun musicButtonClicked() {
-        if (userInfo.isMusic()) {
-            musicSelectionButton.alpha = 0.5f
-            musicSelectionButton.setBackgroundColor(Color.GRAY)
-            userInfo.setMusic(false)
-        } else {
-            musicSelectionButton.setBackgroundColor(Color.parseColor("#FF4081"))
-            musicSelectionButton.alpha = 1.0f
-            userInfo.setMusic(true)
-        }
-    }
-
-    private fun fishingButtonClicked() {
-        if (userInfo.isFishing()) {
-            fishingSelectionButton.alpha = 0.5f
-            fishingSelectionButton.setBackgroundColor(Color.GRAY)
-            userInfo.setFishing(false)
-        } else {
-            fishingSelectionButton.setBackgroundColor(Color.parseColor("#FF4081"))
-            fishingSelectionButton.alpha = 1.0f
-            userInfo.setFishing(true)
+    private fun updateHobbyStatus(hobby: String, selected: Boolean) {
+        when (hobby) {
+            "sports" -> userInfo.setSports(selected)
+            "travel" -> userInfo.setTravel(selected)
+            "music" -> userInfo.setMusic(selected)
+            "fishing" -> userInfo.setFishing(selected)
         }
     }
 
     private fun init() {
         hobbiesContinueButton.setOnClickListener {
+            // Save user's hobby information to Firestore
+            saveHobbyDataToFirestore()
+
+            // Start MainActivity and finish current activity
             startActivity(Intent(applicationContext, MainActivity::class.java))
             finish()
         }
     }
+
+    private fun saveHobbyDataToFirestore() {
+        if (userInfo.userId.isNullOrEmpty()) {
+            Log.e(TAG, "User ID is null or empty. Cannot save hobby data.")
+            return
+        }
+
+        val hobbyData = hashMapOf(
+            "sports" to userInfo.isSports(),
+            "travel" to userInfo.isTravel(),
+            "music" to userInfo.isMusic(),
+            "fishing" to userInfo.isFishing()
+        )
+
+        hobbiesCollection.document(userInfo.userId!!)
+            .set(hobbyData)
+            .addOnSuccessListener {
+                Log.d(TAG, "Hobby data successfully saved to Firestore")
+            }
+            .addOnFailureListener { e ->
+                Log.e(TAG, "Error saving hobby data to Firestore", e)
+            }
+    }
+
 }

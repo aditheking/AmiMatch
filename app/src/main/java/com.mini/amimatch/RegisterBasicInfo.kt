@@ -2,16 +2,16 @@ package com.mini.amimatch
 
 import android.content.Context
 import android.content.Intent
-import android.location.Location
 import android.os.Bundle
 import android.os.Parcelable
 import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class RegisterBasicInfo : AppCompatActivity() {
 
@@ -22,12 +22,10 @@ class RegisterBasicInfo : AppCompatActivity() {
     private lateinit var mEmail: EditText
     private lateinit var mUsername: EditText
     private lateinit var mPassword: EditText
-    private lateinit var loadingPleaseWait: TextView
     private lateinit var btnRegister: Button
-    private lateinit var append: String
     private lateinit var emailPattern: String
-    private lateinit var gps: GPS
-
+    private lateinit var db: FirebaseFirestore
+    private var user: Users? = null
 
     companion object {
         private const val TAG = "RegisterActivity"
@@ -40,9 +38,7 @@ class RegisterBasicInfo : AppCompatActivity() {
         Log.d(TAG, "onCreate: started")
 
         emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+"
-
-
-        gps = GPS(applicationContext)
+        db = FirebaseFirestore.getInstance()
 
         initWidgets()
         init()
@@ -55,38 +51,57 @@ class RegisterBasicInfo : AppCompatActivity() {
             password = mPassword.text.toString()
 
             if (checkInputs(email, username, password)) {
-                val location: Location? = gps.location
-                var latitude = 37.349642
-                var longitude = -121.938987
-                if (location != null) {
-                    latitude = location.latitude
-                    longitude = location.longitude
-                }
-                Log.d("Location==>", "$longitude   $latitude")
+                FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(this) { task ->
+                        if (task.isSuccessful) {
+                            val firebaseUser = FirebaseAuth.getInstance().currentUser
+                            val userId = firebaseUser?.uid ?: ""
 
-                val user = Users(
-                    userId = "",
-                    name = "",
-                    profileImageUrl = "",
-                    bio = "",
-                    interest = "",
-                    age = 0,
-                    distance = 0,
-                    phoneNumber = "",
-                    sports = false,
-                    fishing = false,
-                    music = false,
-                    travel = false
-                )
+                            // Create user object
+                            user = Users(
+                                userId = userId,
+                                name = username,
+                                profileImageUrl = "",
+                                bio = "",
+                                interest = "",
+                                age = 0,
+                                distance = 0,
+                                phoneNumber = "",
+                                sports = false,
+                                fishing = false,
+                                music = false,
+                                travel = false
+                            )
 
-// Create an intent and pass the password and user object as extras
-                val intent = Intent(this@RegisterBasicInfo, RegisterGender::class.java)
-                intent.putExtra("password", password)
-                intent.putExtra("classUser", user as Parcelable)
-                startActivity(intent)
+                            Log.d(TAG, "Generated User ID: $userId")
+                            Log.d(TAG, "Initialized User: $user")
+
+                            // Store user basic info in Firestore
+                            db.collection("users").document(userId).set(user!!)
+                                .addOnSuccessListener {
+                                    Log.d(TAG, "DocumentSnapshot added with ID: $userId")
+
+                                    val intent = Intent(this@RegisterBasicInfo, RegisterGender::class.java)
+                                    intent.putExtra("password", password)
+                                    intent.putExtra("classUser", user as Parcelable)
+
+                                    Log.d(TAG, "Starting RegisterGender activity with user: $user")
+
+                                    startActivity(intent)
+                                }
+                                .addOnFailureListener { e ->
+                                    Log.w(TAG, "Error adding document", e)
+                                    Toast.makeText(mContext, "Failed to register user.", Toast.LENGTH_SHORT).show()
+                                }
+
+                        } else {
+                            Toast.makeText(mContext, "Failed to register user.", Toast.LENGTH_SHORT).show()
+                        }
+                    }
             }
         }
     }
+
 
     private fun checkInputs(email: String, username: String, password: String): Boolean {
         Log.d(TAG, "checkInputs: checking inputs for null values.")
@@ -115,4 +130,5 @@ class RegisterBasicInfo : AppCompatActivity() {
     fun onLoginClicked(view: View) {
         startActivity(Intent(applicationContext, Login::class.java))
     }
+
 }

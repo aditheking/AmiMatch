@@ -18,6 +18,12 @@ class Cards() : Parcelable {
     var travel: Boolean = false
     var preferSex: String = ""
 
+    var userMusic: Boolean = false
+    var userSports: Boolean = false
+    var dateOfBirth: String? = null
+    var userFishing: Boolean = false
+    var userTravel: Boolean = false
+
     constructor(parcel: Parcel) : this() {
         userId = parcel.readString()
         name = parcel.readString()

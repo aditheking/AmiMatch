@@ -16,7 +16,9 @@ class Users(
     var fishing: Boolean,
     var music: Boolean,
     var travel: Boolean,
-    var preferSex: String = ""
+    var preferSex: String = "",
+    var dateOfBirth: String? = null
+
 ) : Parcelable {
 
     constructor(parcel: Parcel) : this(
@@ -32,7 +34,9 @@ class Users(
         parcel.readByte() != 0.toByte(),
         parcel.readByte() != 0.toByte(),
         parcel.readByte() != 0.toByte(),
-        parcel.readString() ?: ""
+        parcel.readString() ?: "",
+        parcel.readString()
+
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -49,6 +53,8 @@ class Users(
         parcel.writeByte(if (music) 1 else 0)
         parcel.writeByte(if (travel) 1 else 0)
         parcel.writeString(preferSex)
+        parcel.writeString(dateOfBirth)
+
     }
 
     override fun describeContents(): Int {
@@ -61,19 +67,16 @@ class Users(
         this.age = age
     }
 
-    // Setter method for profileImageUrl
     @JvmName("setUserProfileImageUrl")
     fun setProfileImageUrl(profileImageUrl: String?) {
         this.profileImageUrl = profileImageUrl
     }
 
-    // Setter method for preferSex
     @JvmName("setUserSex")
     fun setSex(sex: String) {
         preferSex = sex
     }
 
-    // Getter and setter methods for sports
     @JvmName("getUserSports")
     fun isSports(): Boolean {
         return sports
@@ -84,7 +87,6 @@ class Users(
         this.sports = sports
     }
 
-    // Getter and setter methods for fishing
     @JvmName("getUserFishing")
     fun isFishing(): Boolean {
         return fishing
@@ -95,7 +97,6 @@ class Users(
         this.fishing = fishing
     }
 
-    // Getter and setter methods for music
     @JvmName("getUserMusic")
     fun isMusic(): Boolean {
         return music
@@ -106,7 +107,6 @@ class Users(
         this.music = music
     }
 
-    // Getter and setter methods for travel
     @JvmName("getUserTravel")
     fun isTravel(): Boolean {
         return travel
@@ -115,6 +115,11 @@ class Users(
     @JvmName("setUserTravel")
     fun setTravel(travel: Boolean) {
         this.travel = travel
+    }
+
+    @JvmName("setUserDateOfBirth")
+    fun setDateOfBirth(date: String) {
+        this.dateOfBirth = date
     }
 
     companion object CREATOR : Parcelable.Creator<Users> {

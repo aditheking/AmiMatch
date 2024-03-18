@@ -6,6 +6,7 @@ import android.widget.Button
 import android.widget.DatePicker
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
 import java.util.Calendar
 
@@ -16,45 +17,77 @@ class RegisterAge : AppCompatActivity() {
     private var ageSelectionPicker: DatePicker? = null
     private var ageContinueButton: Button? = null
     private val ageLimit = 17
+    private lateinit var firestore: FirebaseFirestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register_age)
-        user = intent.getSerializableExtra("classUser") as Users?
-        password = intent.getStringExtra("password")
+
+        // Initialize UI components and Firestore
         ageSelectionPicker = findViewById(R.id.ageSelectionPicker)
         ageContinueButton = findViewById(R.id.ageContinueButton)
+        firestore = FirebaseFirestore.getInstance()
+
+        // Retrieve user object and password from intent
+        user = intent.getParcelableExtra("classUser") as? Users
+        password = intent.getStringExtra("password")
+
+        // Set click listener for continue button
         ageContinueButton?.setOnClickListener { openHobbiesEntryPage() }
     }
 
     private fun openHobbiesEntryPage() {
-        val age = getAge(
-            ageSelectionPicker?.year ?: 0,
-            ageSelectionPicker?.month ?: 0,
-            ageSelectionPicker?.dayOfMonth ?: 0
-        )
+        // Check if user object and user ID are not null
+        if (user != null && user?.userId != null) {
+            val age = getAge(
+                ageSelectionPicker?.year ?: 0,
+                ageSelectionPicker?.month ?: 0,
+                ageSelectionPicker?.dayOfMonth ?: 0
+            )
 
-        if (age > ageLimit) {
-            val cal = Calendar.getInstance()
-            cal.set(Calendar.YEAR, ageSelectionPicker?.year ?: 0)
-            cal.set(Calendar.MONTH, ageSelectionPicker?.month ?: 0)
-            cal.set(Calendar.DAY_OF_MONTH, ageSelectionPicker?.dayOfMonth ?: 0)
-            val dateOfBirth = cal.time
-            val strDateOfBirth = dateFormatter.format(dateOfBirth)
+            // Check if age is valid
+            if (age > ageLimit) {
+                val cal = Calendar.getInstance()
+                cal.set(Calendar.YEAR, ageSelectionPicker?.year ?: 0)
+                cal.set(Calendar.MONTH, ageSelectionPicker?.month ?: 0)
+                cal.set(Calendar.DAY_OF_MONTH, ageSelectionPicker?.dayOfMonth ?: 0)
+                val dateOfBirth = cal.time
+                val strDateOfBirth = dateFormatter.format(dateOfBirth)
 
-            user?.let {
-                it.setAge(age)
-                it.setProfileImageUrl(strDateOfBirth)
+                // Set age and date of birth in user object
+                user?.apply {
+                    setAge(age)
+                    setDateOfBirth(strDateOfBirth)
+                }
+
+                // Add user to Firestore
+                firestore.collection("users")
+                    .document(user!!.userId!!)
+                    .set(user!!)
+                    .addOnSuccessListener {
+                        val intent = Intent(this, RegisterHobby::class.java)
+                        intent.putExtra("password", password)
+                        user = intent.getParcelableExtra("classUser") as? Users
+                        startActivity(intent)
+                    }
+                    .addOnFailureListener { e ->
+                        Toast.makeText(
+                            applicationContext,
+                            "Failed to register user: ${e.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+            } else {
+                Toast.makeText(
+                    applicationContext,
+                    "Age of the user should be greater than $ageLimit",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
-
-            val intent = Intent(this, RegisterHobby::class.java)
-            intent.putExtra("password", password)
-            intent.putExtra("classUser", user)
-            startActivity(intent)
         } else {
             Toast.makeText(
                 applicationContext,
-                "Age of the user should be greater than $ageLimit !!!",
+                "User ID is null or user object is invalid",
                 Toast.LENGTH_SHORT
             ).show()
         }

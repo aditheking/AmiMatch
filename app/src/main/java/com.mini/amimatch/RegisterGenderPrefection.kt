@@ -1,12 +1,12 @@
 package com.mini.amimatch
 
-import android.content.ContentValues.TAG
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.firestore.FirebaseFirestore
 
 class RegisterGenderPrefection : AppCompatActivity() {
 
@@ -16,10 +16,14 @@ class RegisterGenderPrefection : AppCompatActivity() {
     private lateinit var preferenceContinueButton: Button
     private lateinit var maleSelectionButton: Button
     private lateinit var femaleSelectionButton: Button
+    private lateinit var firestore: FirebaseFirestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register_gender_prefection)
+
+        // Initialize Firestore
+        firestore = FirebaseFirestore.getInstance()
 
         // Retrieve the password and user object from the intent extras
         val intent = intent
@@ -39,15 +43,6 @@ class RegisterGenderPrefection : AppCompatActivity() {
             travel = false
         )
 
-        // Check if the user object is not null
-        if (user != null) {
-            // Use the user object as needed
-        } else {
-            // Handle the case when the user object is null
-            Log.e(TAG, "No User object found in intent extras")
-            // You may want to finish the activity or handle the error in another way
-        }
-
         maleSelectionButton = findViewById(R.id.maleSelectionButton)
         femaleSelectionButton = findViewById(R.id.femaleSelectionButton)
         preferenceContinueButton = findViewById(R.id.preferenceContinueButton)
@@ -64,11 +59,9 @@ class RegisterGenderPrefection : AppCompatActivity() {
         }
 
         preferenceContinueButton.setOnClickListener {
-            openAgeEntryPage()
+            saveUserPreferenceAndOpenAgeEntryPage()
         }
     }
-
-
 
     private fun maleButtonSelected() {
         preferMale = true
@@ -86,12 +79,24 @@ class RegisterGenderPrefection : AppCompatActivity() {
         maleSelectionButton.setBackgroundColor(Color.GRAY)
     }
 
-    private fun openAgeEntryPage() {
+    private fun saveUserPreferenceAndOpenAgeEntryPage() {
         val preferSex = if (preferMale) "male" else "female"
         user.preferSex = preferSex
-        val intent = Intent(this, RegisterAge::class.java)
-        intent.putExtra("password", password)
-        intent.putExtra("classUser", user)
-        startActivity(intent)
+
+        // Save user preference to Firestore
+        val userDocRef = firestore.collection("users").document(user.userId!!)
+        userDocRef.update("preferSex", preferSex)
+            .addOnSuccessListener {
+                Log.d("RegisterGenderPref", "User preference saved successfully")
+                // Proceed to the next step (age entry page)
+                val intent = Intent(this, RegisterAge::class.java)
+                intent.putExtra("password", password)
+                intent.putExtra("classUser", user)
+                startActivity(intent)
+            }
+            .addOnFailureListener { e ->
+                Log.e("RegisterGenderPref", "Error saving user preference", e)
+                // Handle error saving user preference
+            }
     }
 }

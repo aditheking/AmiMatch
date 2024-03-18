@@ -38,7 +38,6 @@ class Login : AppCompatActivity() {
     //----------------------------------------Firebase----------------------------------------
 
     private fun init() {
-        //initialize the button for logging in
         val btnLogin: Button = findViewById(R.id.btn_login)
         btnLogin.setOnClickListener {
             val email = mEmail.text.toString()
@@ -51,7 +50,6 @@ class Login : AppCompatActivity() {
                     .addOnCompleteListener(this) { task ->
                         if (task.isSuccessful) {
                             val user = mAuth.currentUser
-                            // Update user's profile with additional information
                             updateUserProfile(user)
                         } else {
                             Toast.makeText(mContext, "Authentication failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
@@ -69,7 +67,6 @@ class Login : AppCompatActivity() {
 
     private fun updateUserProfile(user: FirebaseUser?) {
         val profileUpdates = UserProfileChangeRequest.Builder()
-            // Add additional user info here if needed
             .build()
 
         user?.updateProfile(profileUpdates)
@@ -78,7 +75,7 @@ class Login : AppCompatActivity() {
                     Toast.makeText(mContext, "Login Successful", Toast.LENGTH_SHORT).show()
                     val intent = Intent(this@Login, MainActivity::class.java)
                     startActivity(intent)
-                    finish() // Finish the current activity to prevent going back to login screen
+                    finish()
                 } else {
                     Toast.makeText(mContext, "Failed to update user profile: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                 }

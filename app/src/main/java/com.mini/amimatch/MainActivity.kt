@@ -18,7 +18,6 @@ import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx
 import com.lorentzos.flingswipe.SwipeFlingAdapterView
 import com.mini.amimatch.Cards
 
-
 class MainActivity : Activity() {
     private val TAG = "MainActivity"
     private val ACTIVITY_NUM = 1
@@ -34,12 +33,11 @@ class MainActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        mContext = this // Initialize mContext with the current context
+        mContext = this
 
         cardFrame = findViewById(R.id.card_frame)
         moreFrame = findViewById(R.id.more_frame)
 
-        // Start the pulsator animation
         val mPulsator = findViewById<PulsatorLayout>(R.id.pulsator)
         mPulsator.start()
 
@@ -54,13 +52,13 @@ class MainActivity : Activity() {
         // Retrieve user data from Firestore
         usersCollection.get().addOnSuccessListener { querySnapshot ->
             for (document in querySnapshot.documents) {
+                val userId = document.id
                 val userData = document.toObject(Cards::class.java)
-                if (userData != null) {
-                    // Add user data to the list
-                    rowItems.add(userData)
+                userData?.userId = userId
+                userData?.let {
+                    rowItems.add(it)
                 }
             }
-            // Create adapter with user data
             arrayAdapter = PhotoAdapter(this, R.layout.item, rowItems)
             updateSwipeCard()
         }.addOnFailureListener { exception ->
@@ -70,6 +68,7 @@ class MainActivity : Activity() {
         checkRowItem()
         updateLocation()
     }
+
 
 
     private fun checkRowItem() {
@@ -142,6 +141,5 @@ class MainActivity : Activity() {
     }
 
     override fun onBackPressed() {
-        // Handle back press event
     }
 }
