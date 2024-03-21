@@ -486,6 +486,15 @@
                         android:textColor="@color/colorPrimaryDark"
                         android:textSize="18dp" />
 
+                    <Button
+                        android:id="@+id/check_for_update_button"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="Check for Update"
+                        android:textColor="@color/white"
+                        android:textSize="16sp" />
+
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
@@ -503,5 +512,7 @@
         android:text="LOG OUT"
         android:textColor="@color/white"
         android:visibility="gone" />
+
+
 
 </LinearLayout>
