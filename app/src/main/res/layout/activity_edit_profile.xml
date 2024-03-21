@@ -328,6 +328,7 @@
                     android:textStyle="bold" />
 
                     <EditText
+                        android:id="@+id/about_edit_text"
                         android:layout_width="match_parent"
                         android:layout_height="70dp"
                         android:background="@android:color/transparent"
@@ -351,6 +352,7 @@
                     android:textStyle="bold" />
 
                     <EditText
+                        android:id="@+id/year_semester_edit_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@android:color/transparent"
@@ -374,6 +376,7 @@
                     android:textStyle="bold" />
 
                     <EditText
+                        android:id="@+id/course_edit_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@android:color/transparent"
@@ -397,6 +400,7 @@
                     android:textStyle="bold" />
 
                     <EditText
+                        android:id="@+id/school_edit_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@android:color/transparent"
@@ -535,6 +539,19 @@
                             android:checked="false"
                             android:thumb="@null"
                             app:track="@null" />
+
+                        <Button
+                            android:id="@+id/save_button"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Save"
+                            android:background="@drawable/white_grey_border_bottom"
+                            android:textColor="@android:color/white"
+                            android:layout_marginTop="16dp"
+                            android:padding="8dp"
+                            android:textSize="16sp"
+                            android:gravity="center" />
+
 
                     </RelativeLayout>
 

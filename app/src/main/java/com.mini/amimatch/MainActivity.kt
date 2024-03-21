@@ -3,6 +3,7 @@ package com.mini.amimatch
 import android.Manifest
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
@@ -28,6 +29,8 @@ class MainActivity : Activity() {
     private lateinit var moreFrame: FrameLayout
     private lateinit var mContext: Context
     private lateinit var arrayAdapter: PhotoAdapter
+    private lateinit var mNotificationHelper: NotificationHelper
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,6 +40,8 @@ class MainActivity : Activity() {
 
         cardFrame = findViewById(R.id.card_frame)
         moreFrame = findViewById(R.id.more_frame)
+        mNotificationHelper = NotificationHelper(this)
+
 
         val mPulsator = findViewById<PulsatorLayout>(R.id.pulsator)
         mPulsator.start()
@@ -52,24 +57,19 @@ class MainActivity : Activity() {
         // Retrieve user data from Firestore
         usersCollection.get().addOnSuccessListener { querySnapshot ->
             for (document in querySnapshot.documents) {
-                val userId = document.id
                 val userData = document.toObject(Cards::class.java)
-                userData?.userId = userId
                 userData?.let {
                     rowItems.add(it)
                 }
             }
             arrayAdapter = PhotoAdapter(this, R.layout.item, rowItems)
             updateSwipeCard()
+            checkRowItem()
+            updateLocation()
         }.addOnFailureListener { exception ->
             Log.e(TAG, "Error getting documents: ", exception)
         }
-
-        checkRowItem()
-        updateLocation()
     }
-
-
 
     private fun checkRowItem() {
         if (rowItems.isEmpty()) {
@@ -127,6 +127,36 @@ class MainActivity : Activity() {
 
         flingContainer.setOnItemClickListener { _, _ ->
             Toast.makeText(applicationContext, "Clicked", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    fun sendNotification() {
+        val nb = mNotificationHelper.getChannel1Notification(getString(R.string.app_name), getString(R.string.match_notification))
+        mNotificationHelper.manager?.notify(1, nb.build())
+    }
+
+    fun dislikeBtn(v: View?) {
+        if (rowItems.isNotEmpty()) {
+            val cardItem = rowItems[0]
+            val userId = cardItem.userId
+            rowItems.removeAt(0)
+            arrayAdapter.notifyDataSetChanged()
+            val btnClick = Intent(mContext, BtnDislikeActivity::class.java)
+            btnClick.putExtra("url", cardItem.profileImageUrl)
+            startActivity(btnClick)
+        }
+    }
+
+    fun likeBtn(v: View?) {
+        if (rowItems.isNotEmpty()) {
+            val cardItem = rowItems[0]
+            val userId = cardItem.userId
+            //check matches
+            rowItems.removeAt(0)
+            arrayAdapter.notifyDataSetChanged()
+            val btnClick = Intent(mContext, BtnLikeActivity::class.java)
+            btnClick.putExtra("url", cardItem.profileImageUrl)
+            startActivity(btnClick)
         }
     }
 

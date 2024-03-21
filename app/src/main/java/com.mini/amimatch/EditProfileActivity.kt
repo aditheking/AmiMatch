@@ -1,5 +1,4 @@
 package com.mini.amimatch
-
 import android.Manifest
 import android.content.Context
 import android.content.Intent
@@ -8,10 +7,9 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.provider.MediaStore
-import android.provider.Settings
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
@@ -19,27 +17,25 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.FileNotFoundException
-import java.io.FileOutputStream
 import java.io.IOException
-import com.mini.amimatch.R
-import com.mini.amimatch.SquareImageView
+
 class EditProfileActivity : AppCompatActivity() {
-    private lateinit var man: Button
-    private lateinit var woman: Button
-    private lateinit var back: ImageButton
-    private lateinit var man_text: TextView
-    private lateinit var women_text: TextView
+    private lateinit var manButton: Button
+    private lateinit var womanButton: Button
+    private lateinit var backImageButton: ImageButton
+    private lateinit var manTextView: TextView
+    private lateinit var womenTextView: TextView
     private lateinit var imageView1: ImageView
     private lateinit var imageView2: ImageView
     private lateinit var imageView3: ImageView
     private lateinit var imageView4: ImageView
     private lateinit var imageView5: ImageView
     private lateinit var imageView6: ImageView
-    private lateinit var imageView: ImageView
-    private var myBitmap: Bitmap? = null
+    private lateinit var selectedImageView: ImageView
     private var picUri: Uri? = null
     private var permissionsRequired = arrayOf(
         Manifest.permission.CAMERA,
@@ -51,7 +47,6 @@ class EditProfileActivity : AppCompatActivity() {
     private var sentToSettings = false
     private val REQUEST_CAMERA = 0
     private val SELECT_FILE = 1
-    private val userChoosenTask: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,47 +63,55 @@ class EditProfileActivity : AppCompatActivity() {
         imageView4 = findViewById(R.id.image_view_4)
         imageView5 = findViewById(R.id.image_view_5)
         imageView6 = findViewById(R.id.image_view_6)
-        man = findViewById(R.id.man_button)
-        woman = findViewById(R.id.woman_button)
-        man_text = findViewById(R.id.man_text)
-        women_text = findViewById(R.id.woman_text)
-        back = findViewById(R.id.back)
-        back.setOnClickListener { onBackPressed() }
-        woman.setOnClickListener {
-            women_text.setTextColor(R.color.colorAccent)
-            woman.setBackgroundResource(R.drawable.ic_check_select)
-            man_text.setTextColor(R.color.black)
-            man.setBackgroundResource(R.drawable.ic_check_unselect)
+        manButton = findViewById(R.id.man_button)
+        womanButton = findViewById(R.id.woman_button)
+        manTextView = findViewById(R.id.man_text)
+        womenTextView = findViewById(R.id.woman_text)
+        backImageButton = findViewById(R.id.back)
+
+        backImageButton.setOnClickListener { onBackPressed() }
+
+        womanButton.setOnClickListener {
+            womenTextView.setTextColor(ContextCompat.getColor(this@EditProfileActivity, R.color.colorAccent))
+            womanButton.setBackgroundResource(R.drawable.ic_check_select)
+            manTextView.setTextColor(ContextCompat.getColor(this@EditProfileActivity, R.color.colorAccent))
+            manButton.setBackgroundResource(R.drawable.ic_check_unselect)
         }
-        man.setOnClickListener {
-            man_text.setTextColor(R.color.colorAccent)
-            man.setBackgroundResource(R.drawable.ic_check_select)
-            women_text.setTextColor(R.color.black)
-            woman.setBackgroundResource(R.drawable.ic_check_unselect)
+        manButton.setOnClickListener {
+            manTextView.setTextColor(ContextCompat.getColor(this@EditProfileActivity, R.color.black))
+            manButton.setBackgroundResource(R.drawable.ic_check_select)
+            womenTextView.setTextColor(ContextCompat.getColor(this@EditProfileActivity, R.color.black))
+            womanButton.setBackgroundResource(R.drawable.ic_check_unselect)
         }
         imageView1.setOnClickListener {
-            imageView = imageView1
+            selectedImageView = imageView1
             proceedAfterPermission()
         }
         imageView2.setOnClickListener {
-            imageView = imageView2
+            selectedImageView = imageView2
             proceedAfterPermission()
         }
         imageView3.setOnClickListener {
-            imageView = imageView3
+            selectedImageView = imageView3
             proceedAfterPermission()
         }
         imageView4.setOnClickListener {
-            imageView = imageView4
+            selectedImageView = imageView4
             proceedAfterPermission()
         }
         imageView5.setOnClickListener {
-            imageView = imageView5
+            selectedImageView = imageView5
             proceedAfterPermission()
         }
         imageView6.setOnClickListener {
-            imageView = imageView6
+            selectedImageView = imageView6
             proceedAfterPermission()
+        }
+
+        // Save button click listener
+        val saveButton: Button = findViewById(R.id.save_button)
+        saveButton.setOnClickListener {
+            saveProfileToFirestore()
         }
     }
 
@@ -124,85 +127,16 @@ class EditProfileActivity : AppCompatActivity() {
                 permissionsRequired[2]
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(
-                    this@EditProfileActivity,
-                    permissionsRequired[0]
-                )
-                || ActivityCompat.shouldShowRequestPermissionRationale(
-                    this@EditProfileActivity,
-                    permissionsRequired[1]
-                )
-                || ActivityCompat.shouldShowRequestPermissionRationale(
-                    this@EditProfileActivity,
-                    permissionsRequired[2]
-                )
-            ) {
-                //Show Information about why you need the permission
-                val builder = AlertDialog.Builder(this@EditProfileActivity)
-                builder.setTitle("Need Multiple Permissions")
-                builder.setMessage("This app needs Camera and Location permissions.")
-                builder.setPositiveButton(
-                    "Grant"
-                ) { dialog, which ->
-                    dialog.cancel()
-                    ActivityCompat.requestPermissions(
-                        this@EditProfileActivity,
-                        permissionsRequired,
-                        PERMISSION_CALLBACK_CONSTANT
-                    )
-                }
-                builder.setNegativeButton(
-                    "Cancel"
-                ) { dialog, which -> dialog.cancel() }
-                builder.show()
-            } else if (permissionStatus!!.getBoolean(permissionsRequired[0], false)) {
-                //Previously Permission Request was cancelled with 'Dont Ask Again',
-                // Redirect to Settings after showing Information about why you need the permission
-                val builder = AlertDialog.Builder(this@EditProfileActivity)
-                builder.setTitle("Need Multiple Permissions")
-                builder.setMessage("This app needs Camera and Location permissions.")
-                builder.setPositiveButton(
-                    "Grant"
-                ) { dialog, which ->
-                    dialog.cancel()
-                    sentToSettings = true
-                    val intent =
-                        Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                    val uri = Uri.fromParts(
-                        "package",
-                        packageName, null
-                    )
-                    intent.setData(uri)
-                    startActivityForResult(
-                        intent,
-                        REQUEST_PERMISSION_SETTING
-                    )
-                    Toast.makeText(
-                        baseContext,
-                        "Go to Permissions to Grant  Camera and Location",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-                builder.setNegativeButton(
-                    "Cancel"
-                ) { dialog, which -> dialog.cancel() }
-                builder.show()
-            } else {
-                //just request the permission
-                ActivityCompat.requestPermissions(
-                    this@EditProfileActivity,
-                    permissionsRequired,
-                    PERMISSION_CALLBACK_CONSTANT
-                )
-            }
-
-            // txtPermissions.setText("Permissions Required");
+            // Permission not granted, request it
+            ActivityCompat.requestPermissions(
+                this@EditProfileActivity,
+                permissionsRequired,
+                PERMISSION_CALLBACK_CONSTANT
+            )
+            // Save permission status
             val editor = permissionStatus!!.edit()
             editor.putBoolean(permissionsRequired[0], true)
-            editor.commit()
-        } else {
-            //You already have the permission, just go ahead.
-            //proceedAfterPermission();
+            editor.apply()
         }
     }
 
@@ -211,22 +145,18 @@ class EditProfileActivity : AppCompatActivity() {
         val builder = AlertDialog.Builder(this@EditProfileActivity)
         builder.setTitle("Add Photo!")
         builder.setItems(options) { dialog, item ->
-            if (options[item] == "Take Photo") {
-                cameraIntent()
-            } else if (options[item] == "Choose from Gallery") {
-                galleryIntent()
-            } else if (options[item] == "Cancel") {
-                dialog.dismiss()
+            when (options[item]) {
+                "Take Photo" -> cameraIntent()
+                "Choose from Gallery" -> galleryIntent()
+                "Cancel" -> dialog.dismiss()
             }
         }
         builder.show()
     }
 
     private fun galleryIntent() {
-        val intent = Intent()
-        intent.setType("image/*")
-        intent.setAction(Intent.ACTION_GET_CONTENT) //
-        startActivityForResult(Intent.createChooser(intent, "Select File"), SELECT_FILE)
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        startActivityForResult(intent, SELECT_FILE)
     }
 
     private fun cameraIntent() {
@@ -236,57 +166,93 @@ class EditProfileActivity : AppCompatActivity() {
 
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_PERMISSION_SETTING) {
-            if (ActivityCompat.checkSelfPermission(
-                    this@EditProfileActivity,
-                    permissionsRequired[0]
-                ) == PackageManager.PERMISSION_GRANTED
-            ) {
-                //Got Permission
-                proceedAfterPermission()
-            }
-        }
         if (resultCode == RESULT_OK) {
-            if (requestCode == SELECT_FILE) onSelectFromGalleryResult(data) else if (requestCode == REQUEST_CAMERA) onCaptureImageResult(
-                data
-            )
+            when (requestCode) {
+                REQUEST_CAMERA -> onCaptureImageResult(data)
+                SELECT_FILE -> onSelectFromGalleryResult(data)
+            }
         }
     }
 
     private fun onCaptureImageResult(data: Intent?) {
-        val thumbnail = data!!.extras!!["data"] as Bitmap?
-        val bytes = ByteArrayOutputStream()
-        thumbnail!!.compress(Bitmap.CompressFormat.JPEG, 90, bytes)
-        val destination = File(
-            Environment.getExternalStorageDirectory(),
-            System.currentTimeMillis().toString() + ".jpg"
-        )
-        val fo: FileOutputStream
-        try {
-            destination.createNewFile()
-            fo = FileOutputStream(destination)
-            fo.write(bytes.toByteArray())
-            fo.close()
-        } catch (e: FileNotFoundException) {
-            e.printStackTrace()
-        } catch (e: IOException) {
-            e.printStackTrace()
+        val thumbnail = data?.extras?.get("data") as Bitmap?
+        selectedImageView.setImageBitmap(thumbnail)
+        // Convert Bitmap to Uri
+        thumbnail?.let {
+            picUri = getImageUri(mContext, it)
         }
-        imageView!!.setImageBitmap(thumbnail)
     }
 
-    @Suppress("deprecation")
+    @Suppress("DEPRECATION")
     private fun onSelectFromGalleryResult(data: Intent?) {
-        var bm: Bitmap? = null
+        val bm: Bitmap?
         if (data != null) {
             try {
-                bm =
-                    MediaStore.Images.Media.getBitmap(applicationContext.contentResolver, data.data)
+                val selectedImageUri = data.data
+                bm = MediaStore.Images.Media.getBitmap(
+                    applicationContext.contentResolver,
+                    selectedImageUri
+                )
+                selectedImageView.setImageBitmap(bm)
+                // Convert Bitmap to Uri
+                picUri = selectedImageUri
             } catch (e: IOException) {
                 e.printStackTrace()
             }
         }
-        imageView!!.setImageBitmap(bm)
+    }
+
+    private fun saveProfileToFirestore() {
+        // Retrieve other profile information from EditText fields
+        val aboutText = findViewById<EditText>(R.id.about_edit_text).text.toString()
+        val yearSemesterText = findViewById<EditText>(R.id.year_semester_edit_text).text.toString()
+        val courseText = findViewById<EditText>(R.id.course_edit_text).text.toString()
+        val schoolText = findViewById<EditText>(R.id.school_edit_text).text.toString()
+        val gender = if (manButton.isSelected) "Male" else "Female"
+
+        // Retrieve current user's ID
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+
+        // Check if user ID is not null
+        userId?.let { uid ->
+            // Access the Firestore collection "users"
+            val userRef = FirebaseFirestore.getInstance().collection("users").document(uid)
+
+            // Create a Map to store the user's profile data
+            val userProfile = hashMapOf(
+                "about" to aboutText,
+                "year_semester" to yearSemesterText,
+                "course" to courseText,
+                "school" to schoolText,
+                "gender" to gender,
+                "profile_pic_uri" to picUri.toString() // Save image URI to Firestore
+            )
+
+            // Save the data to Firestore
+            userRef.set(userProfile)
+                .addOnSuccessListener {
+                    Toast.makeText(
+                        this@EditProfileActivity,
+                        "Profile updated successfully",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                .addOnFailureListener {
+                    Toast.makeText(
+                        this@EditProfileActivity,
+                        "Error updating profile",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+        }
+    }
+
+    private fun getImageUri(inContext: Context, inImage: Bitmap): Uri {
+        val bytes = ByteArrayOutputStream()
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+        val path =
+            MediaStore.Images.Media.insertImage(inContext.contentResolver, inImage, "Title", null)
+        return Uri.parse(path)
     }
 
     override fun onPostResume() {
