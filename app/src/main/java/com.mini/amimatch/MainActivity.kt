@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
+import android.widget.ImageButton
 import android.widget.ListView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
@@ -42,6 +43,11 @@ class MainActivity : Activity() {
         moreFrame = findViewById(R.id.more_frame)
         mNotificationHelper = NotificationHelper(this)
 
+        val commentButton: ImageButton = findViewById(R.id.commentbtn)
+        commentButton.setOnClickListener {
+            val intent = Intent(this@MainActivity, ChatActivity::class.java)
+            startActivity(intent)
+        }
 
         val mPulsator = findViewById<PulsatorLayout>(R.id.pulsator)
         mPulsator.start()
@@ -169,6 +175,8 @@ class MainActivity : Activity() {
         val menuItem = menu.getItem(ACTIVITY_NUM)
         menuItem.isChecked = true
     }
+
+
 
     override fun onBackPressed() {
     }

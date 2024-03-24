@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.gms.google-services")
+    id ("kotlin-android")
     id ("kotlin-parcelize")
 }
 
@@ -80,6 +81,7 @@ dependencies {
     implementation ("com.squareup.picasso:picasso:2.71828")
     implementation ("com.yahoo.mobile.client.android.util.rangeseekbar:rangeseekbar-library:0.1.0")
     implementation ("de.hdodenhof:circleimageview:2.2.0")
+    implementation("com.google.firebase:firebase-database-ktx:20.3.1")
     annotationProcessor ("com.github.bumptech.glide:compiler:4.12.0")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
