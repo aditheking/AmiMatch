@@ -72,6 +72,8 @@ class MainActivity : Activity() {
             updateSwipeCard()
             checkRowItem()
             updateLocation()
+            val flingContainer = findViewById<SwipeFlingAdapterView>(R.id.frame)
+            flingContainer.adapter = arrayAdapter
         }.addOnFailureListener { exception ->
             Log.e(TAG, "Error getting documents: ", exception)
         }

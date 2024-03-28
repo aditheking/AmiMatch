@@ -2,6 +2,7 @@ package com.mini.amimatch
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -14,11 +15,13 @@ import com.google.firebase.auth.UserProfileChangeRequest
 
 class Login : AppCompatActivity() {
     private val TAG = "LoginActivity"
+    private val PREF_NAME = "LoginPrefs"
 
     private lateinit var mContext: Context
     private lateinit var mEmail: EditText
     private lateinit var mPassword: EditText
     private lateinit var mAuth: FirebaseAuth
+    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,8 +30,18 @@ class Login : AppCompatActivity() {
         mPassword = findViewById(R.id.input_password)
         mContext = this
         mAuth = FirebaseAuth.getInstance()
+        sharedPreferences = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
 
         init()
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        val currentUser = mAuth.currentUser
+        if (currentUser != null) {
+            navigateToMainActivity()
+        }
     }
 
     private fun isStringNull(string: String): Boolean {
@@ -73,12 +86,23 @@ class Login : AppCompatActivity() {
             ?.addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     Toast.makeText(mContext, "Login Successful", Toast.LENGTH_SHORT).show()
-                    val intent = Intent(this@Login, MainActivity::class.java)
-                    startActivity(intent)
-                    finish()
+                    saveLoginState(true) // Save login state
+                    navigateToMainActivity()
                 } else {
                     Toast.makeText(mContext, "Failed to update user profile: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                 }
             }
+    }
+
+    private fun navigateToMainActivity() {
+        val intent = Intent(this@Login, MainActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
+    private fun saveLoginState(isLoggedIn: Boolean) {
+        val editor = sharedPreferences.edit()
+        editor.putBoolean("isLoggedIn", isLoggedIn)
+        editor.apply()
     }
 }

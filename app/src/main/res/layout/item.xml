@@ -55,7 +55,7 @@
                     android:paddingTop="5dp"
                     android:paddingRight="10dp"
                     android:paddingBottom="5dp"
-                    android:text="LIKE"
+                    android:text="Intrested"
                     android:textColor="@color/likegreen"
                     android:textSize="35sp" />
 
@@ -71,7 +71,7 @@
                     android:paddingTop="5dp"
                     android:paddingRight="10dp"
                     android:paddingBottom="5dp"
-                    android:text="NOPE"
+                    android:text="Not Intrested"
                     android:textColor="@color/dislikered"
                     android:textSize="35sp" />
 
@@ -88,7 +88,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
                     android:layout_weight="1"
-                    android:text="Victoria, 19"
+                    android:text="Aditya, 20"
                     android:textColor="@color/textColor"
                     android:textSize="20sp" />
 
