@@ -8,6 +8,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class MessageAdapter(private val messageList: List<Message>) : RecyclerView.Adapter<MessageAdapter.ViewHolder>() {
 
@@ -16,6 +19,8 @@ class MessageAdapter(private val messageList: List<Message>) : RecyclerView.Adap
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val senderNameTextView: TextView = itemView.findViewById(R.id.senderNameTextView)
         val messageTextView: TextView = itemView.findViewById(R.id.messageTextView)
+        val timestampTextView: TextView = itemView.findViewById(R.id.timestampTextView)
+
 
         init {
             itemView.setOnLongClickListener {
@@ -44,6 +49,8 @@ class MessageAdapter(private val messageList: List<Message>) : RecyclerView.Adap
             }
             .addOnFailureListener { exception ->
             }
+        val timestamp = SimpleDateFormat("HH:mm dd/MM/yy", Locale.getDefault()).format(Date(message.timestamp))
+        holder.timestampTextView.text = timestamp
     }
 
     override fun getItemCount(): Int {

@@ -131,10 +131,12 @@ class ChatActivity : AppCompatActivity() {
 
     private fun sendMessage(senderId: String) {
         val messageText = binding.etMessage.text.toString().trim()
+        val currentTimeStamp = System.currentTimeMillis()
         val message = Message(
             senderId = senderId,
             senderName = "",
-            text = messageText
+            text = messageText,
+            timestamp = currentTimeStamp
         )
         val messageId = database.child("messages").push().key
         if (messageId != null) {

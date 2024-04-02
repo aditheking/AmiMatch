@@ -14,7 +14,6 @@
             app:menu="@menu/top_navigation_toolbar">
 
         </com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx>
-
     </LinearLayout>
 
 </merge>
