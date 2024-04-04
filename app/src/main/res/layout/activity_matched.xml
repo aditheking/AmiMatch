@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -11,12 +10,13 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <EditText
@@ -26,13 +26,13 @@
                 android:background="@android:color/transparent"
                 android:drawableLeft="@drawable/ic_search"
                 android:drawablePadding="10dp"
-                android:hint="Seearch Here..."
-                android:textSize="18dp" />
+                android:hint="Search Here..."
+                android:textSize="18sp" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_margin="@dimen/_5dp"
+                android:layout_margin="5dp"
                 android:background="@color/devider" />
 
             <TextView
@@ -41,7 +41,7 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
-                android:text="Active"
+                android:text="Intrested"
                 android:textColor="@color/colorPrimary"
                 android:textSize="20sp" />
 
@@ -51,7 +51,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="10dp">
-
             </androidx.recyclerview.widget.RecyclerView>
 
             <TextView
@@ -67,12 +66,12 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/matche_recycler_view"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="10dp"
+                android:overScrollMode="never">
+            </androidx.recyclerview.widget.RecyclerView>
 
-                android:overScrollMode="never"></androidx.recyclerview.widget.RecyclerView>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
-

@@ -24,4 +24,15 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp" />
 
+    <TextView
+        android:id="@+id/developerNameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Designed and Developed by AdityaUpreti"
+        android:textSize="18sp"
+        android:textColor="@color/white"
+        android:layout_below="@id/cheesyStatementTextView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp" />
+
 </RelativeLayout>
