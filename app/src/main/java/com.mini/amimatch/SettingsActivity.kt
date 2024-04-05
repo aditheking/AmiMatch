@@ -5,7 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
-import android.view.View
+import android.webkit.WebView
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.SeekBar
@@ -97,6 +97,7 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         logoutButton.setOnClickListener {
+            Logout()
             Toast.makeText(this, "Logged out", Toast.LENGTH_SHORT).show()
             finish()
         }
@@ -157,7 +158,7 @@ class SettingsActivity : AppCompatActivity() {
         }
     }
 
-    fun Logout(view: View?) {
+    fun Logout() {
         startActivity(Intent(applicationContext, Login::class.java))
         finish()
     }
@@ -167,6 +168,12 @@ class SettingsActivity : AppCompatActivity() {
         builder.setTitle("Privacy Policy")
 
         val dialogView = layoutInflater.inflate(R.layout.dialog_privacy_policy, null)
+        val webView = dialogView.findViewById<WebView>(R.id.webView)
+        webView.settings.javaScriptEnabled = true
+
+        val privacyPolicyContent = getString(R.string.privacy_policy_content)
+        webView.loadDataWithBaseURL(null, privacyPolicyContent, "text/html", "UTF-8", null)
+
         builder.setView(dialogView)
 
         builder.setPositiveButton("Close") { dialogInterface: DialogInterface, i: Int ->
@@ -175,6 +182,7 @@ class SettingsActivity : AppCompatActivity() {
         val dialog = builder.create()
         dialog.show()
     }
+
 
     companion object {
         private const val TAG = "SettingsActivity"
