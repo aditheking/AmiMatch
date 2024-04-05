@@ -128,9 +128,12 @@ class MainActivity : Activity() {
 
             override fun onScroll(scrollProgressPercent: Float) {
                 val view = flingContainer.selectedView
-                view.findViewById<View>(R.id.item_swipe_right_indicator).alpha = if (scrollProgressPercent < 0) -scrollProgressPercent else 0f
-                view.findViewById<View>(R.id.item_swipe_left_indicator).alpha = if (scrollProgressPercent > 0) scrollProgressPercent else 0f
+                if (view != null) {
+                    view.findViewById<View>(R.id.item_swipe_right_indicator)?.alpha = if (scrollProgressPercent < 0) -scrollProgressPercent else 0f
+                    view.findViewById<View>(R.id.item_swipe_left_indicator)?.alpha = if (scrollProgressPercent > 0) scrollProgressPercent else 0f
+                }
             }
+
         })
 
         flingContainer.setOnItemClickListener { _, _ ->

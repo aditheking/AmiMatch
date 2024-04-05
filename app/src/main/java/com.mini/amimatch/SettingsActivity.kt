@@ -1,5 +1,6 @@
 package com.mini.amimatch
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -10,6 +11,7 @@ import android.widget.ImageButton
 import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import com.google.firebase.firestore.FirebaseFirestore
@@ -49,6 +51,9 @@ class SettingsActivity : AppCompatActivity() {
         storage = FirebaseStorage.getInstance()
 
         val checkForUpdateButton = findViewById<Button>(R.id.check_for_update_button)
+        val privacyPolicy = findViewById<TextView>(R.id.privacy_policy)
+        val accountDelete = findViewById<TextView>(R.id.account_delete)
+        val logoutButton = findViewById<Button>(R.id.logout_button)
 
 
         distance?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -83,8 +88,21 @@ class SettingsActivity : AppCompatActivity() {
         checkForUpdateButton.setOnClickListener {
             checkForUpdates()
         }
+        privacyPolicy.setOnClickListener {
+            showPrivacyPolicyDialog()
+        }
 
+        accountDelete.setOnClickListener {
+            Toast.makeText(this, "Account cannot be deleted please stay with us ;)", Toast.LENGTH_SHORT).show()
+        }
+
+        logoutButton.setOnClickListener {
+            Toast.makeText(this, "Logged out", Toast.LENGTH_SHORT).show()
+            finish()
+        }
     }
+
+
 
     private fun checkForUpdates() {
         firestore?.collection("app_info")?.document("latest_version")
@@ -142,6 +160,20 @@ class SettingsActivity : AppCompatActivity() {
     fun Logout(view: View?) {
         startActivity(Intent(applicationContext, Login::class.java))
         finish()
+    }
+
+    private fun showPrivacyPolicyDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Privacy Policy")
+
+        val dialogView = layoutInflater.inflate(R.layout.dialog_privacy_policy, null)
+        builder.setView(dialogView)
+
+        builder.setPositiveButton("Close") { dialogInterface: DialogInterface, i: Int ->
+        }
+
+        val dialog = builder.create()
+        dialog.show()
     }
 
     companion object {

@@ -419,15 +419,17 @@
                         android:textColor="@color/black"
                         android:textSize="20dp" />
 
-                    <TextView
+                    <Button
+                        android:id="@+id/privacy_policy"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:padding="10dp"
                         android:text="Privacy Policy"
                         android:textColor="@color/black"
-                        android:textSize="20dp" />
+                        android:textSize="20dp"
+                        android:onClick="showPrivacyPolicyDialog"/>
 
-                    <TextView
+                    <Button
+                        android:id="@+id/logout_button"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="10dp"
@@ -451,7 +453,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <TextView
+                    <Button
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
@@ -477,7 +479,8 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <TextView
+                    <Button
+                        android:id="@+id/account_delete"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"

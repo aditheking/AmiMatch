@@ -29,6 +29,7 @@ class BtnLikeActivity : AppCompatActivity() {
             }
         }
 
+
         Thread {
             try {
                 Thread.sleep(1000)
