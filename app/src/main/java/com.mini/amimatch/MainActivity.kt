@@ -2,12 +2,16 @@ package com.mini.amimatch
 
 import android.Manifest
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.webkit.WebView
 import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ListView
@@ -31,14 +35,46 @@ class MainActivity : Activity() {
     private lateinit var mContext: Context
     private lateinit var arrayAdapter: PhotoAdapter
     private lateinit var mNotificationHelper: NotificationHelper
-
+    private lateinit var sharedPref: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         mContext = this
+        sharedPref = getSharedPreferences("com.mini.amimatch.PREFERENCES", Context.MODE_PRIVATE)
 
+        if (!sharedPref.getBoolean("privacyDialogShown", false)) {
+            showPrivacyPolicyDialog()
+        } else {
+            initializeApp()
+        }
+    }
+
+    private fun showPrivacyPolicyDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Terms of Service")
+
+        val dialogView = layoutInflater.inflate(R.layout.dialog_privacy_policy, null)
+        val webView = dialogView.findViewById<WebView>(R.id.webView)
+        webView.settings.javaScriptEnabled = true
+
+        val privacyPolicyContent = getString(R.string.privacy_policy_content)
+        webView.loadDataWithBaseURL(null, privacyPolicyContent, "text/html", "UTF-8", null)
+
+        builder.setView(dialogView)
+
+        builder.setPositiveButton("Accept") { dialogInterface: DialogInterface, i: Int ->
+            sharedPref.edit().putBoolean("privacyDialogShown", true).apply()
+
+            initializeApp()
+        }
+
+        val dialog = builder.create()
+        dialog.show()
+    }
+
+    private fun initializeApp() {
         cardFrame = findViewById(R.id.card_frame)
         moreFrame = findViewById(R.id.more_frame)
         mNotificationHelper = NotificationHelper(this)
@@ -180,8 +216,6 @@ class MainActivity : Activity() {
         val menuItem = menu.getItem(ACTIVITY_NUM)
         menuItem.isChecked = true
     }
-
-
 
     override fun onBackPressed() {
     }

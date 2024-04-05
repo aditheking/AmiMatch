@@ -28,7 +28,8 @@
     <string name="privacy_policy_content">
     <![CDATA[
     <b>Privacy Policy AMI-MATCH 2024</b><br><br>
-    This Privacy Policy explains how your personal information is collected, used, and disclosed by the AmiMatch mobile application ("the App"), developed by Aditya Upreti ("the Developer").<br><br>
+    This Privacy Policy explains how your personal information is collected, used, and disclosed by the AmiMatch ("the App")
+    Developed by <a href="https://www.instagram.com/adityaupreti__/">Aditya Upreti</a> ("the Developer").<br><br>
     <b>Testing Phase and Affiliation</b><br><br>
     The App is intended for university use as part of a mini project and is still in the testing phase. It may have bugs, crashes, and instability. The App is not affiliated with the university.<br><br>
     <b>Information Collection and Use</b><br><br>
@@ -36,11 +37,11 @@
     <b>Access to Data</b><br><br>
     The Developer has access to all data stored on the Firestore database, including your registration information, age, gender, and profile image. This data can be modified, deleted, or accessed by the Developer for troubleshooting purposes.<br><br>
     <b>Sharing of Information</b><br><br>
-    We do not share your personal information.<br><br>
+    We do not share or collect your personal information.<br><br>
     <b>Changes to This Privacy Policy</b><br><br>
     The Developer may update this Privacy Policy from time to time. You are advised to review this page periodically for any changes. By continuing to use the App after any modifications to this Privacy Policy, you acknowledge and agree to the updated terms.<br><br>
     <b>Contact Us</b><br><br>
-    If you have any questions or suggestions about this Privacy Policy, please contact us at <a href="mailto:aupreti73@gmail.com">aupreti73@gmail.com</a>.
+    If you have any questions or suggestions about this App, please contact us at <a href="mailto:aupreti73@gmail.com">aupreti73@gmail.com</a>.
     You can also follow me on <a href="https://www.instagram.com/adityaupreti__/">Instagram</a> for updates and news.
     ]]>
 </string>
