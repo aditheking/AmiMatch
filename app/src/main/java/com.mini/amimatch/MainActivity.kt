@@ -91,9 +91,18 @@ class MainActivity : Activity() {
         setupTopNavigationView()
 
         rowItems = ArrayList()
+        addPredefinedProfiles()
+        arrayAdapter = PhotoAdapter(this, R.layout.item, rowItems)
+        updateSwipeCard()
+        checkRowItem()
+
+        fetchFirebaseProfiles()
+    }
+
 
         // Initialize Firebase Firestore
-        val db = Firebase.firestore
+        private fun fetchFirebaseProfiles() {
+            val db = Firebase.firestore
         val usersCollection = db.collection("users")
 
         // Retrieve user data from Firestore
@@ -114,6 +123,40 @@ class MainActivity : Activity() {
             Log.e(TAG, "Error getting documents: ", exception)
         }
     }
+
+    private fun addPredefinedProfiles() {
+        val cardsList = listOf(
+            Cards().apply {
+                userId = "1"
+                name = "Aditya Upreti"
+                age = 21
+                profileImageUrl = "https://i.ibb.co/mtW3zRC/Whats-App-Image-2024-04-06-at-11-29-46.jpg"
+                bio = "Developer of APP"
+                interest = "coding"
+                distance = 1
+            },
+            Cards().apply {
+                userId = "2"
+                name = "Ashutosh Pandey"
+                age = 20
+                profileImageUrl = "https://i.ibb.co/gMfnGsc/9d2d9510-bc42-4263-b8dc-5a7831476cca.jpg"
+                bio = "Hi, I'm Ashutosh"
+                interest = "travelling"
+                distance = 1
+            },
+            Cards().apply {
+                userId = "3"
+                name = "Hritika Pandey"
+                age = 19
+                profileImageUrl = "https://i.ibb.co/n3SphfW/Whats-App-Image-2024-04-06-at-11-54-12.jpg"
+                bio = "Hi , This is Hritika"
+                interest = "Music and movies"
+                distance = 1
+            }
+        )
+        rowItems.addAll(cardsList)
+    }
+
 
     private fun checkRowItem() {
         if (rowItems.isEmpty()) {
