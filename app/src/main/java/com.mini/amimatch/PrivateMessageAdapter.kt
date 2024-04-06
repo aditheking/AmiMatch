@@ -12,7 +12,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class MessageAdapter(private val messageList: List<Message>) : RecyclerView.Adapter<MessageAdapter.ViewHolder>() {
+class PrivateMessageAdapter(private val messageList: List<Message>) : RecyclerView.Adapter<PrivateMessageAdapter.ViewHolder>() {
 
     private val firestore: FirebaseFirestore = Firebase.firestore
 
@@ -31,16 +31,23 @@ class MessageAdapter(private val messageList: List<Message>) : RecyclerView.Adap
         val message = messageList[position]
         holder.messageTextView.text = message.text
 
-        firestore.collection("users").document(message.senderId).get()
-            .addOnSuccessListener { document ->
-                if (document != null) {
-                    val senderName = document.getString("name")
-                    holder.senderNameTextView.text = senderName
+        val senderId = message.senderId
+        if (senderId != null && senderId.isNotEmpty()) {
+            firestore.collection("users").document(senderId).get()
+                .addOnSuccessListener { document ->
+                    if (document.exists()) {
+                        val senderName = document.getString("name")
+                        holder.senderNameTextView.text = senderName
+                    } else {
+                        holder.senderNameTextView.text = "Unknown"
+                    }
                 }
-            }
-            .addOnFailureListener { exception ->
-
-            }
+                .addOnFailureListener { exception ->
+                    // Handle failure
+                }
+        } else {
+            holder.senderNameTextView.text = "Unknown"
+        }
 
         val timestamp = SimpleDateFormat("HH:mm dd/MM/yy", Locale.getDefault()).format(Date(message.timestamp))
         holder.timestampTextView.text = timestamp
@@ -50,4 +57,3 @@ class MessageAdapter(private val messageList: List<Message>) : RecyclerView.Adap
         return messageList.size
     }
 }
-

@@ -35,14 +35,15 @@
         <activity android:name=".EditProfileActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".ChatActivity" />
-
+        <activity android:name=".PrivateChatActivity" />
         <activity android:name=".RegisterGender" />
         <activity android:name=".RegisterGenderPrefection" />
         <activity android:name=".RegisterAge" />
         <activity android:name=".RegisterHobby" />
         <activity android:name=".SettingsActivity" />
         <activity android:name=".BtnLikeActivity" />
-        <activity android:name=".BtnDislikeActivity"></activity>
+        <activity android:name=".BtnDislikeActivity">
+        </activity>
 
 
     </application>

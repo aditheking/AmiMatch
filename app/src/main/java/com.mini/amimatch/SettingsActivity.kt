@@ -3,6 +3,7 @@ package com.mini.amimatch
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.webkit.WebView
@@ -140,23 +141,21 @@ class SettingsActivity : AppCompatActivity() {
     }
 
 
-
     private fun downloadAndInstallUpdate() {
-        val storageReference = FirebaseStorage.getInstance().getReferenceFromUrl("gs://amimatch-48b17.appspot.com")
-        val updatesReference = storageReference.child("updates")
-        val apkReference = updatesReference.child("app-release.apk")
+        val fileId = "1WlTUJYn9Qws-Tu6_DYcOzjTxC8zQSZxx"
+        val downloadUrl = "https://drive.google.com/uc?export=download&id=$fileId"
 
-        apkReference.downloadUrl
-            .addOnSuccessListener { uri ->
-            val intent = Intent(Intent.ACTION_VIEW)
-            intent.data = uri
-            intent.type = "application/vnd.android.package-archive"
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = Uri.parse(downloadUrl)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+
+        if (intent.resolveActivity(packageManager) != null) {
             startActivity(intent)
-        }.addOnFailureListener { exception ->
-            Toast.makeText(this@SettingsActivity, "Failed to download update", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this@SettingsActivity, "No app found to handle the download", Toast.LENGTH_SHORT).show()
         }
     }
+
 
     fun Logout() {
         startActivity(Intent(applicationContext, Login::class.java))

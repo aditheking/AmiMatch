@@ -3,56 +3,77 @@ package com.mini.amimatch
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import android.widget.EditText
 import android.widget.LinearLayout
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.auth.User
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx
 
 class Matched_Activity : AppCompatActivity() {
     private val TAG = "Matched_Activity"
     private val ACTIVITY_NUM = 2
-    private lateinit var matchList: MutableList<Users>
-    private lateinit var usersList: MutableList<Users>
-    private val mContext: Context = this@Matched_Activity
+    private val matchList = ArrayList<Users>()
+    private val copyList = ArrayList<User>()
+    private lateinit var mContext: Context
+    private lateinit var search: EditText
+    private val usersList = ArrayList<Users>()
     private lateinit var recyclerView: RecyclerView
     private lateinit var mRecyclerView: RecyclerView
     private lateinit var adapter: ActiveUserAdapter
     private lateinit var mAdapter: MatchUserAdapter
-    private lateinit var currentUserId: String // Declare currentUserId property
+    private lateinit var currentUserId: String
     private val db = FirebaseFirestore.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_matched)
+
+        mContext = this
         setupTopNavigationView()
         searchFunc()
 
         recyclerView = findViewById(R.id.active_recycler_view)
         mRecyclerView = findViewById(R.id.matche_recycler_view)
 
-        matchList = mutableListOf()
-        usersList = mutableListOf()
-
         adapter = ActiveUserAdapter(usersList, applicationContext)
-        recyclerView.layoutManager = LinearLayoutManager(this, LinearLayout.HORIZONTAL, false)
+        val mLayoutManager = LinearLayoutManager(this, LinearLayout.HORIZONTAL, false)
+        recyclerView.layoutManager = mLayoutManager
         recyclerView.itemAnimator = DefaultItemAnimator()
         recyclerView.adapter = adapter
+        prepareActiveData()
 
         mAdapter = MatchUserAdapter(matchList, applicationContext)
-        mRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
+        val mLayoutManager1 = LinearLayoutManager(applicationContext)
+        mRecyclerView.layoutManager = mLayoutManager1
         mRecyclerView.itemAnimator = DefaultItemAnimator()
         mRecyclerView.adapter = mAdapter
+
+        prepareMatchData()
 
         currentUserId = getCurrentUserId()
         fetchUsersData()
     }
 
+    private fun prepareActiveData() {
+        var users = Users("1", "Aditya Upreti", "https://i.ibb.co/mtW3zRC/Whats-App-Image-2024-04-06-at-11-29-46.jpg", "Developer of app", "Coding", 21, 1, null, true, false, false, false, "")
+        usersList.add(users)
+        adapter.notifyDataSetChanged()
+    }
+
+    private fun prepareMatchData() {
+        var users = Users("1", "Aditya Upreti", "https://i.ibb.co/mtW3zRC/Whats-App-Image-2024-04-06-at-11-29-46.jpg", "Developer of app", "Coding", 21, 1, null, true, false, false, false, "")
+        matchList.add(users)
+        mAdapter.notifyDataSetChanged()
+    }
+
     private fun fetchUsersData() {
-        val db = FirebaseFirestore.getInstance()
         val usersCollection = db.collection("users")
         usersCollection.get()
             .addOnSuccessListener { querySnapshot ->
@@ -62,7 +83,6 @@ class Matched_Activity : AppCompatActivity() {
                     if (userData != null) {
                         val userId = userData["userId"] as? String
                         if (userId != currentUserId) {
-
                             val name = userData["name"] as? String
                             val profileImageUrl = userData["profileImageUrl"] as? String
                             val bio = userData["bio"] as? String
@@ -106,7 +126,6 @@ class Matched_Activity : AppCompatActivity() {
             }
     }
 
-
     private fun generateRandomMatches(usersList: List<Users>) {
         matchList.clear()
 
@@ -121,9 +140,19 @@ class Matched_Activity : AppCompatActivity() {
             }
         }
 
-        adapter.notifyDataSetChanged()
+        for (user in usersList) {
+            if (user.userId != currentUserId && !matchList.contains(user)) {
+                matchList.add(user)
+            }
+        }
+
+        val uniqueMatchList = matchList.distinctBy { it.userId }
+        matchList.clear()
+        matchList.addAll(uniqueMatchList)
+
         mAdapter.notifyDataSetChanged()
     }
+
 
     private fun haveCommonInterests(user1: Users, user2: Users): Boolean {
         return user1.sports == user2.sports ||
@@ -133,13 +162,13 @@ class Matched_Activity : AppCompatActivity() {
     }
 
     private fun searchFunc() {
+        // Implement your search functionality here
     }
 
     private fun getCurrentUserId(): String {
         val currentUser = FirebaseAuth.getInstance().currentUser
         return currentUser?.uid ?: ""
     }
-
 
     private fun setupTopNavigationView() {
         Log.d(TAG, "setupTopNavigationView: setting up TopNavigationView")

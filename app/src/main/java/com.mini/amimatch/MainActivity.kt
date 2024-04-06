@@ -216,7 +216,17 @@ class MainActivity : Activity() {
         })
 
         flingContainer.setOnItemClickListener { _, _ ->
-            Toast.makeText(applicationContext, "Clicked", Toast.LENGTH_LONG).show()
+            if (rowItems.isNotEmpty()) {
+                val cardItem = rowItems[0]
+                val intent = Intent(mContext, ProfileCheckinMain::class.java).apply {
+                    putExtra("name", cardItem.name)
+                    putExtra("bio", cardItem.bio)
+                    putExtra("interest", cardItem.interest)
+                    putExtra("distance", cardItem.distance)
+                    putExtra("photo", cardItem.profileImageUrl)
+                }
+                startActivity(intent)
+            }
         }
     }
 

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -21,6 +21,7 @@
             android:scaleType="centerCrop"
             android:src="@drawable/monkey" />
 
+        <!-- Profile Name -->
         <TextView
             android:id="@+id/profile_name"
             android:layout_width="match_parent"
@@ -28,9 +29,10 @@
             android:layout_marginTop="10dp"
             android:gravity="center_horizontal"
             android:text="Aditya, 20"
-            android:textColor="@color/textColor"
+            android:textColor="@android:color/black"
             android:textSize="25sp" />
 
+        <!-- Profile Distance -->
         <TextView
             android:id="@+id/profile_distance"
             android:layout_width="wrap_content"
@@ -40,8 +42,10 @@
             android:drawableLeft="@drawable/ic_location"
             android:gravity="center"
             android:text="5 miles away"
+            android:textColor="@android:color/black"
             android:textSize="18sp" />
 
+        <!-- Bio -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -50,6 +54,7 @@
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
             android:text="Bio:"
+            android:textColor="@android:color/black"
             android:textSize="18sp" />
 
         <TextView
@@ -57,11 +62,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="User has not updated the Bio!!!"
+            android:textColor="@android:color/black"
             android:paddingLeft="10dp"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
             android:textSize="16sp" />
 
+        <!-- Interests -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -70,6 +77,7 @@
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
             android:text="Interests:"
+            android:textColor="@android:color/black"
             android:textSize="18sp" />
 
         <TextView
@@ -80,6 +88,7 @@
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
             android:text="Dancing, Traveling, Love"
+            android:textColor="@android:color/black"
             android:textSize="16sp" />
 
         <TextView
@@ -89,7 +98,8 @@
             android:paddingLeft="10dp"
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
-            android:text="Phone:"
+            android:text="Chat:"
+            android:textColor="@android:color/black"
             android:textSize="18sp" />
 
         <LinearLayout
@@ -101,10 +111,11 @@
 
             <TextView
                 android:id="@+id/profile_number"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:hint="Phone Number is not updated!!!"
+                android:textColor="@android:color/black"
                 android:textSize="16sp" />
 
             <Button
@@ -116,11 +127,12 @@
                 android:onClick="sendSMS"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:text="Send SMS"
+                android:text="Private Chat"
                 android:textAllCaps="false"
-                android:textColor="@color/white" />
+                android:textColor="@android:color/black" />
         </LinearLayout>
 
+        <!-- Email -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -129,6 +141,7 @@
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
             android:text="Email:"
+            android:textColor="@android:color/black"
             android:textSize="18sp" />
 
         <LinearLayout
@@ -140,10 +153,11 @@
 
             <TextView
                 android:id="@+id/profile_email"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:hint="Email is not updated!!!"
+                android:textColor="@android:color/black"
                 android:textSize="16sp" />
 
             <Button
@@ -156,11 +170,9 @@
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:text="Send Email"
-                android:textAllCaps="false"
-                android:textColor="@color/white" />
+                android:textColor="@android:color/black"
+                android:textAllCaps="false" />
 
         </LinearLayout>
-
-
     </LinearLayout>
 </ScrollView>
