@@ -9,9 +9,7 @@
     <!-- top navigation -->
     <include layout="@layout/layout_top_navigation_view" />
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/profile_bg"
@@ -47,7 +45,8 @@
                     android:layout_marginTop="59dp"
                     android:src="@drawable/monkey"
                     app:civ_border_color="@color/transparentPink"
-                    app:civ_border_width="2dp" />
+                    app:civ_border_width="2dp"
+                    android:onClick="openGallery"/>
             </com.mini.amimatch.PulsatorLayout>
 
             <TextView
