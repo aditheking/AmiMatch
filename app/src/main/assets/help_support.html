@@ -49,6 +49,32 @@
         .contact-info p {
             margin-bottom: 10px;
         }
+        form {
+            margin-top: 30px;
+            text-align: center;
+        }
+        input[type="text"],
+        input[type="email"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        input[type="submit"] {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -61,6 +87,26 @@
         <p><strong>Instagram:</strong> <a href="https://www.instagram.com/adityaupreti__/">AdityaUpreti</a></p>
         <p><strong>GitHub:</strong> <a href="https://github.com/aditheking">Code</a></p>
     </div>
+    <form action="mailto:aupreti73@gmail.com" method="post" enctype="text/plain">
+        <label for="name">Your Name:</label><br>
+        <input type="text" id="name" name="name" required><br>
+        <label for="email">Your Email:</label><br>
+        <input type="email" id="email" name="email" required><br>
+        <label for="incident">Report Incident/Bug:</label><br>
+        <textarea id="incident" name="incident" rows="4" required></textarea><br>
+        <input type="submit" value="Submit">
+    </form>
+    <h1>Suggest a Feature</h1>
+    <p>We're always looking for ways to improve our service. If you have any feature suggestions or ideas, please share them with us!</p>
+    <form action="mailto:aupreti73@gmail.com" method="post" enctype="text/plain">
+        <label for="name">Your Name:</label><br>
+        <input type="text" id="name" name="name" required><br>
+        <label for="email">Your Email:</label><br>
+        <input type="email" id="email" name="email" required><br>
+        <label for="feature">Feature Suggestion:</label><br>
+        <textarea id="feature" name="feature" rows="4" required></textarea><br>
+        <input type="submit" value="Submit">
+    </form>
 </div>
 </body>
 </html>
