@@ -19,10 +19,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.yahoo.mobile.client.android.util.rangeseekbar.RangeSeekBar
 
-
-
-
 class SettingsActivity : AppCompatActivity() {
+
     private var distance: SeekBar? = null
     private var man: SwitchCompat? = null
     private var woman: SwitchCompat? = null
@@ -55,7 +53,10 @@ class SettingsActivity : AppCompatActivity() {
         val privacyPolicy = findViewById<TextView>(R.id.privacy_policy)
         val accountDelete = findViewById<TextView>(R.id.account_delete)
         val logoutButton = findViewById<Button>(R.id.logout_button)
-
+        val helpSupportButton = findViewById<Button>(R.id.help_support_button)
+        val shareButton = findViewById<Button>(R.id.share_button)
+        val legalButton = findViewById<Button>(R.id.legal_button)
+        val licensesButton = findViewById<Button>(R.id.licenses_button)
 
         distance?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
@@ -102,9 +103,23 @@ class SettingsActivity : AppCompatActivity() {
             Toast.makeText(this, "Logged out", Toast.LENGTH_SHORT).show()
             finish()
         }
+
+        helpSupportButton.setOnClickListener {
+            openHelpSupportPage()
+        }
+
+        shareButton.setOnClickListener {
+            shareApp()
+        }
+
+        legalButton.setOnClickListener {
+            showLegalInformation()
+        }
+
+        licensesButton.setOnClickListener {
+            showLicensesInformation()
+        }
     }
-
-
 
     private fun checkForUpdates() {
         firestore?.collection("app_info")?.document("latest_version")
@@ -140,7 +155,6 @@ class SettingsActivity : AppCompatActivity() {
         return -1
     }
 
-
     private fun downloadAndInstallUpdate() {
         val fileId = "1WlTUJYn9Qws-Tu6_DYcOzjTxC8zQSZxx"
         val downloadUrl = "https://drive.google.com/uc?export=download&id=$fileId"
@@ -156,8 +170,32 @@ class SettingsActivity : AppCompatActivity() {
         }
     }
 
+    private fun openHelpSupportPage() {
+        val intent = Intent(this, WebViewActivity::class.java)
+        intent.putExtra(WebViewActivity.EXTRA_FILE_NAME, "help_support.html")
+        startActivity(intent)
+    }
 
-    fun Logout() {
+    private fun shareApp() {
+        val intent = Intent(this, WebViewActivity::class.java)
+        intent.putExtra(WebViewActivity.EXTRA_FILE_NAME, "share_app.html")
+        startActivity(intent)
+    }
+
+    private fun showLegalInformation() {
+        val intent = Intent(this, WebViewActivity::class.java)
+        intent.putExtra(WebViewActivity.EXTRA_FILE_NAME, "legal_info.html")
+        startActivity(intent)
+    }
+
+    private fun showLicensesInformation() {
+        val intent = Intent(this, WebViewActivity::class.java)
+        intent.putExtra(WebViewActivity.EXTRA_FILE_NAME, "licenses_info.html")
+        startActivity(intent)
+    }
+
+
+    private fun Logout() {
         startActivity(Intent(applicationContext, Login::class.java))
         finish()
     }
@@ -181,7 +219,6 @@ class SettingsActivity : AppCompatActivity() {
         val dialog = builder.create()
         dialog.show()
     }
-
 
     companion object {
         private const val TAG = "SettingsActivity"

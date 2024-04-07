@@ -348,7 +348,8 @@
                 app:cardElevation="@dimen/_5dp"
                 app:cardUseCompatPadding="true">
 
-                <TextView
+                <Button
+                    android:id="@+id/help_support_button"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
@@ -371,7 +372,8 @@
                     android:orientation="vertical">
 
 
-                    <TextView
+                    <Button
+                        android:id="@+id/share_button"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
@@ -403,7 +405,8 @@
                     android:layout_height="match_parent"
                     android:orientation="vertical">
 
-                    <TextView
+                    <Button
+                        android:id="@+id/legal_button"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:padding="10dp"
@@ -411,7 +414,8 @@
                         android:textColor="@color/colorPrimaryDark"
                         android:textSize="18dp" />
 
-                    <TextView
+                    <Button
+                        android:id="@+id/licenses_button"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="10dp"

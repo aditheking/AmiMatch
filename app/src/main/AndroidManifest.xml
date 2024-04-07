@@ -36,6 +36,7 @@
         <activity android:name=".MainActivity" />
         <activity android:name=".ChatActivity" />
         <activity android:name=".PrivateChatActivity" />
+        <activity android:name=".WebViewActivity" />
         <activity android:name=".RegisterGender" />
         <activity android:name=".RegisterGenderPrefection" />
         <activity android:name=".RegisterAge" />
