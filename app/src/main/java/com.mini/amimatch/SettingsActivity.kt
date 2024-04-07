@@ -1,5 +1,6 @@
 package com.mini.amimatch
 
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -15,6 +16,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.yahoo.mobile.client.android.util.rangeseekbar.RangeSeekBar
@@ -196,9 +198,24 @@ class SettingsActivity : AppCompatActivity() {
 
 
     private fun Logout() {
-        startActivity(Intent(applicationContext, Login::class.java))
+        FirebaseAuth.getInstance().signOut()
+        clearLoginState()
+        navigateToLoginActivity()
+    }
+
+    private fun clearLoginState() {
+        val sharedPreferences = getSharedPreferences("LoginPrefs", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putBoolean("isLoggedIn", false)
+        editor.apply()
+    }
+
+    private fun navigateToLoginActivity() {
+        val intent = Intent(this, Login::class.java)
+        startActivity(intent)
         finish()
     }
+
 
     private fun showPrivacyPolicyDialog() {
         val builder = AlertDialog.Builder(this)
