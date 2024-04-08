@@ -85,6 +85,13 @@ class MainActivity : Activity() {
             startActivity(intent)
         }
 
+        val confessionButton: ImageButton = findViewById(R.id.confessionBtn)
+        confessionButton.setOnClickListener {
+            val intent = Intent(this@MainActivity, ConfessionActivity::class.java)
+            startActivity(intent)
+        }
+
+
         val mPulsator = findViewById<PulsatorLayout>(R.id.pulsator)
         mPulsator.start()
 

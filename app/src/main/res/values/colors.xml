@@ -74,6 +74,9 @@
     <color name="gen_white">#FFFFFF</color>
     <color name="green_light">#43A047</color>
     <color name="grey_light">#E0E0E0</color>
+    <color name="light_gray">#CCCCCC</color>
+    <color name="incognito_icon_tint">#FFA726</color>
+
     <color name="bg_screen1">#f64c73</color>
     <color name="dot_dark_screen1">#d1395c</color>
     <color name="dot_light_screen1">#f98da5</color>
