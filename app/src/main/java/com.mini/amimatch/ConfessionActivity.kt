@@ -1,10 +1,12 @@
 package com.mini.amimatch
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -32,6 +34,8 @@ class ConfessionActivity : AppCompatActivity() {
         editTextConfession = findViewById(R.id.editTextConfession)
         submitButton = findViewById(R.id.submitButton)
 
+        displayDisclaimerDialog()
+
         submitButton.setOnClickListener {
             submitConfession()
 
@@ -40,6 +44,34 @@ class ConfessionActivity : AppCompatActivity() {
 
         loadConfessions()
 
+    }
+
+    private fun displayDisclaimerDialog() {
+        val dialogBuilder = AlertDialog.Builder(this)
+        dialogBuilder.setTitle("Anonymous Confession Disclaimer")
+        dialogBuilder.setMessage(
+            "Welcome to AMI-MATCH Anonymous Confession\n\n" +
+                    "By submitting an anonymous confession, you acknowledge and agree to the following:\n\n" +
+                    "1. While your confession will be anonymous, administrators do not have access to the information provided except in cases explicitly declared in the legal terms of service. Refer to the terms of service page for more information.\n" +
+                    "2. We Promise Anonymity: We promise to keep your identity anonymous. Fearlessly confess your feelings without worrying about your identity being revealed.\n"+
+                    "3. Responsible Usage: You are solely responsible for the content of your confession. Please refrain from posting inappropriate, offensive, or unlawful content.\n" +
+                    "4. Community Guidelines: Your confession must adhere to the community guidelines. Do not post content that promotes violence, discrimination, hate speech, or harassment.\n" +
+                    "5. Legal Compliance: Comply with all applicable laws and regulations when submitting your confession.\n" +
+                    "6. Disclaimer of Liability: Developers do not assume liability for the content of anonymous confessions submitted by users.\n\n" +
+                    "By clicking 'I Agree,' you confirm that you have read, understood, and agree to abide by the terms outlined in this disclaimer.\n\n" +
+                    "If you do not agree with these terms, please click 'Cancel' to exit the submission process."
+        )
+        dialogBuilder.setPositiveButton("I Agree") { dialogInterface: DialogInterface, _: Int ->
+            dialogInterface.dismiss()
+        }
+        dialogBuilder.setNegativeButton("Cancel") { dialogInterface: DialogInterface, _: Int ->
+            dialogInterface.dismiss()
+            finish()
+        }
+        dialogBuilder.setOnCancelListener {
+            finish()
+        }
+        dialogBuilder.show()
     }
 
     private fun submitConfession() {
