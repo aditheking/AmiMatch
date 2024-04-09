@@ -86,6 +86,21 @@
 
 
                     <ImageButton
+                        android:id="@+id/confessionBtn"
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentLeft="true"
+                        android:layout_marginEnd="20dp"
+                        android:background="@drawable/round_button_with_border"
+                        android:elevation="7dp"
+                        android:onClick="confessionBtn"
+                        android:padding="10dp"
+                        android:src="@drawable/ic_confession" />
+
+
+                    <ImageButton
                         android:id="@+id/likebtn"
                         android:layout_width="70dp"
                         android:layout_height="70dp"
@@ -98,23 +113,6 @@
                         android:padding="10dp"
                         android:src="@drawable/ic_like1" />
 
-                    <Space
-                        android:layout_width="20dp"
-                        android:layout_height="match_parent" />
-
-                    <ImageButton
-                        android:id="@+id/confessionBtn"
-                        android:layout_width="70dp"
-                        android:layout_height="70dp"
-                        android:layout_alignParentTop="true"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignParentRight="true"
-                        android:layout_marginEnd="20dp"
-                        android:background="@drawable/round_button_with_border"
-                        android:elevation="7dp"
-                        android:onClick="confessionBtn"
-                        android:padding="10dp"
-                        android:src="@drawable/ic_confession" />
 
 
                 </LinearLayout>
