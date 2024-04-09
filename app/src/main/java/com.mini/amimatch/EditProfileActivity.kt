@@ -203,6 +203,8 @@ class EditProfileActivity : AppCompatActivity() {
         val yearSemesterText = findViewById<EditText>(R.id.year_semester_edit_text).text.toString()
         val courseText = findViewById<EditText>(R.id.course_edit_text).text.toString()
         val schoolText = findViewById<EditText>(R.id.school_edit_text).text.toString()
+        val bioText = findViewById<EditText>(R.id.bio_edit_text).text.toString()
+        val interestsText = findViewById<EditText>(R.id.interests_edit_text).text.toString()
         val gender = if (manButton.isSelected) "Male" else "Female"
 
         // Retrieve current user's ID
@@ -219,6 +221,8 @@ class EditProfileActivity : AppCompatActivity() {
                 "year_semester" to yearSemesterText,
                 "course" to courseText,
                 "school" to schoolText,
+                "bio" to bioText,
+                "interests" to interestsText,
                 "gender" to gender
             )
 
@@ -241,6 +245,8 @@ class EditProfileActivity : AppCompatActivity() {
                         putExtra("year_semester", yearSemesterText)
                         putExtra("course", courseText)
                         putExtra("school", schoolText)
+                        putExtra("bio", bioText)
+                        putExtra("interests", interestsText)
                         putExtra("gender", gender)
                         putStringArrayListExtra("imageUris", ArrayList(picUris.map { it.toString() }))
                     }

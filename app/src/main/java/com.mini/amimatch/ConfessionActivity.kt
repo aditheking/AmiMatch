@@ -74,8 +74,7 @@ class ConfessionActivity : AppCompatActivity() {
                     "4. Community Guidelines: Your confession must adhere to the community guidelines. Do not post content that promotes violence, discrimination, hate speech, or harassment.\n" +
                     "5. Legal Compliance: Comply with all applicable laws and regulations when submitting your confession.\n" +
                     "6. Daily Confession Quota: You are limited to 3 confessions per day. To avoid spamming the platform.\n" +
-                    "7. Character Limit: Each confession should not exceed 350 characters.\n\n" +
-                    "8. Disclaimer of Liability: Developers do not assume liability for the content of anonymous confessions submitted by users.\n\n" +
+                    "7. Disclaimer of Liability: Developers do not assume liability for the content of anonymous confessions submitted by users.\n\n" +
                     "By clicking 'I Agree,' you confirm that you have read, understood, and agree to abide by the terms outlined in this disclaimer.\n\n" +
                     "If you do not agree with these terms, please click 'Cancel' to exit the submission process."
         )
@@ -116,8 +115,8 @@ class ConfessionActivity : AppCompatActivity() {
             return
         }
 
-        if (confessionText.length > 350) {
-            Toast.makeText(this, "Confession should not exceed 350 words", Toast.LENGTH_SHORT).show()
+        if (confessionText.length > 150) {
+            Toast.makeText(this, "Confession should not exceed 150 words", Toast.LENGTH_SHORT).show()
             return
         }
 

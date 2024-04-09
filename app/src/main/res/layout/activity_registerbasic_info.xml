@@ -4,7 +4,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
 
     <TextView
         android:id="@+id/numberOfPagesLeft"
@@ -87,6 +89,7 @@
                         android:layout_height="wrap_content"
                         android:background="@drawable/edit_text_focused_bg"
                         android:hint="enter your Email"
+                        android:textColorHint="@android:color/black"
                         android:textColor="@android:color/black"
                         android:inputType="textEmailAddress"
                         android:padding="15dp" />
@@ -104,7 +107,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/edit_text_focused_bg"
-                        android:hint="enter your username "
+                        android:hint="Enter your Username "
+                        android:textColorHint="@android:color/black"
                         android:textColor="@android:color/black"
                         android:inputType="textEmailAddress"
                         android:padding="15dp" />
@@ -124,6 +128,7 @@
                         android:layout_height="wrap_content"
                         android:background="@drawable/edit_text_focused_bg"
                         android:hint="enter your Password"
+                        android:textColorHint="@android:color/black"
                         android:textColor="@android:color/black"
                         android:inputType="textPassword"
                         android:padding="15dp" />
@@ -152,7 +157,7 @@
                 android:layout_centerHorizontal="true"
                 android:onClick="onLoginClicked"
                 android:padding="15dp"
-                android:text="existing User? Please Login" />
+                android:text="Existing User? Please Login" />
 
         </RelativeLayout>
     </ScrollView>

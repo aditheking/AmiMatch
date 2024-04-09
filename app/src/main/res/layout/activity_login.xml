@@ -62,6 +62,7 @@
                         android:layout_height="wrap_content"
                         android:background="@drawable/edit_text_focused_bg"
                         android:hint="Email"
+                        android:textColorHint="@android:color/black"
                         android:inputType="textEmailAddress"
                         android:textColor="@android:color/black"
                         android:padding="15dp" />
@@ -81,6 +82,7 @@
                         android:layout_height="wrap_content"
                         android:background="@drawable/edit_text_focused_bg"
                         android:hint="Password"
+                        android:textColorHint="@android:color/black"
                         android:inputType="textPassword"
                         android:textColor="@android:color/black"
                         android:padding="15dp" />
