@@ -1,6 +1,8 @@
 package com.mini.amimatch
 
+import android.content.Context
 import android.content.DialogInterface
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -12,6 +14,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import java.util.UUID
 
 
@@ -21,10 +26,21 @@ class ConfessionActivity : AppCompatActivity() {
     private lateinit var submitButton: Button
     private lateinit var recyclerView: RecyclerView
     private lateinit var confessionAdapter: ConfessionAdapter
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var currentDate: String
+    private var confessionCount: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_confession)
+
+        sharedPreferences = getSharedPreferences("ConfessionPrefs", Context.MODE_PRIVATE)
+        currentDate = getCurrentDate()
+
+        val lastDate = sharedPreferences.getString("lastDate", "")
+        if (lastDate != currentDate) {
+            resetConfessionCounter()
+        }
 
         recyclerView = findViewById(R.id.recyclerViewConfessions)
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -57,7 +73,9 @@ class ConfessionActivity : AppCompatActivity() {
                     "3. Responsible Usage: You are solely responsible for the content of your confession. Please refrain from posting inappropriate, offensive, or unlawful content.\n" +
                     "4. Community Guidelines: Your confession must adhere to the community guidelines. Do not post content that promotes violence, discrimination, hate speech, or harassment.\n" +
                     "5. Legal Compliance: Comply with all applicable laws and regulations when submitting your confession.\n" +
-                    "6. Disclaimer of Liability: Developers do not assume liability for the content of anonymous confessions submitted by users.\n\n" +
+                    "6. Daily Confession Quota: You are limited to 3 confessions per day. To avoid spamming the platform.\n" +
+                    "7. Character Limit: Each confession should not exceed 350 characters.\n\n" +
+                    "8. Disclaimer of Liability: Developers do not assume liability for the content of anonymous confessions submitted by users.\n\n" +
                     "By clicking 'I Agree,' you confirm that you have read, understood, and agree to abide by the terms outlined in this disclaimer.\n\n" +
                     "If you do not agree with these terms, please click 'Cancel' to exit the submission process."
         )
@@ -74,11 +92,32 @@ class ConfessionActivity : AppCompatActivity() {
         dialogBuilder.show()
     }
 
+    private fun getCurrentDate(): String {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val currentDate = Date()
+        return dateFormat.format(currentDate)
+    }
+
+    private fun resetConfessionCounter() {
+        confessionCount = 0
+
+        sharedPreferences.edit().putString("lastDate", currentDate).apply()
+    }
+
     private fun submitConfession() {
+        if (confessionCount >= 3) {
+            Toast.makeText(this, "You have reached your daily confession quota. Please come back tomorrow.", Toast.LENGTH_SHORT).show()
+            return
+        }
         val confessionText = editTextConfession.text.toString().trim()
 
         if (confessionText.isEmpty()) {
             Toast.makeText(this, "Please enter a confession", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (confessionText.length > 350) {
+            Toast.makeText(this, "Confession should not exceed 350 words", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -106,6 +145,7 @@ class ConfessionActivity : AppCompatActivity() {
                 Toast.makeText(this, "Confession submitted successfully", Toast.LENGTH_SHORT).show()
                 editTextConfession.text.clear()
 
+                confessionCount++
                 loadConfessions()
             }
             .addOnFailureListener { e ->
