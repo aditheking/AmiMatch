@@ -1,4 +1,5 @@
 package com.mini.amimatch
+
 import android.Manifest
 import android.content.Context
 import android.content.Intent
@@ -20,6 +21,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 
@@ -35,8 +37,8 @@ class EditProfileActivity : AppCompatActivity() {
     private lateinit var imageView4: ImageView
     private lateinit var imageView5: ImageView
     private lateinit var imageView6: ImageView
-    private lateinit var selectedImageView: ImageView
-    private var picUri: Uri? = null
+    private lateinit var selectedImageViews: List<ImageView>
+    private var picUris: MutableList<Uri> = mutableListOf()
     private var permissionsRequired = arrayOf(
         Manifest.permission.CAMERA,
         Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -47,6 +49,7 @@ class EditProfileActivity : AppCompatActivity() {
     private var sentToSettings = false
     private val REQUEST_CAMERA = 0
     private val SELECT_FILE = 1
+    private val STORAGE_PATH = "images/"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,6 +72,8 @@ class EditProfileActivity : AppCompatActivity() {
         womenTextView = findViewById(R.id.woman_text)
         backImageButton = findViewById(R.id.back)
 
+        selectedImageViews = listOf(imageView1, imageView2, imageView3, imageView4, imageView5, imageView6)
+
         backImageButton.setOnClickListener { onBackPressed() }
 
         womanButton.setOnClickListener {
@@ -83,29 +88,12 @@ class EditProfileActivity : AppCompatActivity() {
             womenTextView.setTextColor(ContextCompat.getColor(this@EditProfileActivity, R.color.black))
             womanButton.setBackgroundResource(R.drawable.ic_check_unselect)
         }
-        imageView1.setOnClickListener {
-            selectedImageView = imageView1
-            proceedAfterPermission()
-        }
-        imageView2.setOnClickListener {
-            selectedImageView = imageView2
-            proceedAfterPermission()
-        }
-        imageView3.setOnClickListener {
-            selectedImageView = imageView3
-            proceedAfterPermission()
-        }
-        imageView4.setOnClickListener {
-            selectedImageView = imageView4
-            proceedAfterPermission()
-        }
-        imageView5.setOnClickListener {
-            selectedImageView = imageView5
-            proceedAfterPermission()
-        }
-        imageView6.setOnClickListener {
-            selectedImageView = imageView6
-            proceedAfterPermission()
+
+        selectedImageViews.forEachIndexed { index, imageView ->
+            imageView.setOnClickListener {
+                selectedImageViews = listOf(imageView)
+                proceedAfterPermission()
+            }
         }
 
         // Save button click listener
@@ -176,10 +164,13 @@ class EditProfileActivity : AppCompatActivity() {
 
     private fun onCaptureImageResult(data: Intent?) {
         val thumbnail = data?.extras?.get("data") as Bitmap?
-        selectedImageView.setImageBitmap(thumbnail)
-        // Convert Bitmap to Uri
-        thumbnail?.let {
-            picUri = getImageUri(mContext, it)
+        selectedImageViews.forEach { imageView ->
+            imageView.setImageBitmap(thumbnail)
+            // Convert Bitmap to Uri
+            thumbnail?.let {
+                val picUri = getImageUri(mContext, it)
+                picUris.add(picUri)
+            }
         }
     }
 
@@ -193,9 +184,13 @@ class EditProfileActivity : AppCompatActivity() {
                     applicationContext.contentResolver,
                     selectedImageUri
                 )
-                selectedImageView.setImageBitmap(bm)
-                // Convert Bitmap to Uri
-                picUri = selectedImageUri
+                selectedImageViews.forEach { imageView ->
+                    imageView.setImageBitmap(bm)
+                    // Convert Bitmap to Uri
+                    selectedImageUri?.let {
+                        picUris.add(it)
+                    }
+                }
             } catch (e: IOException) {
                 e.printStackTrace()
             }
@@ -215,8 +210,8 @@ class EditProfileActivity : AppCompatActivity() {
 
         // Check if user ID is not null
         userId?.let { uid ->
-            // Access the Firestore collection "users"
-            val userRef = FirebaseFirestore.getInstance().collection("users").document(uid)
+            // Access the Firestore collection "users1"
+            val userRef = FirebaseFirestore.getInstance().collection("users1").document(uid)
 
             // Create a Map to store the user's profile data
             val userProfile = hashMapOf(
@@ -224,8 +219,7 @@ class EditProfileActivity : AppCompatActivity() {
                 "year_semester" to yearSemesterText,
                 "course" to courseText,
                 "school" to schoolText,
-                "gender" to gender,
-                "profile_pic_uri" to picUri.toString() // Save image URI to Firestore
+                "gender" to gender
             )
 
             // Save the data to Firestore
@@ -236,6 +230,22 @@ class EditProfileActivity : AppCompatActivity() {
                         "Profile updated successfully",
                         Toast.LENGTH_SHORT
                     ).show()
+
+                    // Upload images to Firebase Storage
+                    uploadImagesToStorage(uid)
+
+                    // Create an Intent to pass data to ProfileCheckinMain activity
+                    val intent = Intent(this, ProfileCheckinMain::class.java).apply {
+                        putExtra("userId", userId)
+                        putExtra("about", aboutText)
+                        putExtra("year_semester", yearSemesterText)
+                        putExtra("course", courseText)
+                        putExtra("school", schoolText)
+                        putExtra("gender", gender)
+                        putStringArrayListExtra("imageUris", ArrayList(picUris.map { it.toString() }))
+                    }
+
+                    startActivity(intent)
                 }
                 .addOnFailureListener {
                     Toast.makeText(
@@ -244,6 +254,21 @@ class EditProfileActivity : AppCompatActivity() {
                         Toast.LENGTH_SHORT
                     ).show()
                 }
+        }
+    }
+
+    private fun uploadImagesToStorage(userId: String) {
+        val storage = FirebaseStorage.getInstance()
+        val storageRef = storage.reference
+
+        picUris.forEachIndexed { index, picUri ->
+            val imageRef = storageRef.child("$STORAGE_PATH$userId/image$index.jpg")
+
+            val uploadTask = imageRef.putFile(picUri)
+            uploadTask.addOnSuccessListener { taskSnapshot ->
+                val downloadUrl = taskSnapshot.metadata?.reference?.downloadUrl
+            }.addOnFailureListener {
+            }
         }
     }
 
@@ -272,8 +297,5 @@ class EditProfileActivity : AppCompatActivity() {
     companion object {
         private const val TAG = "EditProfileActivity"
         private const val PERMISSION_CALLBACK_CONSTANT = 100
-
-        //firebase
-        private const val REQUEST_PERMISSION_SETTING = 101
     }
 }

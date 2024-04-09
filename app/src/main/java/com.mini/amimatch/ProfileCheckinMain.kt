@@ -21,44 +21,53 @@ class ProfileCheckinMain : AppCompatActivity() {
         mContext = this
 
         // Set up views
-        val profileName: TextView = findViewById<TextView>(R.id.profile_name)
-        val profileImage: SquareImageView = findViewById<SquareImageView>(R.id.image_matched)
-        val profileBio: TextView = findViewById<TextView>(R.id.bio_match)
-        val profileInterest: TextView = findViewById<TextView>(R.id.interests_match)
-        val profileDistance: TextView = findViewById<TextView>(R.id.profile_distance)
+        val profileName: TextView = findViewById(R.id.profile_name)
+        val profileImage: SquareImageView = findViewById(R.id.image_matched)
+        val profileBio: TextView = findViewById(R.id.bio_match)
+        val profileInterest: TextView = findViewById(R.id.interests_match)
+        val profileDistance: TextView = findViewById(R.id.profile_distance)
+        val aboutTextView: TextView = findViewById(R.id.about)
+        val yearSemesterTextView: TextView = findViewById(R.id.year_semester)
+        val courseTextView: TextView = findViewById(R.id.course)
+        val schoolTextView: TextView = findViewById(R.id.school)
 
-        // Get data from intent
         val intent: Intent = getIntent()
         val name = intent.getStringExtra("name")
         val bio = intent.getStringExtra("bio")
         val interest = intent.getStringExtra("interest")
+        val about = intent.getStringExtra("about")
+        val yearSemester = intent.getStringExtra("year_semester")
+        val course = intent.getStringExtra("course")
+        val school = intent.getStringExtra("school")
         val distance = intent.getIntExtra("distance", 1)
         val append = if (distance == 1) "mile away" else "miles away"
+        profileImageUrl = intent.getStringExtra("profile_image_url")
 
-        // Set data to views
+
+
         profileDistance.text = "$distance $append"
         profileName.text = name
         profileBio.text = bio
         profileInterest.text = interest
+        aboutTextView.text = about
+        yearSemesterTextView.text = yearSemester
+        courseTextView.text = course
+        schoolTextView.text = school
         profileImageUrl = intent.getStringExtra("photo")
 
-        // Load profile image
         when (profileImageUrl) {
             "defaultFemale" -> Glide.with(mContext).load(R.drawable.default_woman).into(profileImage)
             "defaultMale" -> Glide.with(mContext).load(R.drawable.default_man).into(profileImage)
             else -> Glide.with(mContext).load(profileImageUrl).into(profileImage)
         }
 
-        // Set onClick listener for Private Chat button
         binding.sendSms.setOnClickListener {
             startPrivateChat()
         }
     }
 
     private fun startPrivateChat() {
-        // Start PrivateChatActivity and pass necessary data
         val intent = Intent(mContext, PrivateChatActivity::class.java)
-        // Pass any necessary data to the PrivateChatActivity using intent extras
         startActivity(intent)
     }
 

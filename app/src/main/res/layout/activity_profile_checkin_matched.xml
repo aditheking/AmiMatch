@@ -9,9 +9,10 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!-- contain back activity -->
+        <!-- Top Navigation Back -->
         <include layout="@layout/layout_top_navigation_back" />
 
+        <!-- Profile Image -->
         <com.mini.amimatch.SquareImageView
             android:id="@+id/image_matched"
             android:layout_width="match_parent"
@@ -45,14 +46,88 @@
             android:textColor="@android:color/black"
             android:textSize="18sp" />
 
+        <!-- About -->
+        <TextView
+            android:id="@+id/about_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/light_grey"
+            android:padding="10dp"
+            android:text="About:"
+            android:textColor="@android:color/black"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/about"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:textColor="@android:color/black"
+            android:textSize="16sp" />
+
+        <!-- Year/Semester -->
+        <TextView
+            android:id="@+id/year_semester_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/light_grey"
+            android:padding="10dp"
+            android:text="Year/Semester:"
+            android:textColor="@android:color/black"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/year_semester"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:textColor="@android:color/black"
+            android:textSize="16sp" />
+
+        <!-- Course -->
+        <TextView
+            android:id="@+id/course_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/light_grey"
+            android:padding="10dp"
+            android:text="Course:"
+            android:textColor="@android:color/black"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/course"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:textColor="@android:color/black"
+            android:textSize="16sp" />
+
+        <!-- School -->
+        <TextView
+            android:id="@+id/school_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/light_grey"
+            android:padding="10dp"
+            android:text="School:"
+            android:textColor="@android:color/black"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/school"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:textColor="@android:color/black"
+            android:textSize="16sp" />
+
         <!-- Bio -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/light_grey"
-            android:paddingLeft="10dp"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
+            android:padding="10dp"
             android:text="Bio:"
             android:textColor="@android:color/black"
             android:textSize="18sp" />
@@ -63,9 +138,7 @@
             android:layout_height="wrap_content"
             android:hint="User has not updated the Bio!!!"
             android:textColor="@android:color/black"
-            android:paddingLeft="10dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
+            android:padding="10dp"
             android:textSize="16sp" />
 
         <!-- Interests -->
@@ -73,9 +146,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/light_grey"
-            android:paddingLeft="10dp"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
+            android:padding="10dp"
             android:text="Interests:"
             android:textColor="@android:color/black"
             android:textSize="18sp" />
@@ -84,20 +155,17 @@
             android:id="@+id/interests_match"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="10dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
+            android:padding="10dp"
             android:text="Dancing, Traveling, Love"
             android:textColor="@android:color/black"
             android:textSize="16sp" />
 
+        <!-- Chat -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/light_grey"
-            android:paddingLeft="10dp"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
+            android:padding="10dp"
             android:text="Chat:"
             android:textColor="@android:color/black"
             android:textSize="18sp" />
@@ -105,9 +173,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="10dp"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp">
+            android:orientation="horizontal"
+            android:padding="10dp">
 
             <TextView
                 android:id="@+id/profile_number"
@@ -122,14 +189,13 @@
                 android:id="@+id/send_sms"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="20dp"
                 android:background="@drawable/white_rounded_button"
                 android:onClick="sendSMS"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:text="Private Chat"
-                android:textAllCaps="false"
-                android:textColor="@android:color/black" />
+                android:textColor="@android:color/black"
+                android:textAllCaps="false" />
         </LinearLayout>
 
         <!-- Email -->
@@ -137,9 +203,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/light_grey"
-            android:paddingLeft="10dp"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
+            android:padding="10dp"
             android:text="Email:"
             android:textColor="@android:color/black"
             android:textSize="18sp" />
@@ -147,9 +211,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="10dp"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp">
+            android:orientation="horizontal"
+            android:padding="10dp">
 
             <TextView
                 android:id="@+id/profile_email"
@@ -164,7 +227,6 @@
                 android:id="@+id/send_email"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="20dp"
                 android:background="@drawable/white_rounded_button"
                 android:onClick="sendEmail"
                 android:paddingLeft="10dp"
@@ -172,7 +234,14 @@
                 android:text="Send Email"
                 android:textColor="@android:color/black"
                 android:textAllCaps="false" />
-
         </LinearLayout>
+
+        <!-- RecyclerView for Images -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/image_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp" />
+
     </LinearLayout>
 </ScrollView>
