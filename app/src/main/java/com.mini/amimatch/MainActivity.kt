@@ -138,9 +138,13 @@ class MainActivity : Activity() {
                 name = "Aditya Upreti"
                 age = 21
                 profileImageUrl = "https://i.ibb.co/mtW3zRC/Whats-App-Image-2024-04-06-at-11-29-46.jpg"
-                bio = "Developer of APP"
-                interest = "coding"
+                bio = ":)"
+                interest = "Coding"
                 distance = 1
+                about ="Hi , Im Developer of this app "
+                year_semester ="3rd Year"
+                course = "BtechCSE"
+                school ="ASET"
             },
             Cards().apply {
                 userId = "2"
@@ -231,6 +235,10 @@ class MainActivity : Activity() {
                     putExtra("interest", cardItem.interest)
                     putExtra("distance", cardItem.distance)
                     putExtra("photo", cardItem.profileImageUrl)
+                    putExtra("about", cardItem.about)
+                    putExtra("year_semester", cardItem.year_semester)
+                    putExtra("course", cardItem.course)
+                    putExtra("school", cardItem.school)
                 }
                 startActivity(intent)
             }

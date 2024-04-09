@@ -1,6 +1,7 @@
 package com.mini.amimatch
 
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.os.Parcelable
@@ -9,6 +10,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -45,6 +47,8 @@ class RegisterBasicInfo : AppCompatActivity() {
     }
 
     private fun init() {
+        showDisclaimerDialog()
+
         btnRegister.setOnClickListener {
             email = mEmail.text.toString()
             username = mUsername.text.toString()
@@ -57,7 +61,6 @@ class RegisterBasicInfo : AppCompatActivity() {
                             val firebaseUser = FirebaseAuth.getInstance().currentUser
                             val userId = firebaseUser?.uid ?: ""
 
-                            // Create user object
                             user = Users(
                                 userId = userId,
                                 name = username,
@@ -73,20 +76,11 @@ class RegisterBasicInfo : AppCompatActivity() {
                                 travel = false
                             )
 
-                            Log.d(TAG, "Generated User ID: $userId")
-                            Log.d(TAG, "Initialized User: $user")
-
-                            // Store user basic info in Firestore
                             db.collection("users").document(userId).set(user!!)
                                 .addOnSuccessListener {
-                                    Log.d(TAG, "DocumentSnapshot added with ID: $userId")
-
                                     val intent = Intent(this@RegisterBasicInfo, RegisterGender::class.java)
                                     intent.putExtra("password", password)
                                     intent.putExtra("classUser", user as Parcelable)
-
-                                    Log.d(TAG, "Starting RegisterGender activity with user: $user")
-
                                     startActivity(intent)
                                 }
                                 .addOnFailureListener { e ->
@@ -102,9 +96,7 @@ class RegisterBasicInfo : AppCompatActivity() {
         }
     }
 
-
     private fun checkInputs(email: String, username: String, password: String): Boolean {
-        Log.d(TAG, "checkInputs: checking inputs for null values.")
         if (email.isEmpty() || username.isEmpty() || password.isEmpty()) {
             Toast.makeText(mContext, "All fields must be filled out.", Toast.LENGTH_SHORT).show()
             return false
@@ -119,7 +111,6 @@ class RegisterBasicInfo : AppCompatActivity() {
     }
 
     private fun initWidgets() {
-        Log.d(TAG, "initWidgets: initializing widgets")
         mEmail = findViewById(R.id.input_email)
         mUsername = findViewById(R.id.input_username)
         btnRegister = findViewById(R.id.btn_register)
@@ -129,6 +120,18 @@ class RegisterBasicInfo : AppCompatActivity() {
 
     fun onLoginClicked(view: View) {
         startActivity(Intent(applicationContext, Login::class.java))
+    }
+
+    private fun showDisclaimerDialog() {
+        val dialogBuilder = AlertDialog.Builder(this)
+        dialogBuilder.setTitle("Disclaimer!")
+        dialogBuilder.setMessage(
+            "By proceeding, you agree that we do not verify the accuracy of email IDs for sign-up purposes. However, we kindly ask you to refrain from creating multiple profiles, fake accounts, or spamming as it could lead to increased Server costs and violation of our terms of service. For more detailed information on profiles, please refer to our terms of service."
+        )
+        dialogBuilder.setPositiveButton("Got it") { dialogInterface: DialogInterface, i: Int ->
+        }
+        val disclaimerDialog = dialogBuilder.create()
+        disclaimerDialog.show()
     }
 
 }

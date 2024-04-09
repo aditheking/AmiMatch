@@ -17,7 +17,10 @@ class Cards() : Parcelable {
     var music: Boolean = false
     var travel: Boolean = false
     var preferSex: String = ""
-
+    var about: String? = null
+    var year_semester: String? = null
+    var course: String? = null
+    var school: String? = null
     var userMusic: Boolean = false
     var userSports: Boolean = false
     var dateOfBirth: String? = null
