@@ -3,11 +3,14 @@ package com.mini.amimatch
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -17,6 +20,7 @@ import android.widget.ImageButton
 import android.widget.ListView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -28,6 +32,7 @@ class MainActivity : Activity() {
     private val TAG = "MainActivity"
     private val ACTIVITY_NUM = 1
     private val MY_PERMISSIONS_REQUEST_LOCATION = 123
+    private val MY_PERMISSIONS_REQUEST_POST_NOTIFICATIONS = 124
     private lateinit var listView: ListView
     private lateinit var rowItems: MutableList<Cards>
     private lateinit var cardFrame: FrameLayout
@@ -48,6 +53,9 @@ class MainActivity : Activity() {
             showPrivacyPolicyDialog()
         } else {
             initializeApp()
+        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), MY_PERMISSIONS_REQUEST_POST_NOTIFICATIONS)
         }
     }
 
@@ -188,10 +196,43 @@ class MainActivity : Activity() {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     updateLocation()
                 } else {
-                    Toast.makeText(this@MainActivity, "Location Permission Denied. You have to give permission inorder to know the user range ", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this@MainActivity,
+                        "Location Permission Denied. You have to give permission inorder to know the user range ",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
+            }
+
+            MY_PERMISSIONS_REQUEST_POST_NOTIFICATIONS -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    sendNotification1()
+                } else {
+                    Toast.makeText(
+                        this@MainActivity,
+                        "Notification Access Permission Denied. You have to give permission to access notifications.",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }
+    }
+
+    fun sendNotification1() {
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel("INSTALL_CHANNEL_ID", "Channel Name", NotificationManager.IMPORTANCE_DEFAULT)
+            notificationManager.createNotificationChannel(channel)
+        }
+
+        val notificationBuilder = NotificationCompat.Builder(this, "INSTALL_CHANNEL_ID")
+            .setSmallIcon(R.drawable.ic_comment)
+            .setContentTitle("Welcome to AMI-MATCH!")
+            .setContentText("Explore new connections within Amity. Meet new people, broaden your social circle!")
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+
+        notificationManager.notify(1, notificationBuilder.build())
     }
 
     private fun updateSwipeCard() {
