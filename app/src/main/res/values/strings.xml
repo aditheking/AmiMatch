@@ -39,6 +39,8 @@
     The App collects certain personal information provided by you during the registration process, including your name, email address, age, gender, and profile image. This information is stored securely on Google\'s Firestore database.<br><br>
     <b>Access to Data</b><br><br>
     The Developer has access to all data stored on the Firestore database, including your registration information, age, gender, and profile image. This data can be modified, deleted, or accessed by the Developer for troubleshooting purposes.<br><br>
+    <b>User Interactions</b><br><br>
+    The application acknowledges its role in facilitating interactions between users; however, it does not endorse or guarantee the outcome of these interactions. Users are strongly advised to exercise caution and discretion when engaging in communication with others.<br><br>
     <b>Sharing of Information</b><br><br>
     Protecting your privacy is our priority. We want to assure you that AMI-MATCH does not share or collect your personal information for any purpose other than what is explicitly outlined in this Privacy Policy.<br><br>
     <b>Prohibited Activities</b><br><br>

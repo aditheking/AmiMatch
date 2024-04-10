@@ -227,7 +227,7 @@ class MainActivity : Activity() {
         }
 
         val notificationBuilder = NotificationCompat.Builder(this, "INSTALL_CHANNEL_ID")
-            .setSmallIcon(R.drawable.ic_comment)
+            .setSmallIcon(R.drawable.ic_main)
             .setContentTitle("Welcome to AMI-MATCH!")
             .setContentText("Explore new connections within Amity. Meet new people, broaden your social circle!")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
