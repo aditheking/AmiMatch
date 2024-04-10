@@ -43,11 +43,13 @@ class PhotoAdapter(
             mContext.startActivity(intent)
         }
 
-        when (cardItem.profileImageUrl) {
-            "defaultFemale" -> Glide.with(context).load(R.drawable.default_woman).into(image)
-            "defaultMale" -> Glide.with(context).load(R.drawable.default_man).into(image)
+        when {
+            cardItem.profilePhotoUrl != null -> Glide.with(context).load(cardItem.profilePhotoUrl).into(image)
+            cardItem.profileImageUrl == "defaultFemale" -> Glide.with(context).load(R.drawable.default_woman).into(image)
+            cardItem.profileImageUrl == "defaultMale" -> Glide.with(context).load(R.drawable.default_man).into(image)
             else -> Glide.with(context).load(cardItem.profileImageUrl).into(image)
         }
+
 
         return convertView
     }

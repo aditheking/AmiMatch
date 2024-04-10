@@ -7,6 +7,7 @@ class Cards() : Parcelable {
     var userId: String? = null
     var name: String? = null
     var profileImageUrl: String? = null
+    val profilePhotoUrl: String? = null
     var bio: String? = null
     var interest: String? = null
     var age: Int = 0
