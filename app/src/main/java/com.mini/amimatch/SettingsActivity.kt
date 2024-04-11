@@ -1,10 +1,14 @@
 package com.mini.amimatch
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.webkit.WebView
@@ -16,6 +20,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
+import androidx.core.app.NotificationCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -158,17 +163,46 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun downloadAndInstallUpdate() {
-        val fileId = "1WlTUJYn9Qws-Tu6_DYcOzjTxC8zQSZxx"
-        val downloadUrl = "https://drive.google.com/uc?export=download&id=$fileId"
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        val intent = Intent(Intent.ACTION_VIEW)
-        intent.data = Uri.parse(downloadUrl)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        createNotificationChannel(notificationManager)
 
-        if (intent.resolveActivity(packageManager) != null) {
-            startActivity(intent)
+        val downloadIntent = Intent(Intent.ACTION_VIEW).apply {
+            data = Uri.parse("https://drive.google.com/drive/folders/1p_wBeXQqgU6CwZlSsjp6iZMPXotudgT3?usp=sharing")
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        }
+
+        if (downloadIntent.resolveActivity(packageManager) != null) {
+            val pendingIntent = PendingIntent.getActivity(
+                this,
+                0,
+                downloadIntent,
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+            )
+
+            val notification = NotificationCompat.Builder(this, CHANNEL_ID)
+                .setContentTitle("New Update Available")
+                .setContentText("Tap to download the latest version")
+                .setSmallIcon(R.drawable.ic_main)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true)
+                .build()
+
+            notificationManager.notify(NOTIFICATION_ID, notification)
         } else {
-            Toast.makeText(this@SettingsActivity, "No app found to handle the download", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "No app found to handle the download", Toast.LENGTH_SHORT).show()
+        }
+    }
+    private fun createNotificationChannel(notificationManager: NotificationManager) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                CHANNEL_ID,
+                "Update Notifications",
+                NotificationManager.IMPORTANCE_DEFAULT
+            ).apply {
+                description = "Channel for update notifications"
+            }
+            notificationManager.createNotificationChannel(channel)
         }
     }
 
@@ -239,5 +273,7 @@ class SettingsActivity : AppCompatActivity() {
 
     companion object {
         private const val TAG = "SettingsActivity"
+        private const val CHANNEL_ID = "update_channel"
+        private const val NOTIFICATION_ID = 123
     }
 }

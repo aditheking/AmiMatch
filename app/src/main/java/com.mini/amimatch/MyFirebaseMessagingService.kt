@@ -1,5 +1,3 @@
-package com.mini.amimatch;
-
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -20,19 +18,28 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
 
-        remoteMessage.data.isNotEmpty().let {
-            handleDataPayload(remoteMessage.data)
-        }
+        // Check if the message is a Firebase In-App Messaging message
+        remoteMessage.data["google.c.a.e_a"].let { inAppMessageAction ->
+            if (inAppMessageAction != null && inAppMessageAction == "true") {
+                Log.d(TAG, "Received Firebase In-App Messaging message")
+            } else {
+                remoteMessage.data.isNotEmpty().let {
+                    handleDataPayload(remoteMessage.data)
+                }
 
-        remoteMessage.notification?.let {
-            handleNotificationPayload(it)
+                remoteMessage.notification?.let {
+                    handleNotificationPayload(it)
+                }
+            }
         }
     }
 
     private fun handleDataPayload(data: Map<String, String>) {
+        // Handle data payload
     }
 
     private fun handleNotificationPayload(notification: RemoteMessage.Notification) {
+        // Handle notification payload
     }
 
     private fun saveTokenToFirestore(token: String) {
