@@ -36,6 +36,7 @@ class PhotoAdapter(
             val intent = Intent(mContext, ProfileCheckinMain::class.java).apply {
                 putExtra("name", "${cardItem.name}, ${cardItem.age}")
                 putExtra("photo", cardItem.profileImageUrl)
+                putExtra("profilePhotoUrl", cardItem.profilePhotoUrl)
                 putExtra("bio", cardItem.bio)
                 putExtra("interest", cardItem.interest)
                 putExtra("distance", cardItem.distance)

@@ -276,6 +276,7 @@ class MainActivity : Activity() {
                     putExtra("interest", cardItem.interest)
                     putExtra("distance", cardItem.distance)
                     putExtra("photo", cardItem.profileImageUrl)
+                    putExtra("profilePhotoUrl", cardItem.profilePhotoUrl)
                     putExtra("about", cardItem.about)
                     putExtra("year_semester", cardItem.year_semester)
                     putExtra("course", cardItem.course)
@@ -299,6 +300,7 @@ class MainActivity : Activity() {
             arrayAdapter.notifyDataSetChanged()
             val btnClick = Intent(mContext, BtnDislikeActivity::class.java)
             btnClick.putExtra("url", cardItem.profileImageUrl)
+            btnClick.putExtra("photo", cardItem.profilePhotoUrl)
             startActivity(btnClick)
         }
     }
@@ -312,6 +314,7 @@ class MainActivity : Activity() {
             arrayAdapter.notifyDataSetChanged()
             val btnClick = Intent(mContext, BtnLikeActivity::class.java)
             btnClick.putExtra("url", cardItem.profileImageUrl)
+            btnClick.putExtra("photo", cardItem.profilePhotoUrl)
             startActivity(btnClick)
         }
     }

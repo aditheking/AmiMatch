@@ -1,3 +1,4 @@
+package com.mini.amimatch
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessagingService

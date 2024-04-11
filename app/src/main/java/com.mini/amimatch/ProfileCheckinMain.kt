@@ -55,6 +55,11 @@ class ProfileCheckinMain : AppCompatActivity() {
         schoolTextView.text = school
         profileImageUrl = intent.getStringExtra("photo")
 
+        val intentProfilePhotoUrl = intent.getStringExtra("profilePhotoUrl")
+        if (!intentProfilePhotoUrl.isNullOrEmpty()) {
+            profileImageUrl = intentProfilePhotoUrl
+        }
+
         when (profileImageUrl) {
             "defaultFemale" -> Glide.with(mContext).load(R.drawable.default_woman).into(profileImage)
             "defaultMale" -> Glide.with(mContext).load(R.drawable.default_man).into(profileImage)

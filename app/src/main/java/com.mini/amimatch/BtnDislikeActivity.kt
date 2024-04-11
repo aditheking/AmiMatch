@@ -21,9 +21,11 @@ class BtnDislikeActivity : AppCompatActivity() {
         if (dislike != null) {
             val intent: Intent = getIntent()
             val profileUrl = intent.getStringExtra("url")
-            when (profileUrl) {
-                "defaultFemale" -> Glide.with(mContext).load(R.drawable.default_woman).into(dislike!!)
-                "defaultMale" -> Glide.with(mContext).load(R.drawable.default_man).into(dislike!!)
+            val profilePhotoUrl = intent.getStringExtra("photo")
+            when {
+                profilePhotoUrl != null -> Glide.with(mContext).load(profilePhotoUrl).into(dislike!!)
+                profileUrl == "defaultFemale" -> Glide.with(mContext).load(R.drawable.default_woman).into(dislike!!)
+                profileUrl == "defaultMale" -> Glide.with(mContext).load(R.drawable.default_man).into(dislike!!)
                 else -> Glide.with(mContext).load(profileUrl).into(dislike!!)
             }
         }

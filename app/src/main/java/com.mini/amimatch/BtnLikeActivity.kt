@@ -22,9 +22,11 @@ class BtnLikeActivity : AppCompatActivity() {
         if (like != null) {
             val intent: Intent = getIntent()
             val profileUrl = intent.getStringExtra("url")
-            when (profileUrl) {
-                "defaultFemale" -> Glide.with(mContext).load(R.drawable.default_woman).into(like!!)
-                "defaultMale" -> Glide.with(mContext).load(R.drawable.default_man).into(like!!)
+            val profilePhotoUrl = intent.getStringExtra("photo")
+            when {
+                profilePhotoUrl != null -> Glide.with(mContext).load(profilePhotoUrl).into(like!!)
+                profileUrl == "defaultFemale" -> Glide.with(mContext).load(R.drawable.default_woman).into(like!!)
+                profileUrl == "defaultMale" -> Glide.with(mContext).load(R.drawable.default_man).into(like!!)
                 else -> Glide.with(mContext).load(profileUrl).into(like!!)
             }
         }
