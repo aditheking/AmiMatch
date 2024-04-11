@@ -13,12 +13,10 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -26,11 +24,7 @@ import java.io.ByteArrayOutputStream
 import java.io.IOException
 
 class EditProfileActivity : AppCompatActivity() {
-    private lateinit var manButton: Button
-    private lateinit var womanButton: Button
     private lateinit var backImageButton: ImageButton
-    private lateinit var manTextView: TextView
-    private lateinit var womenTextView: TextView
     private lateinit var imageView1: ImageView
     private lateinit var imageView2: ImageView
     private lateinit var imageView3: ImageView
@@ -66,28 +60,12 @@ class EditProfileActivity : AppCompatActivity() {
         imageView4 = findViewById(R.id.image_view_4)
         imageView5 = findViewById(R.id.image_view_5)
         imageView6 = findViewById(R.id.image_view_6)
-        manButton = findViewById(R.id.man_button)
-        womanButton = findViewById(R.id.woman_button)
-        manTextView = findViewById(R.id.man_text)
-        womenTextView = findViewById(R.id.woman_text)
         backImageButton = findViewById(R.id.back)
 
         selectedImageViews = listOf(imageView1, imageView2, imageView3, imageView4, imageView5, imageView6)
 
         backImageButton.setOnClickListener { onBackPressed() }
 
-        womanButton.setOnClickListener {
-            womenTextView.setTextColor(ContextCompat.getColor(this@EditProfileActivity, R.color.colorAccent))
-            womanButton.setBackgroundResource(R.drawable.ic_check_select)
-            manTextView.setTextColor(ContextCompat.getColor(this@EditProfileActivity, R.color.colorAccent))
-            manButton.setBackgroundResource(R.drawable.ic_check_unselect)
-        }
-        manButton.setOnClickListener {
-            manTextView.setTextColor(ContextCompat.getColor(this@EditProfileActivity, R.color.black))
-            manButton.setBackgroundResource(R.drawable.ic_check_select)
-            womenTextView.setTextColor(ContextCompat.getColor(this@EditProfileActivity, R.color.black))
-            womanButton.setBackgroundResource(R.drawable.ic_check_unselect)
-        }
 
         selectedImageViews.forEachIndexed { index, imageView ->
             imageView.setOnClickListener {
@@ -205,7 +183,6 @@ class EditProfileActivity : AppCompatActivity() {
         val schoolText = findViewById<EditText>(R.id.school_edit_text).text.toString()
         val bioText = findViewById<EditText>(R.id.bio_edit_text).text.toString()
         val interestsText = findViewById<EditText>(R.id.interests_edit_text).text.toString()
-        val gender = if (manButton.isSelected) "Male" else "Female"
 
         // Retrieve current user's ID
         val userId = FirebaseAuth.getInstance().currentUser?.uid
@@ -223,7 +200,6 @@ class EditProfileActivity : AppCompatActivity() {
                 "school" to schoolText,
                 "bio" to bioText,
                 "interests" to interestsText,
-                "gender" to gender
             )
 
             // Save the data to Firestore
@@ -247,7 +223,6 @@ class EditProfileActivity : AppCompatActivity() {
                         putExtra("school", schoolText)
                         putExtra("bio", bioText)
                         putExtra("interests", interestsText)
-                        putExtra("gender", gender)
                         putStringArrayListExtra("imageUris", ArrayList(picUris.map { it.toString() }))
                     }
 

@@ -477,41 +477,11 @@
                         android:layout_marginTop="2dp"
                         android:background="@color/colorAccent" />
 
-                    <com.mini.amimatch.MyTextView_Roboto_Bold
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="5dp"
-                        android:text="Gender"
-                        android:textColor="@android:color/black"
-                    android:textSize="18dp"
-                    android:textStyle="bold" />
 
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                        <TextView
-                            android:id="@+id/man_text"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:layout_marginStart="8dp"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginEnd="8dp"
-                            android:layout_marginBottom="8dp"
-                            android:text="Male"
-                            android:textColor="@android:color/black"
-                        android:textSize="18dp" />
-
-
-                        <Button
-                            android:id="@+id/man_button"
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:layout_alignParentEnd="true"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true"
-                            android:background="@drawable/ic_check_select" />
                     </RelativeLayout>
 
 
@@ -519,64 +489,14 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                        <TextView
-                            android:id="@+id/woman_text"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:layout_marginStart="8dp"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginEnd="8dp"
-                            android:layout_marginBottom="8dp"
-                            android:text="Female"
-                            android:textColor="@android:color/black"
-                        android:textSize="18dp" />
-
-                        <Button
-                            android:id="@+id/woman_button"
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:layout_alignParentEnd="true"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true"
-                            android:background="@drawable/ic_check_unselect"
-                            android:visibility="visible" />
                     </RelativeLayout>
 
 
-                    <com.mini.amimatch.MyTextView_Roboto_Bold
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="@dimen/_5dp"
-                        android:text="Control Your Profile"
-                        android:textColor="@android:color/black"
-                    android:textSize="18dp" />
 
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="10dp"
-                            android:text="Don't Show my age"
-                            android:textColor="@android:color/black"
-                        android:textSize="18dp" />
-
-                        <androidx.appcompat.widget.SwitchCompat
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true"
-                            android:layout_gravity="center"
-                            android:layout_marginRight="10dp"
-                            android:background="@null"
-                            android:button="@drawable/custom_switch"
-                            android:checked="false"
-                            android:thumb="@null"
-                            app:track="@null" />
 
                     </RelativeLayout>
 
@@ -584,27 +504,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="10dp"
-                            android:text="Make My Distance Invisible"
-                            android:textColor="@android:color/black"
-                        android:textSize="18dp" />
-
-                        <androidx.appcompat.widget.SwitchCompat
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true"
-                            android:layout_gravity="center"
-                            android:layout_marginRight="10dp"
-                            android:background="@null"
-                            android:button="@drawable/custom_switch"
-                            android:checked="false"
-                            android:thumb="@null"
-                            app:track="@null" />
 
                         <Button
                             android:id="@+id/save_button"
