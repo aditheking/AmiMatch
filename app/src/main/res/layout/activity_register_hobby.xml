@@ -8,9 +8,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/white">
 
-    <TextView
+
+<TextView
         android:id="@+id/numberOfPagesLeft"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -39,7 +41,7 @@
             android:layout_gravity="center_horizontal"
             android:background="@drawable/logo" />
 
-        <com.quintus.labs.datingapp.customfonts.MyTextView_GreatVibes_Regular
+        <com.mini.amimatch.MyTextView_Roboto_Bold
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
@@ -83,7 +85,7 @@
                 android:background="#ff4081"
                 android:elevation="24dp"
                 android:text="SPORTS"
-                android:textColor="@android:color/white"
+                android:textColor="@android:color/black"
                 android:textSize="30sp"
                 android:textStyle="bold" />
 
@@ -98,7 +100,7 @@
                 android:background="#ff4081"
                 android:elevation="24dp"
                 android:text="TRAVEL"
-                android:textColor="@android:color/white"
+                android:textColor="@android:color/black"
                 android:textSize="30sp"
                 android:textStyle="bold" />
 
@@ -119,7 +121,7 @@
                 android:background="#ff4081"
                 android:elevation="24dp"
                 android:text="MUSIC"
-                android:textColor="@android:color/white"
+                android:textColor="@android:color/black"
                 android:textSize="30sp"
                 android:textStyle="bold" />
 
@@ -134,7 +136,7 @@
                 android:background="#ff4081"
                 android:elevation="24dp"
                 android:text="Coding"
-                android:textColor="@android:color/white"
+                android:textColor="@android:color/black"
                 android:textSize="30sp"
                 android:textStyle="bold" />
 
@@ -152,7 +154,7 @@
             android:elevation="24dp"
             android:onClick="onHobbyContinueClicked"
             android:text="Register"
-            android:textColor="@android:color/white"
+            android:textColor="@android:color/black"
             android:textStyle="bold" />
     </LinearLayout>
 

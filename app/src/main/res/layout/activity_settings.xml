@@ -355,6 +355,8 @@
                     android:gravity="center"
                     android:padding="10dp"
                     android:text="Help &amp; Support"
+                    android:textColor="@color/black"
+                    android:background="@android:color/transparent"
                     android:textSize="20dp" />
             </androidx.cardview.widget.CardView>
 
@@ -379,6 +381,8 @@
                         android:gravity="center"
                         android:padding="10dp"
                         android:text="Share"
+                        android:textColor="@color/black"
+                        android:background="@android:color/transparent"
                         android:textSize="20dp" />
 
                     <TextView
@@ -411,6 +415,7 @@
                         android:layout_height="match_parent"
                         android:padding="10dp"
                         android:text=" Legal"
+                        android:background="@android:color/transparent"
                         android:textColor="@color/colorPrimaryDark"
                         android:textSize="18dp" />
 
@@ -420,6 +425,7 @@
                         android:layout_height="wrap_content"
                         android:padding="10dp"
                         android:text="Licenses"
+                        android:background="@android:color/transparent"
                         android:textColor="@color/black"
                         android:textSize="20dp" />
 
@@ -430,6 +436,7 @@
                         android:padding="10dp"
                         android:text="Privacy Policy"
                         android:textColor="@color/black"
+                        android:background="@android:color/transparent"
                         android:textSize="20dp"
                         android:onClick="showPrivacyPolicyDialog"/>
 
@@ -457,6 +464,7 @@
                         android:gravity="center"
                         android:padding="10dp"
                         android:text=" Logout"
+                        android:background="@android:color/transparent"
                         android:textColor="@color/black"
 
                         android:textSize="18dp" />
@@ -484,6 +492,7 @@
                         android:gravity="center"
                         android:padding="10dp"
                         android:text=" Delete Account"
+                        android:background="@android:color/transparent"
                         android:textColor="@color/colorPrimaryDark"
                         android:textSize="18dp" />
 
@@ -493,7 +502,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
                         android:text="Check for Update"
-                        android:textColor="@color/white"
+                        android:textColor="@color/black"
+                        android:background="@android:color/transparent"
                         android:textSize="16sp" />
 
                 </LinearLayout>
@@ -507,11 +517,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-        android:background="@drawable/white_rounded_button"
         android:gravity="center"
         android:onClick="Logout"
         android:text="LOG OUT"
-        android:textColor="@color/white"
+        android:background="@android:color/transparent"
+        android:textColor="@color/colorPrimaryDark"
         android:visibility="gone" />
 
 
