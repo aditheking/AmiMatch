@@ -1,10 +1,13 @@
 package com.mini.amimatch
 
+import android.text.util.Linkify
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -20,6 +23,8 @@ class MessageAdapter(private val messageList: List<Message>) : RecyclerView.Adap
         val senderNameTextView: TextView = itemView.findViewById(R.id.senderNameTextView)
         val messageTextView: TextView = itemView.findViewById(R.id.messageTextView)
         val timestampTextView: TextView = itemView.findViewById(R.id.timestampTextView)
+        val profileImageView: ImageView = itemView.findViewById(R.id.profileImageView)
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -30,6 +35,12 @@ class MessageAdapter(private val messageList: List<Message>) : RecyclerView.Adap
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val message = messageList[position]
         holder.messageTextView.text = message.text
+
+        loadProfilePicture(holder.profileImageView, message.senderId)
+
+
+        Linkify.addLinks(holder.messageTextView, Linkify.ALL)
+
 
         firestore.collection("users").document(message.senderId).get()
             .addOnSuccessListener { document ->
@@ -44,6 +55,36 @@ class MessageAdapter(private val messageList: List<Message>) : RecyclerView.Adap
 
         val timestamp = SimpleDateFormat("HH:mm dd/MM/yy", Locale.getDefault()).format(Date(message.timestamp))
         holder.timestampTextView.text = timestamp
+    }
+
+    private fun loadProfilePicture(imageView: ImageView, senderId: String) {
+        firestore.collection("users").document(senderId).get()
+            .addOnSuccessListener { document ->
+                if (document != null) {
+                    val profilePhotoUrl = document.getString("profilePhotoUrl")
+                    val profileImageUrl = document.getString("profileImageUrl")
+
+                    // Determine which URL to use for the profile picture
+                    val imageUrl = if (profilePhotoUrl != null) {
+                        profilePhotoUrl
+                    } else {
+                        // Use profileImageUrl to determine male or female
+                        when {
+                            profileImageUrl == "defaultFemale" -> R.drawable.default_woman
+                            profileImageUrl == "defaultMale" -> R.drawable.default_man
+                            else -> profileImageUrl // Use profileImageUrl if it's not a default image
+                        }
+                    }
+
+                    // Load the profile picture using Glide
+                    Glide.with(imageView.context)
+                        .load(imageUrl)
+                        .into(imageView)
+                }
+            }
+            .addOnFailureListener { exception ->
+                // Handle failure
+            }
     }
 
     override fun getItemCount(): Int {
