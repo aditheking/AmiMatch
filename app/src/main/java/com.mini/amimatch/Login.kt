@@ -71,12 +71,37 @@ class Login : AppCompatActivity() {
             }
         }
 
+        val linkResetPassword: TextView = findViewById(R.id.link_reset_password)
+        linkResetPassword.setOnClickListener {
+            val email = mEmail.text.toString().trim()
+
+            if (email.isEmpty()) {
+                Toast.makeText(this, "Enter your email to reset password", Toast.LENGTH_SHORT).show()
+            } else {
+                resetPassword(email)
+            }
+        }
+
+
+
         val linkSignUp: TextView = findViewById(R.id.link_signup)
         linkSignUp.setOnClickListener {
             val intent = Intent(this@Login, RegisterBasicInfo::class.java)
             startActivity(intent)
         }
     }
+
+    private fun resetPassword(email: String) {
+        mAuth.sendPasswordResetEmail(email)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Toast.makeText(this, "Password reset email sent", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "Failed to send password reset email: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+    }
+
 
     private fun updateUserProfile(user: FirebaseUser?) {
         val profileUpdates = UserProfileChangeRequest.Builder()

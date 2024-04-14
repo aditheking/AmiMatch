@@ -40,6 +40,11 @@ class PhotoAdapter(
                 putExtra("bio", cardItem.bio)
                 putExtra("interest", cardItem.interest)
                 putExtra("distance", cardItem.distance)
+                putExtra("about",cardItem.about)
+                putExtra("year_semester",cardItem.year_semester)
+                putExtra("course",cardItem.course)
+                putExtra("school",cardItem.school)
+
             }
             mContext.startActivity(intent)
         }
