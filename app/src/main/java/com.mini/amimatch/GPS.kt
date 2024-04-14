@@ -7,29 +7,28 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
-import androidx.core.app.ActivityCompat
+import android.util.Log
+import androidx.core.content.ContextCompat
 
-class GPS(var mContext: Context) : LocationListener {
-    var location: Location?
-    var mLocationManager: LocationManager
-    var mProvider = LocationManager.GPS_PROVIDER
+class GPS(private val mContext: Context) : LocationListener {
+    private var mLocationManager: LocationManager = mContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    var location: Location? = null
 
     init {
-        mLocationManager = mContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        location = null // Initialize location to null
-        if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION)
-            == PackageManager.PERMISSION_GRANTED ||
-            ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION)
-            == PackageManager.PERMISSION_GRANTED
+        if (ContextCompat.checkSelfPermission(
+                mContext,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
         ) {
-            location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-            onLocationChanged(location!!)
+            // Handle the case where location permissions are not granted gracefully
+            Log.e("GPS", "Location permissions not granted")
         } else {
-            // Handle the case where location permissions are not granted
-            // For example, you can throw an exception or log an error message
-            throw SecurityException("Location permissions not granted")
-            // Or log an error message
-            // Log.e("GPS", "Location permissions not granted")
+            mLocationManager.requestLocationUpdates(
+                LocationManager.GPS_PROVIDER,
+                MIN_TIME_BW_UPDATES,
+                MIN_DISTANCE_CHANGE_FOR_UPDATES,
+                this
+            )
         }
     }
 
@@ -37,23 +36,21 @@ class GPS(var mContext: Context) : LocationListener {
         this.location = location
     }
 
-    override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {}
-    override fun onProviderEnabled(provider: String) {}
-    override fun onProviderDisabled(provider: String) {}
+    override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
+
+
     fun calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Int {
         val theta = lon1 - lon2
-        var dist =
-            Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1)) * Math.cos(
-                deg2rad(lat2)
-            ) * Math.cos(deg2rad(theta))
+        var dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) +
+                Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+                Math.cos(deg2rad(theta))
         dist = Math.acos(dist)
         dist = rad2deg(dist)
         dist = dist * 60 * 1.1515
-        val dis = Math.floor(dist).toInt()
-        return if (dis < 1) {
-            1
-        } else dis
+        dist *= 1609.344
+        return Math.floor(dist).toInt()
     }
+
 
     private fun deg2rad(deg: Double): Double {
         return deg * Math.PI / 180.0
@@ -61,5 +58,10 @@ class GPS(var mContext: Context) : LocationListener {
 
     private fun rad2deg(rad: Double): Double {
         return rad * 180 / Math.PI
+    }
+
+    companion object {
+        private const val MIN_TIME_BW_UPDATES: Long = 1000 * 60 * 1 // 1 minute
+        private const val MIN_DISTANCE_CHANGE_FOR_UPDATES: Float = 10f // 10 meters
     }
 }
