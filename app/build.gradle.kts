@@ -78,6 +78,7 @@ dependencies {
     implementation ("org.jetbrains.kotlin:kotlin-stdlib:1.5.0")
     implementation("com.google.firebase:firebase-storage-ktx:20.3.0")
     implementation ("com.github.ittianyu:BottomNavigationViewEx:1.2.4")
+    implementation ("com.google.code.gson:gson:2.8.8")
     implementation ("com.google.android.material:material:1.0.0")
     implementation ("com.lorentzos.swipecards:library:1.0.9")
     implementation ("com.squareup.picasso:picasso:2.71828")

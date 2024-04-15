@@ -1,10 +1,18 @@
 package com.mini.amimatch
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ChildEventListener
@@ -15,6 +23,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
 import com.mini.amimatch.databinding.ActivityChatBinding
 
 class ChatActivity : AppCompatActivity() {
@@ -23,16 +32,27 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var messageAdapter: MessageAdapter
     private val messageList = ArrayList<Message>()
     private val firestore: FirebaseFirestore = Firebase.firestore
+    private var lastSeenMessageTimestamp: Long = 0
+
+    private val channelId = "default_channel_id"
+    private val channelName = "Default Channel"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityChatBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        FirebaseMessaging.getInstance().subscribeToTopic("allMessages")
+
         database = FirebaseDatabase.getInstance().reference
 
         setupRecyclerView()
         fetchMessages()
+
+        val sharedPreferences = getSharedPreferences("com.mini.amimatch.PREFERENCES", Context.MODE_PRIVATE)
+        lastSeenMessageTimestamp = sharedPreferences.getLong("lastSeenMessageTimestamp", 0)
+
+        createNotificationChannel()
 
         binding.btnSend.setOnClickListener {
             sendMessage()
@@ -52,14 +72,34 @@ class ChatActivity : AppCompatActivity() {
                 message?.let {
                     messageList.add(it)
                     messageAdapter.notifyDataSetChanged()
+                    if (it.timestamp > lastSeenMessageTimestamp) {
+                        sendNotification("New Chat: ${it.text}",snapshot.key ?: "")
+                        updateLastSeenMessageTimestamp(it.timestamp)
+                    }
+                    binding.rvMessages.scrollToPosition(messageList.size - 1)
+
                 }
             }
 
-            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
-            override fun onChildRemoved(snapshot: DataSnapshot) {}
-            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
-            override fun onCancelled(error: DatabaseError) {}
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+            }
+
+            override fun onChildRemoved(snapshot: DataSnapshot) {
+            }
+
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+            }
         })
+    }
+
+
+    private fun updateLastSeenMessageTimestamp(timestamp: Long) {
+        lastSeenMessageTimestamp = timestamp
+        val sharedPreferences = getSharedPreferences("com.mini.amimatch.PREFERENCES", Context.MODE_PRIVATE)
+        sharedPreferences.edit().putLong("lastSeenMessageTimestamp", timestamp).apply()
     }
 
     private fun sendMessage() {
@@ -67,7 +107,6 @@ class ChatActivity : AppCompatActivity() {
         val messageText = binding.etMessage.text.toString().trim()
 
         if (currentUser != null && messageText.isNotEmpty()) {
-            // Check if the username is already saved
             checkUsernameSaved(currentUser.uid) { isUsernameSaved ->
                 if (isUsernameSaved) {
                     sendMessage(currentUser.uid)
@@ -75,6 +114,30 @@ class ChatActivity : AppCompatActivity() {
                     showUsernameDialog()
                 }
             }
+        }
+    }
+
+    private fun sendNotification(message: String, messageId: String) {
+        val sharedPreferences = getSharedPreferences("com.mini.amimatch.NOTIFICATION_PREFS", Context.MODE_PRIVATE)
+        val sentNotificationIds = sharedPreferences.getStringSet("sentNotificationIds", HashSet()) ?: HashSet()
+
+        if (!sentNotificationIds.contains(messageId)) {
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val intent = Intent(this, ChatActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+            val notificationBuilder = NotificationCompat.Builder(this, channelId)
+                .setSmallIcon(R.drawable.ic_main)
+                .setContentTitle("AMI-MATCH")
+                .setContentText(message)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true)
+
+            NotificationManagerCompat.from(this).notify(System.currentTimeMillis().toInt(), notificationBuilder.build())
+
+            // Update SharedPreferences to store the sentNotificationIds set
+            sentNotificationIds.add(messageId)
+            sharedPreferences.edit().putStringSet("sentNotificationIds", sentNotificationIds).apply()
         }
     }
 
@@ -143,7 +206,15 @@ class ChatActivity : AppCompatActivity() {
             message.id = messageId
             database.child("messages").child(messageId).setValue(message)
             binding.etMessage.text.clear()
-        } else {
+        }
+    }
+
+    private fun createNotificationChannel() {
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel(channelId, channelName, importance)
+            notificationManager.createNotificationChannel(channel)
         }
     }
 }
