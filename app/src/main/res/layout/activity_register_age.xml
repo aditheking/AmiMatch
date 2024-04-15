@@ -64,7 +64,6 @@
 
         <DatePicker
             android:id="@+id/ageSelectionPicker"
-            style="@style/MyDatePicker"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/getStartedTextView"
@@ -72,10 +71,10 @@
             android:layout_marginTop="16dp"
             android:layout_marginRight="24dp"
             android:backgroundTint="#ff4081"
-            android:calendarTextColor="#ff4081"
             android:calendarViewShown="false"
             android:datePickerMode="spinner"
-            android:yearListSelectorColor="@color/colorPrimaryDark" />
+            android:yearListSelectorColor="@color/colorPrimaryDark"
+            android:textColor="@android:color/black"/>
 
         <Button
             android:id="@+id/ageContinueButton"

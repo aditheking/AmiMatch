@@ -24,6 +24,8 @@ class MessageAdapter(private val messageList: List<Message>) : RecyclerView.Adap
         val messageTextView: TextView = itemView.findViewById(R.id.messageTextView)
         val timestampTextView: TextView = itemView.findViewById(R.id.timestampTextView)
         val profileImageView: ImageView = itemView.findViewById(R.id.profileImageView)
+        val expandLabel: TextView = itemView.findViewById(R.id.expandLabel)
+
 
     }
 
@@ -41,6 +43,18 @@ class MessageAdapter(private val messageList: List<Message>) : RecyclerView.Adap
 
         Linkify.addLinks(holder.messageTextView, Linkify.ALL)
 
+        if (message.text.length > 100) {
+            holder.messageTextView.maxLines = 4
+            holder.expandLabel.visibility = View.VISIBLE
+            holder.expandLabel.setOnClickListener {
+                holder.messageTextView.maxLines = Int.MAX_VALUE
+                holder.expandLabel.visibility = View.GONE
+            }
+        } else {
+            holder.messageTextView.maxLines = Int.MAX_VALUE
+            holder.expandLabel.visibility = View.GONE
+        }
+
 
         firestore.collection("users").document(message.senderId).get()
             .addOnSuccessListener { document ->
@@ -52,6 +66,7 @@ class MessageAdapter(private val messageList: List<Message>) : RecyclerView.Adap
             .addOnFailureListener { exception ->
 
             }
+
 
         val timestamp = SimpleDateFormat("HH:mm dd/MM/yy", Locale.getDefault()).format(Date(message.timestamp))
         holder.timestampTextView.text = timestamp
