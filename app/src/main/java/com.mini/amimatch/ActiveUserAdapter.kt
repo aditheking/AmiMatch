@@ -19,7 +19,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
-import jp.shts.android.storiesprogressview.StoriesProgressView
 
 class ActiveUserAdapter(
     private val usersList: List<Users>,
@@ -180,36 +179,29 @@ class ActiveUserAdapter(
 
     private fun startViewingStories(stories: List<String>, holder: MyViewHolder) {
         if (stories.isNotEmpty()) {
-            val storiesProgressView = holder.itemView.findViewById<StoriesProgressView>(R.id.stories_progress)
-            storiesProgressView.setStoriesCount(stories.size)
-            storiesProgressView.setStoryDuration(3000L)
+          //  val storiesProgressView = holder.itemView.findViewById<StoriesProgressView>(R.id.stories_progress)
+         //   storiesProgressView.setStoriesCount(stories.size)
+          //  storiesProgressView.setStoryDuration(3000L)
 
-            storiesProgressView.setStoriesListener(object : StoriesProgressView.StoriesListener {
-                override fun onNext() {
-                    currentStoryIndex = (currentStoryIndex + 1) % stories.size
-                    displayStory(stories[currentStoryIndex], holder)
+           // storiesProgressView.setStoriesListener(object : StoriesProgressView.StoriesListener {
+              //  override fun onNext() {
+               //     currentStoryIndex = (currentStoryIndex + 1) % stories.size
+                    //displayStory(stories[currentStoryIndex], holder)
                 }
 
-                override fun onPrev() {
-                    currentStoryIndex = (currentStoryIndex - 1 + stories.size) % stories.size
-                    displayStory(stories[currentStoryIndex], holder)
+            //    override fun onPrev() {
+                  //  currentStoryIndex = (currentStoryIndex - 1 + stories.size) % stories.size
+                    //displayStory(stories[currentStoryIndex], holder)
                 }
 
-                override fun onComplete() {
-                    currentStoryIndex = 0
-                }
-            })
+              //  override fun onComplete() {
+            //      currentStoryIndex = 0
+           //     }
+         //   })
 
-            storiesProgressView.startStories(currentStoryIndex)
-        }
-    }
-
-
-
-
-    private fun displayStory(storyUrl: String, holder: MyViewHolder) {
-        Picasso.get().load(storyUrl).into(holder.imageView)
-    }
+          //  storiesProgressView.startStories(currentStoryIndex)
+      //  }
+  //  }
 
     override fun getItemCount(): Int {
         return usersList.size
