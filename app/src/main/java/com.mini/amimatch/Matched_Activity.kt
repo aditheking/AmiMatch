@@ -45,7 +45,7 @@ class Matched_Activity : AppCompatActivity() {
         val db = FirebaseFirestore.getInstance()
 
         // Create adapters
-        adapter = ActiveUserAdapter(usersList, applicationContext, db)
+        adapter = ActiveUserAdapter(usersList, this, db)
         mAdapter = MatchUserAdapter(matchList, applicationContext, db)
 
         val mLayoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
@@ -66,6 +66,13 @@ class Matched_Activity : AppCompatActivity() {
         fetchUsersData()
         fetchActiveUsersData()
     }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        adapter.handleActivityResult(requestCode, resultCode, data)
+    }
+
 
     private fun prepareActiveData() {
         var users = Users("1", "Aditya Upreti", "https://i.ibb.co/mtW3zRC/Whats-App-Image-2024-04-06-at-11-29-46.jpg", "Developer of app", "Coding", 21, 1, null, true, false, false, false, "")
@@ -130,50 +137,57 @@ class Matched_Activity : AppCompatActivity() {
 
     private fun fetchActiveUsersData() {
         val usersCollection = db.collection("users")
+        val activeUsersList = mutableListOf<Users>()
+
         usersCollection.get()
             .addOnSuccessListener { querySnapshot ->
-                val activeUsersList = mutableListOf<Users>()
                 for (document in querySnapshot.documents) {
-                    val userData = document.data
-                    if (userData != null) {
-                        val userId = userData["userId"] as? String
-                        val name = userData["name"] as? String
-                        val profileImageUrl = userData["profileImageUrl"] as? String
-                        val bio = userData["bio"] as? String
-                        val interest = userData["interest"] as? String
-                        val age = (userData["age"] as? Long)?.toInt() ?: 0
-                        val distance = (userData["distance"] as? Long)?.toInt() ?: 0
-                        val phoneNumber = userData["phoneNumber"] as? String
-                        val sports = userData["sports"] as? Boolean ?: false
-                        val fishing = userData["fishing"] as? Boolean ?: false
-                        val music = userData["music"] as? Boolean ?: false
-                        val travel = userData["travel"] as? Boolean ?: false
-                        val preferSex = userData["preferSex"] as? String ?: ""
-                        val dateOfBirth = userData["dateOfBirth"] as? String
+                    val userId = document.id
+                    db.collection("stories").document(userId).get()
+                        .addOnSuccessListener { storiesDocument ->
+                            if (storiesDocument.exists()) {
+                                val userData = document.data
+                                if (userData != null) {
+                                    val name = userData["name"] as? String
+                                    val profileImageUrl = userData["profileImageUrl"] as? String
+                                    val bio = userData["bio"] as? String
+                                    val interest = userData["interest"] as? String
+                                    val age = (userData["age"] as? Long)?.toInt() ?: 0
+                                    val distance = (userData["distance"] as? Long)?.toInt() ?: 0
+                                    val phoneNumber = userData["phoneNumber"] as? String
+                                    val sports = userData["sports"] as? Boolean ?: false
+                                    val fishing = userData["fishing"] as? Boolean ?: false
+                                    val music = userData["music"] as? Boolean ?: false
+                                    val travel = userData["travel"] as? Boolean ?: false
+                                    val preferSex = userData["preferSex"] as? String ?: ""
+                                    val dateOfBirth = userData["dateOfBirth"] as? String
 
-                        val user = Users(
-                            userId,
-                            name,
-                            profileImageUrl,
-                            bio,
-                            interest,
-                            age,
-                            distance,
-                            phoneNumber,
-                            sports,
-                            fishing,
-                            music,
-                            travel,
-                            preferSex,
-                            dateOfBirth
-                        )
-                        activeUsersList.add(user)
-                    } else {
-                        Log.e(TAG, "User data is null for document ${document.id}")
-                    }
+                                    val user = Users(
+                                        userId,
+                                        name,
+                                        profileImageUrl,
+                                        bio,
+                                        interest,
+                                        age,
+                                        distance,
+                                        phoneNumber,
+                                        sports,
+                                        fishing,
+                                        music,
+                                        travel,
+                                        preferSex,
+                                        dateOfBirth
+                                    )
+                                    activeUsersList.add(user)
+                                }
+                            }
+                            adapter = ActiveUserAdapter(activeUsersList, this, db)
+                            recyclerView.adapter = adapter
+                        }
+                        .addOnFailureListener { exception ->
+                            Log.e(TAG, "Error fetching stories for user $userId: $exception")
+                        }
                 }
-                adapter = ActiveUserAdapter(activeUsersList, applicationContext, db)
-                recyclerView.adapter = adapter
             }
             .addOnFailureListener { exception ->
                 Log.e(TAG, "Error getting documents: ", exception)
@@ -217,7 +231,6 @@ class Matched_Activity : AppCompatActivity() {
     }
 
     private fun searchFunc() {
-        // Implement your search functionality here
     }
 
     private fun getCurrentUserId(): String {

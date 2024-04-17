@@ -1,0 +1,17 @@
+<!-- res/drawable/ic_story_indicator.xml -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24.0"
+    android:viewportHeight="24.0">
+
+    <!-- Outer Circle -->
+    <path
+        android:fillColor="#FF0000"
+        android:pathData="M12,2A10,10 0,1 1,22 12A10,10 0,0 1,12 2M11,5A2,2 0,0 0,9 7A2,2 0,0 0,11 9A2,2 0,0 0,13 7A2,2 0,0 0,11 5M12,15C9.24,15 7,17.24 7,20H8C8,18.34 9.34,17 11,17C12.66,17 14,18.34 14,20H15C15,17.24 12.76,15 12,15Z" />
+
+    <!-- Inner Circle (Transparent) -->
+    <path
+        android:fillColor="#00FFFFFF"
+        android:pathData="M12,4A8,8 0,1 1,20 12A8,8 0,0 1,12 4M11,7A2,2 0,0 0,9 9A2,2 0,0 0,11 11A2,2 0,0 0,13 9A2,2 0,0 0,11 7M12,17C9.24,17 7,14.76 7,12C7,9.24 9.24,7 12,7C14.76,7 17,9.24 17,12C17,14.76 14.76,17 12,17Z" />
+</vector>
