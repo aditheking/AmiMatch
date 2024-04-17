@@ -13,6 +13,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -93,13 +94,13 @@ class ActiveUserAdapter(
     fun handleActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == GALLERY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             val selectedMediaUri = data?.data
-            val userId =
-                usersList[0].userId
+            val userId = FirebaseAuth.getInstance().currentUser?.uid
             if (selectedMediaUri != null && userId != null) {
                 uploadStory(userId, selectedMediaUri)
             }
         }
     }
+
 
     fun uploadStory(userId: String, storyUri: Uri) {
         val storageRef = FirebaseStorage.getInstance().reference.child("stories")
