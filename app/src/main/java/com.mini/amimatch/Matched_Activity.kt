@@ -1,8 +1,10 @@
 package com.mini.amimatch
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DefaultItemAnimator
@@ -221,6 +223,11 @@ class Matched_Activity : AppCompatActivity() {
     private fun getCurrentUserId(): String {
         val currentUser = FirebaseAuth.getInstance().currentUser
         return currentUser?.uid ?: ""
+    }
+
+    fun chat(view: View) {
+        val intent = Intent(this, PrivateChatActivity::class.java)
+        startActivity(intent)
     }
 
     private fun setupTopNavigationView() {
