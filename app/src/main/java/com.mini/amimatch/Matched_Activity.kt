@@ -39,21 +39,30 @@ class Matched_Activity : AppCompatActivity() {
         recyclerView = findViewById(R.id.active_recycler_view)
         mRecyclerView = findViewById(R.id.matche_recycler_view)
 
-        adapter = ActiveUserAdapter(usersList, applicationContext, db)
-        val mLayoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
-        recyclerView.layoutManager = mLayoutManager
-        recyclerView.itemAnimator = DefaultItemAnimator()
-        recyclerView.adapter = adapter
-        prepareActiveData()
+        // Initialize Firestore
+        val db = FirebaseFirestore.getInstance()
 
+        // Create adapters
+        adapter = ActiveUserAdapter(usersList, applicationContext, db)
         mAdapter = MatchUserAdapter(matchList, applicationContext, db)
+
+        val mLayoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
         val mLayoutManager1 = LinearLayoutManager(applicationContext)
-        mRecyclerView.layoutManager = mLayoutManager1
-        mRecyclerView.itemAnimator = DefaultItemAnimator()
-        mRecyclerView.adapter = mAdapter
+        recyclerView.apply {
+            layoutManager = mLayoutManager
+            itemAnimator = DefaultItemAnimator()
+            adapter = adapter
+        }
+
+        mRecyclerView.apply {
+            layoutManager = mLayoutManager1
+            itemAnimator = DefaultItemAnimator()
+            adapter = mAdapter
+        }
 
         currentUserId = getCurrentUserId()
         fetchUsersData()
+        fetchActiveUsersData()
     }
 
     private fun prepareActiveData() {
@@ -110,11 +119,65 @@ class Matched_Activity : AppCompatActivity() {
                     }
                 }
                 generateRandomMatches(usersList)
+
             }
             .addOnFailureListener { exception ->
                 Log.e(TAG, "Error getting documents: ", exception)
             }
     }
+
+    private fun fetchActiveUsersData() {
+        val usersCollection = db.collection("users")
+        usersCollection.get()
+            .addOnSuccessListener { querySnapshot ->
+                val activeUsersList = mutableListOf<Users>()
+                for (document in querySnapshot.documents) {
+                    val userData = document.data
+                    if (userData != null) {
+                        val userId = userData["userId"] as? String
+                        val name = userData["name"] as? String
+                        val profileImageUrl = userData["profileImageUrl"] as? String
+                        val bio = userData["bio"] as? String
+                        val interest = userData["interest"] as? String
+                        val age = (userData["age"] as? Long)?.toInt() ?: 0
+                        val distance = (userData["distance"] as? Long)?.toInt() ?: 0
+                        val phoneNumber = userData["phoneNumber"] as? String
+                        val sports = userData["sports"] as? Boolean ?: false
+                        val fishing = userData["fishing"] as? Boolean ?: false
+                        val music = userData["music"] as? Boolean ?: false
+                        val travel = userData["travel"] as? Boolean ?: false
+                        val preferSex = userData["preferSex"] as? String ?: ""
+                        val dateOfBirth = userData["dateOfBirth"] as? String
+
+                        val user = Users(
+                            userId,
+                            name,
+                            profileImageUrl,
+                            bio,
+                            interest,
+                            age,
+                            distance,
+                            phoneNumber,
+                            sports,
+                            fishing,
+                            music,
+                            travel,
+                            preferSex,
+                            dateOfBirth
+                        )
+                        activeUsersList.add(user)
+                    } else {
+                        Log.e(TAG, "User data is null for document ${document.id}")
+                    }
+                }
+                adapter = ActiveUserAdapter(activeUsersList, applicationContext, db)
+                recyclerView.adapter = adapter
+            }
+            .addOnFailureListener { exception ->
+                Log.e(TAG, "Error getting documents: ", exception)
+            }
+    }
+
 
     private fun generateRandomMatches(usersList: List<Users>) {
         matchList.clear()

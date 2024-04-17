@@ -30,8 +30,8 @@ class ActiveUserAdapter(usersList: List<Users>, context: Context, private val fi
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val user: Users = usersList[position]
+        holder.name.text = user.name
 
-        // Fetch user data from Firestore
         val senderId = user.userId
         if (senderId != null) {
             firestore.collection("users").document(senderId).get()
