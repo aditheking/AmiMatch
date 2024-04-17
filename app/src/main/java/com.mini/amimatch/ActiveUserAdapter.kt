@@ -19,6 +19,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
+import jp.shts.android.storiesprogressview.StoriesProgressView
 
 class ActiveUserAdapter(
     private val usersList: List<Users>,
@@ -144,43 +145,67 @@ class ActiveUserAdapter(
 
 
     private fun loadUserStories(userId: String, holder: MyViewHolder) {
-        firestore.collection("stories").document(userId).get()
-            .addOnSuccessListener { document ->
-                if (document != null && document.exists()) {
-                    val data = document.data
-                    if (data != null) {
-                        val stories = (data["stories"] as? List<*>)?.filterIsInstance<String>()
-                        if (stories != null && stories.isNotEmpty()) {
-                            storyList[userId] = stories
-                            holder.storyIndicator.visibility = View.VISIBLE
-                            holder.itemView.setOnClickListener {
-                                startViewingStories(stories, holder)
+        val stories = storyList[userId]
+        if (stories != null && stories.isNotEmpty()) {
+            holder.storyIndicator.visibility = View.VISIBLE
+            holder.itemView.setOnClickListener {
+                startViewingStories(stories, holder)
+            }
+        } else {
+            firestore.collection("stories").document(userId).get()
+                .addOnSuccessListener { document ->
+                    if (document != null && document.exists()) {
+                        val data = document.data
+                        if (data != null) {
+                            val stories = (data["stories"] as? List<*>)?.filterIsInstance<String>()
+                            if (stories != null && stories.isNotEmpty()) {
+                                storyList[userId] = stories
+                                holder.storyIndicator.visibility = View.VISIBLE
+                                holder.itemView.setOnClickListener {
+                                    startViewingStories(stories, holder)
+                                }
+                                return@addOnSuccessListener
                             }
-                            return@addOnSuccessListener
                         }
                     }
+                    // No stories found for this user
+                    holder.storyIndicator.visibility = View.GONE
                 }
-                holder.storyIndicator.visibility = View.GONE
-            }
-            .addOnFailureListener { exception ->
-                Log.e(TAG, "Error fetching user stories: $exception")
-            }
+                .addOnFailureListener { exception ->
+                    Log.e(TAG, "Error fetching user stories: $exception")
+                }
+        }
     }
 
+
     private fun startViewingStories(stories: List<String>, holder: MyViewHolder) {
-        currentStoryIndex = 0
-        currentStoryTimer = Handler()
-        currentStoryTimer?.post(object : Runnable {
-            override fun run() {
-                displayStory(stories[currentStoryIndex], holder)
-                currentStoryIndex = (currentStoryIndex + 1) % stories.size
-                currentStoryTimer?.postDelayed(
-                    this,
-                    3000
-                )
-            }
-        })
+        if (stories.isNotEmpty()) {
+            val storiesProgressView = holder.itemView.findViewById<StoriesProgressView>(R.id.stories_progress)
+            storiesProgressView.setStoriesCount(stories.size)
+            storiesProgressView.setStoryDuration(3000L)
+
+            storiesProgressView.setStoriesListener(object : StoriesProgressView.StoriesListener {
+                override fun onNext() {
+                    currentStoryIndex = (currentStoryIndex + 1) % stories.size
+                    displayStory(stories[currentStoryIndex], holder)
+                }
+
+                override fun onPrev() {
+                    currentStoryIndex = (currentStoryIndex - 1 + stories.size) % stories.size
+                    displayStory(stories[currentStoryIndex], holder)
+                }
+
+                override fun onComplete() {
+                    currentStoryIndex = 0
+                }
+            })
+
+            storiesProgressView.startStories(currentStoryIndex)
+        }
     }
+
+
+
 
     private fun displayStory(storyUrl: String, holder: MyViewHolder) {
         Picasso.get().load(storyUrl).into(holder.imageView)
@@ -195,8 +220,25 @@ class ActiveUserAdapter(
         var name: TextView = itemView.findViewById(R.id.aui_name)
         var storyIndicator: ImageView = itemView.findViewById(R.id.story_indicator)
         var btnUploadStory: ImageButton = itemView.findViewById(R.id.btn_upload_story)
+
+        init {
+            imageView.setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    val storyUrls = storyList[usersList[position].userId]
+                    if (storyUrls != null) {
+                        val intent = Intent(activity, FullScreenActivity::class.java)
+                        intent.putStringArrayListExtra("storyUrls", ArrayList(storyUrls))
+                        intent.putExtra("position", 0) // Start with the first story
+                        activity.startActivity(intent)
+                    }
+                }
+            }
+        }
     }
 
+}
 
-    }
+
+
 

@@ -55,4 +55,11 @@
         android:src="@drawable/ic_lens_black_24dp"
         android:visibility="gone"/>
 
+    <!-- Stories Progress View -->
+    <jp.shts.android.storiesprogressview.StoriesProgressView
+        android:id="@+id/stories_progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"/>
+
 </LinearLayout>

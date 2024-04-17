@@ -51,6 +51,7 @@
         <activity android:name=".RegisterAge" />
         <activity android:name=".RegisterHobby" />
         <activity android:name=".SettingsActivity" />
+        <activity android:name=".FullScreenActivity" />
         <activity android:name=".BtnLikeActivity" />
         <activity android:name=".BtnDislikeActivity">
         </activity>
