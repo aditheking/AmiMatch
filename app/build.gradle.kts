@@ -85,6 +85,8 @@ dependencies {
     implementation ("com.yahoo.mobile.client.android.util.rangeseekbar:rangeseekbar-library:0.1.0")
     implementation ("de.hdodenhof:circleimageview:2.2.0")
     implementation("com.google.firebase:firebase-database-ktx:20.3.1")
+    implementation("com.google.firebase:firebase-analytics")
+    implementation(platform("com.google.firebase:firebase-bom:32.8.1"))
     implementation ("androidx.fragment:fragment-ktx:1.3.0")
     implementation("com.google.firebase:firebase-messaging:23.4.1")
     implementation("androidx.recyclerview:recyclerview:1.3.2")

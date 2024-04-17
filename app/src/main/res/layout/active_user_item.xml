@@ -38,6 +38,7 @@
             android:gravity="center_vertical"
             android:maxLines="1"
             android:text="Aditya"
+            android:textColor="@color/black"
             android:textSize="10dp" />
     </LinearLayout>
 

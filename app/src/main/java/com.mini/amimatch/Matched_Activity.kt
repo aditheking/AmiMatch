@@ -4,9 +4,6 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.widget.EditText
-import android.widget.LinearLayout
-import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -42,20 +39,18 @@ class Matched_Activity : AppCompatActivity() {
         recyclerView = findViewById(R.id.active_recycler_view)
         mRecyclerView = findViewById(R.id.matche_recycler_view)
 
-        adapter = ActiveUserAdapter(usersList, applicationContext)
-        val mLayoutManager = LinearLayoutManager(this, LinearLayout.HORIZONTAL, false)
+        adapter = ActiveUserAdapter(usersList, applicationContext, db)
+        val mLayoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
         recyclerView.layoutManager = mLayoutManager
         recyclerView.itemAnimator = DefaultItemAnimator()
         recyclerView.adapter = adapter
         prepareActiveData()
 
-        mAdapter = MatchUserAdapter(matchList, applicationContext)
+        mAdapter = MatchUserAdapter(matchList, applicationContext, db)
         val mLayoutManager1 = LinearLayoutManager(applicationContext)
         mRecyclerView.layoutManager = mLayoutManager1
         mRecyclerView.itemAnimator = DefaultItemAnimator()
         mRecyclerView.adapter = mAdapter
-
-        prepareMatchData()
 
         currentUserId = getCurrentUserId()
         fetchUsersData()
@@ -67,11 +62,6 @@ class Matched_Activity : AppCompatActivity() {
         adapter.notifyDataSetChanged()
     }
 
-    private fun prepareMatchData() {
-        var users = Users("1", "Aditya Upreti", "https://i.ibb.co/mtW3zRC/Whats-App-Image-2024-04-06-at-11-29-46.jpg", "Developer of app", "Coding", 21, 1, null, true, false, false, false, "")
-        matchList.add(users)
-        mAdapter.notifyDataSetChanged()
-    }
 
     private fun fetchUsersData() {
         val usersCollection = db.collection("users")

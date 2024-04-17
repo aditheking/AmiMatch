@@ -1,79 +1,61 @@
 package com.mini.amimatch
-import android.util.Log
-import com.google.firebase.firestore.FirebaseFirestore
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.os.Build
+import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
 
-    private val TAG = "MyFirebaseMsgService"
-    private val db = FirebaseFirestore.getInstance()
-
-    override fun onNewToken(token: String) {
-        super.onNewToken(token)
-        Log.d(TAG, "Refreshed token: $token")
-
-        saveTokenToFirestore(token)
-    }
-
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
 
-        // Check if the message is a Firebase In-App Messaging message
-        remoteMessage.data["google.c.a.e_a"].let { inAppMessageAction ->
-            if (inAppMessageAction != null && inAppMessageAction == "true") {
-                Log.d(TAG, "Received Firebase In-App Messaging message")
-            } else {
-                remoteMessage.data.isNotEmpty().let {
-                    handleDataPayload(remoteMessage.data)
-                }
+        // Check if the message contains data payload.
+        remoteMessage.data.isNotEmpty().let {
+            // Extract message data
+            val messageText = remoteMessage.data["text"]
 
-                remoteMessage.notification?.let {
-                    handleNotificationPayload(it)
-                }
+            // Display notification
+            messageText?.let { text ->
+                sendNotification(text)
             }
         }
     }
 
-    private fun handleDataPayload(data: Map<String, String>) {
-        // Handle data payload
-    }
-
-    private fun handleNotificationPayload(notification: RemoteMessage.Notification) {
-        // Handle notification payload
-    }
-
-    private fun saveTokenToFirestore(token: String) {
-        val tokenData = hashMapOf(
-            "token" to token
+    private fun sendNotification(messageText: String) {
+        val channelId = getString(R.string.default_notification_channel_id)
+        val channelName = getString(R.string.default_notification_channel_name)
+        val intent = Intent(this, ChatActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        val pendingIntent = PendingIntent.getActivity(
+            this, 0, intent,
+            PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        db.collection("tokens")
-            .document("token")
-            .set(tokenData)
-            .addOnSuccessListener {
-                Log.d(TAG, "Token successfully saved to Firestore")
-            }
-            .addOnFailureListener { e ->
-                Log.w(TAG, "Error saving token to Firestore", e)
-            }
-    }
+        val notificationBuilder = NotificationCompat.Builder(this, channelId)
+            .setSmallIcon(R.drawable.ic_main)
+            .setContentTitle(getString(R.string.app_name))
+            .setContentText(messageText)
+            .setAutoCancel(true)
+            .setContentIntent(pendingIntent)
 
-    private fun fetchTokenFromFirestore() {
-        // Fetch token from Firestore
-        db.collection("tokens")
-            .document("token")
-            .get()
-            .addOnSuccessListener { document ->
-                if (document.exists()) {
-                    val token = document.getString("token")
-                    Log.d(TAG, "Token from Firestore: $token")
-                } else {
-                    Log.d(TAG, "No such document")
-                }
-            }
-            .addOnFailureListener { exception ->
-                Log.d(TAG, "get failed with ", exception)
-            }
+        val notificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        // Create Notification Channel for Android Oreo and above
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                channelId,
+                channelName,
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+            notificationManager.createNotificationChannel(channel)
+        }
+
+        notificationManager.notify(0, notificationBuilder.build())
     }
 }

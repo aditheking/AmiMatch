@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -33,16 +34,23 @@ class ChatActivity : AppCompatActivity() {
     private val messageList = ArrayList<Message>()
     private val firestore: FirebaseFirestore = Firebase.firestore
     private var lastSeenMessageTimestamp: Long = 0
+    private lateinit var channelId: String
+    private lateinit var channelName: String
 
-    private val channelId = "default_channel_id"
-    private val channelName = "Default Channel"
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityChatBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        channelId = getString(R.string.default_notification_channel_id)
+        channelName = getString(R.string.default_notification_channel_name)
+
         FirebaseMessaging.getInstance().subscribeToTopic("allMessages")
+        Log.d("ChatActivity", "Subscribed to topic: allMessages")
+
+
 
         database = FirebaseDatabase.getInstance().reference
 
