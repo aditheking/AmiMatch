@@ -194,7 +194,7 @@
                         android:paddingEnd="10dp"
                         android:paddingRight="10dp"
 
-                        android:text="50-14"
+                        android:text="30-17"
                         android:textColor="@color/black"
                         android:textSize="16dp" />
 
@@ -205,8 +205,8 @@
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="10dp"
                         android:layout_marginBottom="10dp"
-                        rsb:absoluteMaxValue="14"
-                        rsb:absoluteMinValue="50" />
+                        rsb:absoluteMaxValue="17"
+                        rsb:absoluteMinValue="30" />
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>

@@ -102,7 +102,7 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         accountDelete.setOnClickListener {
-            Toast.makeText(this, "Account cannot be deleted please stay with us ;)", Toast.LENGTH_SHORT).show()
+            DeleteAccount()
         }
 
         logoutButton.setOnClickListener {
@@ -227,6 +227,12 @@ class SettingsActivity : AppCompatActivity() {
     private fun showLicensesInformation() {
         val intent = Intent(this, WebViewActivity::class.java)
         intent.putExtra(WebViewActivity.EXTRA_FILE_NAME, "licenses_info.html")
+        startActivity(intent)
+    }
+
+    private fun DeleteAccount() {
+        val intent = Intent(this, WebViewActivity::class.java)
+        intent.putExtra(WebViewActivity.EXTRA_FILE_NAME, "delete_info.html")
         startActivity(intent)
     }
 
