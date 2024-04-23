@@ -28,6 +28,10 @@ class Cards() : Parcelable {
     var userFishing: Boolean = false
     var userTravel: Boolean = false
 
+    constructor(parcel: Parcel, userId: String?) : this(parcel) {
+        this.userId = userId
+    }
+
     constructor(parcel: Parcel) : this() {
         userId = parcel.readString()
         name = parcel.readString()

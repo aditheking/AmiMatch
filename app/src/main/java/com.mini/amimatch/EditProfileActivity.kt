@@ -176,7 +176,6 @@ class EditProfileActivity : AppCompatActivity() {
     }
 
     private fun saveProfileToFirestore() {
-        // Retrieve other profile information from EditText fields
         val aboutText = findViewById<EditText>(R.id.about_edit_text).text.toString()
         val yearSemesterText = findViewById<EditText>(R.id.year_semester_edit_text).text.toString()
         val courseText = findViewById<EditText>(R.id.course_edit_text).text.toString()
@@ -184,26 +183,20 @@ class EditProfileActivity : AppCompatActivity() {
         val bioText = findViewById<EditText>(R.id.bio_edit_text).text.toString()
         val interestsText = findViewById<EditText>(R.id.interests_edit_text).text.toString()
 
-        // Retrieve current user's ID
         val userId = FirebaseAuth.getInstance().currentUser?.uid
 
-        // Check if user ID is not null
         userId?.let { uid ->
-            // Access the Firestore collection "users1"
-            val userRef = FirebaseFirestore.getInstance().collection("users1").document(uid)
+            val userRef = FirebaseFirestore.getInstance().collection("users").document(uid)
 
-            // Create a Map to store the user's profile data
-            val userProfile = hashMapOf(
-                "about" to aboutText,
-                "year_semester" to yearSemesterText,
-                "course" to courseText,
-                "school" to schoolText,
-                "bio" to bioText,
-                "interests" to interestsText,
-            )
+            val userProfileUpdates = hashMapOf<String, Any>()
+            if (aboutText.isNotBlank()) userProfileUpdates["about"] = aboutText
+            if (yearSemesterText.isNotBlank()) userProfileUpdates["year_semester"] = yearSemesterText
+            if (courseText.isNotBlank()) userProfileUpdates["course"] = courseText
+            if (schoolText.isNotBlank()) userProfileUpdates["school"] = schoolText
+            if (bioText.isNotBlank()) userProfileUpdates["bio"] = bioText
+            if (interestsText.isNotBlank()) userProfileUpdates["interests"] = interestsText
 
-            // Save the data to Firestore
-            userRef.set(userProfile)
+            userRef.update(userProfileUpdates)
                 .addOnSuccessListener {
                     Toast.makeText(
                         this@EditProfileActivity,
@@ -211,17 +204,15 @@ class EditProfileActivity : AppCompatActivity() {
                         Toast.LENGTH_SHORT
                     ).show()
 
-                    // Upload images to Firebase Storage
                     uploadImagesToStorage(uid)
 
-                    // Create an Intent to pass data to ProfileCheckinMain activity
                     val intent = Intent(this, ProfileCheckinMain::class.java).apply {
                         putExtra("userId", userId)
-                        putExtra("about", aboutText)
-                        putExtra("year_semester", yearSemesterText)
-                        putExtra("course", courseText)
-                        putExtra("school", schoolText)
-                        putExtra("bio", bioText)
+                      putExtra("about", aboutText)
+                       putExtra("year_semester", yearSemesterText)
+                      putExtra("course", courseText)
+                      putExtra("school", schoolText)
+                       putExtra("bio", bioText)
                         putExtra("interests", interestsText)
                         putStringArrayListExtra("imageUris", ArrayList(picUris.map { it.toString() }))
                     }
