@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId = "com.mini.amimatch"
-        minSdk = 24
+        minSdk = 23
         targetSdk = 34
         versionCode = 2
         versionName = "1.0"
