@@ -1,5 +1,6 @@
 package com.mini.amimatch
 
+import android.text.util.Linkify
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -53,6 +54,8 @@ class PrivateMessageAdapter(private val messageList: List<Message>) : RecyclerVi
         }
 
         loadProfilePicture(holder.profileImageView, message.senderId)
+        Linkify.addLinks(holder.messageTextView, Linkify.ALL)
+
 
         val timestamp = SimpleDateFormat("HH:mm dd/MM/yy", Locale.getDefault()).format(Date(message.timestamp))
         holder.timestampTextView.text = timestamp
