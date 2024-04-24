@@ -271,6 +271,7 @@ class MainActivity : Activity() {
             if (rowItems.isNotEmpty()) {
                 val cardItem = rowItems[0]
                 val intent = Intent(mContext, ProfileCheckinMain::class.java).apply {
+                    putExtra("userId", cardItem.userId)
                     putExtra("name", cardItem.name)
                     putExtra("bio", cardItem.bio)
                     putExtra("interest", cardItem.interest)

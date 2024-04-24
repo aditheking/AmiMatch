@@ -1,9 +1,11 @@
 package com.mini.amimatch
 
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -16,6 +18,8 @@ class ProfileCheckinMain : AppCompatActivity() {
     private var profileImageUrl: String? = null
     private var userLocation: Location? = null
     private lateinit var gps: GPS
+    private var userId: String? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,6 +28,7 @@ class ProfileCheckinMain : AppCompatActivity() {
         mContext = this
 
         gps = GPS(mContext)
+        userId = intent.getStringExtra("userId")
 
 
         // Set up views
@@ -75,20 +80,29 @@ class ProfileCheckinMain : AppCompatActivity() {
         }
 
         when (profileImageUrl) {
-            "defaultFemale" -> Glide.with(mContext).load(R.drawable.default_woman).into(profileImage)
+            "defaultFemale" -> Glide.with(mContext).load(R.drawable.default_woman)
+                .into(profileImage)
+
             "defaultMale" -> Glide.with(mContext).load(R.drawable.default_man).into(profileImage)
             else -> Glide.with(mContext).load(profileImageUrl).into(profileImage)
         }
 
+
         binding.sendSms.setOnClickListener {
-            startPrivateChat()
+            startPrivateChat(userId)
         }
+
     }
+
 
     private fun calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Int {
         val theta = lon1 - lon2
         var dist =
-            Math.sin(Math.toRadians(lat1)) * Math.sin(Math.toRadians(lat2)) + Math.cos(Math.toRadians(lat1)) * Math.cos(
+            Math.sin(Math.toRadians(lat1)) * Math.sin(Math.toRadians(lat2)) + Math.cos(
+                Math.toRadians(
+                    lat1
+                )
+            ) * Math.cos(
                 Math.toRadians(lat2)
             ) * Math.cos(Math.toRadians(theta))
         dist = Math.acos(dist)
@@ -100,21 +114,25 @@ class ProfileCheckinMain : AppCompatActivity() {
         } else dis
     }
 
-    private fun startPrivateChat() {
-        val intent = Intent(mContext, PrivateChatActivity::class.java)
-        startActivity(intent)
+    private fun startPrivateChat(userId: String?) {
+        if (userId != null) {
+            val intent = Intent(mContext, PrivateChatActivity::class.java)
+            intent.putExtra("userId", userId)
+            startActivity(intent)
+        } else {
+            Log.e(TAG, "User ID is null")
+        }
     }
 
+        fun DislikeBtn(v: View?) {
+            val btnClick = Intent(mContext, BtnDislikeActivity::class.java)
+            btnClick.putExtra("url", profileImageUrl)
+            startActivity(btnClick)
+        }
 
-    fun DislikeBtn(v: View?) {
-        val btnClick = Intent(mContext, BtnDislikeActivity::class.java)
-        btnClick.putExtra("url", profileImageUrl)
-        startActivity(btnClick)
+        fun LikeBtn(v: View?) {
+            val btnClick = Intent(mContext, BtnLikeActivity::class.java)
+            btnClick.putExtra("url", profileImageUrl)
+            startActivity(btnClick)
+        }
     }
-
-    fun LikeBtn(v: View?) {
-        val btnClick = Intent(mContext, BtnLikeActivity::class.java)
-        btnClick.putExtra("url", profileImageUrl)
-        startActivity(btnClick)
-    }
-}

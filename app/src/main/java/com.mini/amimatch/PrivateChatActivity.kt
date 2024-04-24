@@ -1,6 +1,6 @@
 package com.mini.amimatch
-
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
@@ -17,14 +17,16 @@ class PrivateChatActivity : AppCompatActivity() {
     private lateinit var privateMessageAdapter: PrivateMessageAdapter
     private val privateMessageList = ArrayList<Message>()
     private val currentUser = FirebaseAuth.getInstance().currentUser
-    private var otherUserId: String? = null
+    private var userId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPrivateChatBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        otherUserId = intent.getStringExtra("otherUserId")
+        userId = intent.getStringExtra("userId")
+        Log.d("PrivateChatActivity", "Current user ID: ${currentUser?.uid}")
+        Log.d("PrivateChatActivity", "Other user ID: $userId")
 
         database = FirebaseDatabase.getInstance().reference
 
@@ -43,7 +45,8 @@ class PrivateChatActivity : AppCompatActivity() {
     }
 
     private fun fetchMessages() {
-        val chatRoomId = generateChatRoomId(currentUser!!.uid, otherUserId)
+        val chatRoomId = generateChatRoomId(currentUser!!.uid, userId)
+        Log.d("PrivateChatActivity", "Chat room ID: $chatRoomId")
         database.child("private_messages").child(chatRoomId)
             .addChildEventListener(object : ChildEventListener {
                 override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
@@ -51,6 +54,7 @@ class PrivateChatActivity : AppCompatActivity() {
                     message?.let {
                         privateMessageList.add(it)
                         privateMessageAdapter.notifyDataSetChanged()
+                        Log.d("PrivateChatActivity", "Received message: $it")
                     }
                 }
 
@@ -63,7 +67,6 @@ class PrivateChatActivity : AppCompatActivity() {
 
     private fun sendMessage() {
         val messageText = binding.etMessage.text.toString().trim()
-        privateMessageAdapter.notifyDataSetChanged()
         if (currentUser != null && messageText.isNotEmpty()) {
             val currentTimeStamp = System.currentTimeMillis()
             val message = Message(
@@ -72,7 +75,8 @@ class PrivateChatActivity : AppCompatActivity() {
                 text = messageText,
                 timestamp = currentTimeStamp
             )
-            val chatRoomId = generateChatRoomId(currentUser.uid, otherUserId)
+            val chatRoomId = generateChatRoomId(currentUser.uid, userId)
+            Log.d("PrivateChatActivity", "Sending message to chat room: $chatRoomId")
             val messageId = database.child("private_messages").child(chatRoomId).push().key
             if (messageId != null) {
                 message.id = messageId
@@ -84,13 +88,14 @@ class PrivateChatActivity : AppCompatActivity() {
     }
 
     private fun generateChatRoomId(userId1: String?, userId2: String?): String {
-        if (userId1 != null && userId2 != null) {
-            return if (userId1 < userId2) "$userId1-$userId2" else "$userId2-$userId1"
+        return if (userId1 != null && userId2 != null) {
+            if (userId1 < userId2) {
+                "$userId1-$userId2"
+            } else {
+                "$userId2-$userId1"
+            }
         } else {
-            return ""
+            ""
         }
     }
-
 }
-
-
