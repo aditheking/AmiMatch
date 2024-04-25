@@ -163,12 +163,15 @@ class ProfileCheckinMain : AppCompatActivity() {
 
 
 
-private fun sendFriendRequest(userId: String?) {
-    if (userId != null) {
+    private fun sendFriendRequest(userId: String?) {
         val currentUserUid = FirebaseAuth.getInstance().currentUser?.uid
-        if (currentUserUid != null) {
-            val senderRequestRef = firestore.collection("friend_requests").document(currentUserUid)
+        if (userId != null && currentUserUid != null) {
+            val senderRequestRef = firestore.collection("friend_requests").document(userId).collection("received").document(currentUserUid)
+            val receiverRequestRef = firestore.collection("friend_requests").document(currentUserUid).collection("sent").document(userId)
+
             val senderData = hashMapOf("userId" to userId)
+            val receiverData = hashMapOf("userId" to currentUserUid)
+
             senderRequestRef.set(senderData)
                 .addOnSuccessListener {
                     Log.d(TAG, "Friend request sent successfully")
@@ -177,19 +180,16 @@ private fun sendFriendRequest(userId: String?) {
                     Log.e(TAG, "Error sending friend request", e)
                 }
 
-            val receiverRequestRef = firestore.collection("friend_requests").document(userId)
-            val receiverData = hashMapOf("userId" to currentUserUid)
             receiverRequestRef.set(receiverData)
                 .addOnSuccessListener {
                 }
                 .addOnFailureListener { e ->
                     Log.e(TAG, "Error sending friend request to receiver", e)
                 }
+        } else {
+            Log.e(TAG, "User ID is null")
         }
-    } else {
-        Log.e(TAG, "User ID is null")
     }
-}
 
 
     private fun calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Int {

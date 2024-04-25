@@ -85,27 +85,25 @@ class Matched_Activity : AppCompatActivity() {
     private fun fetchFriendRequests() {
         val currentUserUid = FirebaseAuth.getInstance().currentUser?.uid
         if (currentUserUid != null) {
-            val friendRequestsRef = db.collection("friend_requests").document(currentUserUid)
-            friendRequestsRef.get()
-                .addOnSuccessListener { document ->
-                    if (document.exists()) {
-                        val userId = document.getString("userId")
-                        if (userId != null) {
-                            val userRef = db.collection("users").document(userId)
-                            userRef.get()
-                                .addOnSuccessListener { userDocument ->
-                                    if (userDocument.exists()) {
-                                        val userData = userDocument.toObject(Users::class.java)
-                                        if (userData != null) {
-                                            friendRequestsList.add(userData)
-                                            friendRequestsAdapter.notifyDataSetChanged()
-                                        }
+            val friendRequestsReceivedRef = db.collection("friend_requests").document(currentUserUid).collection("received")
+            friendRequestsReceivedRef.get()
+                .addOnSuccessListener { documents ->
+                    for (document in documents) {
+                        val senderId = document.id
+                        val senderRef = db.collection("users").document(senderId)
+                        senderRef.get()
+                            .addOnSuccessListener { senderDocument ->
+                                if (senderDocument.exists()) {
+                                    val senderData = senderDocument.toObject(Users::class.java)
+                                    if (senderData != null) {
+                                        friendRequestsList.add(senderData)
+                                        friendRequestsAdapter.notifyDataSetChanged()
                                     }
                                 }
-                                .addOnFailureListener { e ->
-                                    Log.e(TAG, "Error getting user data", e)
-                                }
-                        }
+                            }
+                            .addOnFailureListener { e ->
+                                Log.e(TAG, "Error getting sender data", e)
+                            }
                     }
                 }
                 .addOnFailureListener { e ->
@@ -113,6 +111,8 @@ class Matched_Activity : AppCompatActivity() {
                 }
         }
     }
+
+
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
