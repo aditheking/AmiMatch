@@ -23,4 +23,23 @@
         android:textColor="@color/textColor"
         android:textSize="10sp" />
 
+    <Button
+        android:id="@+id/btnAccept"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Accept"
+        android:textColor="@color/black"
+        android:textSize="10sp"
+        android:background="@android:color/transparent"/>
+
+    <Button
+        android:id="@+id/btnReject"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Reject"
+        android:textColor="@color/black"
+        android:textSize="10sp"
+        android:background="@android:color/transparent"/>
+
+
 </LinearLayout>

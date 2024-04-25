@@ -53,9 +53,17 @@ class FriendRequestsAdapter(private val friendRequestsList: ArrayList<Users>, pr
                 }
         }
 
+       // holder.btnAccept.setOnClickListener {
+       //     acceptFriendRequest(user)
+       // }
+
+    //    holder.btnReject.setOnClickListener {
+      //      rejectFriendRequest(user)
+      //  }
+
+
         holder.name.text = user.name
     }
-
 
     override fun getItemCount(): Int {
         return friendRequestsList.size

@@ -112,6 +112,41 @@ class Matched_Activity : AppCompatActivity() {
         }
     }
 
+    private fun acceptFriendRequest(user: Users) {
+        val currentUserUid = FirebaseAuth.getInstance().currentUser?.uid
+        if (currentUserUid != null) {
+            val acceptedFriendRequestsRef = db.collection("accepted_friend_requests").document(currentUserUid).collection("accepted")
+            val newFriendRef = user.userId?.let { acceptedFriendRequestsRef.document(it) }
+            if (newFriendRef != null) {
+                newFriendRef.set(user)
+                    .addOnSuccessListener {
+                        friendRequestsList.remove(user)
+                        friendRequestsAdapter.notifyDataSetChanged()
+                    }
+                    .addOnFailureListener { e ->
+                        Log.e(TAG, "Error accepting friend request", e)
+                    }
+            }
+        }
+    }
+
+    private fun rejectFriendRequest(user: Users) {
+        val currentUserUid = FirebaseAuth.getInstance().currentUser?.uid
+        if (currentUserUid != null) {
+            val friendRequestsReceivedRef = db.collection("friend_requests").document(currentUserUid).collection("received")
+            user.userId?.let {
+                friendRequestsReceivedRef.document(it)
+                    .delete()
+                    .addOnSuccessListener {
+                        friendRequestsList.remove(user)
+                        friendRequestsAdapter.notifyDataSetChanged()
+                    }
+                    .addOnFailureListener { e ->
+                        Log.e(TAG, "Error rejecting friend request", e)
+                    }
+            }
+        }
+    }
 
 
 
