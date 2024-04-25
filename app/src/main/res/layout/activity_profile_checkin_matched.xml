@@ -51,7 +51,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_lock"
+            android:layout_gravity="center_horizontal"
             android:visibility="gone" />
+
 
         <TextView
             android:id="@+id/privateMessage"
@@ -144,6 +146,7 @@
 
         <!-- Bio -->
         <TextView
+            android:id="@+id/bioTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/light_grey"
@@ -163,6 +166,7 @@
 
         <!-- Interests -->
         <TextView
+            android:id="@+id/interestsTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/light_grey"
@@ -182,6 +186,7 @@
 
         <!-- Chat -->
         <TextView
+            android:id="@+id/chattitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/light_grey"
@@ -220,6 +225,7 @@
 
         <!-- Email -->
         <TextView
+            android:id="@+id/emailtitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/light_grey"
