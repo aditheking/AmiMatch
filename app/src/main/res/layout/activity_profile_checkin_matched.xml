@@ -46,6 +46,26 @@
             android:textColor="@android:color/black"
             android:textSize="18sp" />
 
+        <ImageView
+            android:id="@+id/lockIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_lock"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/privateMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/private_account_message"
+            android:textColor="@android:color/black"
+            android:layout_below="@id/lockIcon"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="16dp"
+            android:textSize="16sp"
+            android:visibility="gone" />
+
+
         <!-- About -->
         <TextView
             android:id="@+id/about_text_view"

@@ -51,6 +51,7 @@
     The Developer may update this Privacy Policy from time to time. You are advised to review this page periodically for any changes. By continuing to use the App after any modifications to this Privacy Policy, you acknowledge and agree to the updated terms.<br><br>
     ]]>
 </string>
+    <string name="private_account_message">This account is set to private. To view their profile details or chat with them, you must add them as a friend first.</string>
 
 
 </resources>

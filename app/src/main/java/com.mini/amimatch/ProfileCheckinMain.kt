@@ -7,9 +7,12 @@ import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
+import com.google.firebase.firestore.FirebaseFirestore
 import com.mini.amimatch.databinding.ActivityProfileCheckinMatchedBinding
 
 class ProfileCheckinMain : AppCompatActivity() {
@@ -19,7 +22,7 @@ class ProfileCheckinMain : AppCompatActivity() {
     private var userLocation: Location? = null
     private lateinit var gps: GPS
     private var userId: String? = null
-
+    private val firestore = FirebaseFirestore.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,7 +32,6 @@ class ProfileCheckinMain : AppCompatActivity() {
 
         gps = GPS(mContext)
         userId = intent.getStringExtra("userId")
-
 
         // Set up views
         val profileName: TextView = findViewById(R.id.profile_name)
@@ -41,9 +43,10 @@ class ProfileCheckinMain : AppCompatActivity() {
         val yearSemesterTextView: TextView = findViewById(R.id.year_semester)
         val courseTextView: TextView = findViewById(R.id.course)
         val schoolTextView: TextView = findViewById(R.id.school)
+        val lockIcon: ImageView = findViewById(R.id.lockIcon)
+
 
         userLocation = gps.location
-
 
         val intent: Intent = getIntent()
         val name = intent.getStringExtra("name")
@@ -61,8 +64,6 @@ class ProfileCheckinMain : AppCompatActivity() {
         )
         val append = if (distance == 1) "KM away" else "KM away"
         profileImageUrl = intent.getStringExtra("profile_image_url")
-
-
 
         profileDistance.text = "$distance $append"
         profileName.text = name
@@ -87,12 +88,52 @@ class ProfileCheckinMain : AppCompatActivity() {
             else -> Glide.with(mContext).load(profileImageUrl).into(profileImage)
         }
 
-
         binding.sendSms.setOnClickListener {
             startPrivateChat(userId)
         }
-
+        retrievePrivacySettings(userId)
     }
+
+    private fun retrievePrivacySettings(userId: String?) {
+        userId?.let {
+            firestore.collection("users").document(it).get()
+                .addOnSuccessListener { document ->
+                    val isPrivate = document?.getBoolean("isPrivate") ?: false
+                    val isPublic = document?.getBoolean("isPublic") ?: true
+
+                    if (isPrivate) {
+                        blurFields()
+                    }
+                }
+                .addOnFailureListener { exception ->
+                }
+        }
+    }
+
+    private fun blurFields() {
+        val profileBio: TextView = findViewById(R.id.bio_match)
+        val profileInterest: TextView = findViewById(R.id.interests_match)
+        val aboutTextView: TextView = findViewById(R.id.about)
+        val yearSemesterTextView: TextView = findViewById(R.id.year_semester)
+        val courseTextView: TextView = findViewById(R.id.course)
+        val schoolTextView: TextView = findViewById(R.id.school)
+        val emailButton: Button = findViewById(R.id.send_email)
+        val privateChatButton: Button = findViewById(R.id.send_sms)
+
+        profileBio.visibility = View.INVISIBLE
+        profileInterest.visibility = View.INVISIBLE
+        aboutTextView.visibility = View.INVISIBLE
+        yearSemesterTextView.visibility = View.INVISIBLE
+        courseTextView.visibility = View.INVISIBLE
+        schoolTextView.visibility = View.INVISIBLE
+        emailButton.visibility = View.INVISIBLE
+        privateChatButton.isEnabled = false
+
+        binding.lockIcon.visibility = View.VISIBLE
+
+        binding.privateMessage.visibility = View.VISIBLE
+    }
+
 
 
     private fun calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Int {
@@ -124,15 +165,15 @@ class ProfileCheckinMain : AppCompatActivity() {
         }
     }
 
-        fun DislikeBtn(v: View?) {
-            val btnClick = Intent(mContext, BtnDislikeActivity::class.java)
-            btnClick.putExtra("url", profileImageUrl)
-            startActivity(btnClick)
-        }
-
-        fun LikeBtn(v: View?) {
-            val btnClick = Intent(mContext, BtnLikeActivity::class.java)
-            btnClick.putExtra("url", profileImageUrl)
-            startActivity(btnClick)
-        }
+    fun DislikeBtn(v: View?) {
+        val btnClick = Intent(mContext, BtnDislikeActivity::class.java)
+        btnClick.putExtra("url", profileImageUrl)
+        startActivity(btnClick)
     }
+
+    fun LikeBtn(v: View?) {
+        val btnClick = Intent(mContext, BtnLikeActivity::class.java)
+        btnClick.putExtra("url", profileImageUrl)
+        startActivity(btnClick)
+    }
+}
