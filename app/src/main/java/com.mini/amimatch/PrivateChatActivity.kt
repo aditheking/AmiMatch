@@ -42,6 +42,10 @@ class PrivateChatActivity : AppCompatActivity() {
         privateMessageAdapter = PrivateMessageAdapter(privateMessageList)
         binding.rvPrivateChat.layoutManager = LinearLayoutManager(this)
         binding.rvPrivateChat.adapter = privateMessageAdapter
+        binding.rvPrivateChat.post {
+            binding.rvPrivateChat.scrollToPosition(privateMessageAdapter.itemCount - 1)
+        }
+
     }
 
     private fun fetchMessages() {

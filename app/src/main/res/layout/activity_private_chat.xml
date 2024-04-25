@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -7,34 +8,44 @@
         android:id="@+id/rvPrivateChat"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:padding="10dp"
+        android:clipToPadding="false"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintTop_toTopOf="parent"
         android:layout_above="@id/inputLayout"
-        android:padding="10dp" />
+        app:layout_constraintBottom_toTopOf="@+id/inputLayout" />
 
-    <RelativeLayout
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/inputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@color/cardBackgroungColor"
-        android:padding="10dp">
+        app:cardCornerRadius="0dp"
+        app:cardElevation="8dp">
 
-        <EditText
-            android:id="@+id/etMessage"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toLeftOf="@+id/btnSend"
-            android:layout_toStartOf="@+id/btnSend"
-            android:hint="Type a message"
-            android:textColor="@android:color/black"
-            android:inputType="text" />
+            android:orientation="horizontal"
+            android:padding="8dp">
 
-        <Button
-            android:id="@+id/btnSend"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:text="Send" />
+            <EditText
+                android:id="@+id/etMessage"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:hint="Type a message"
+                android:textColor="@android:color/black"
+                android:inputType="text" />
 
-    </RelativeLayout>
+            <ImageButton
+                android:id="@+id/btnSend"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_send"/>
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
 </RelativeLayout>
