@@ -12,6 +12,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.mini.amimatch.databinding.ActivityProfileCheckinMatchedBinding
 
@@ -92,7 +93,14 @@ class ProfileCheckinMain : AppCompatActivity() {
             startPrivateChat(userId)
         }
         retrievePrivacySettings(userId)
+
+        val sendRequestButton: Button = findViewById(R.id.send_friend_request_button)
+
+        sendRequestButton.setOnClickListener {
+            sendFriendRequest(userId)
+        }
     }
+
 
     private fun retrievePrivacySettings(userId: String?) {
         userId?.let {
@@ -154,6 +162,34 @@ class ProfileCheckinMain : AppCompatActivity() {
     }
 
 
+
+private fun sendFriendRequest(userId: String?) {
+    if (userId != null) {
+        val currentUserUid = FirebaseAuth.getInstance().currentUser?.uid
+        if (currentUserUid != null) {
+            val senderRequestRef = firestore.collection("friend_requests").document(currentUserUid)
+            val senderData = hashMapOf("userId" to userId)
+            senderRequestRef.set(senderData)
+                .addOnSuccessListener {
+                    Log.d(TAG, "Friend request sent successfully")
+                }
+                .addOnFailureListener { e ->
+                    Log.e(TAG, "Error sending friend request", e)
+                }
+
+            val receiverRequestRef = firestore.collection("friend_requests").document(userId)
+            val receiverData = hashMapOf("userId" to currentUserUid)
+            receiverRequestRef.set(receiverData)
+                .addOnSuccessListener {
+                }
+                .addOnFailureListener { e ->
+                    Log.e(TAG, "Error sending friend request to receiver", e)
+                }
+        }
+    } else {
+        Log.e(TAG, "User ID is null")
+    }
+}
 
 
     private fun calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Int {

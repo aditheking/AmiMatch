@@ -28,7 +28,10 @@ class Matched_Activity : AppCompatActivity() {
     private lateinit var adapter: ActiveUserAdapter
     private lateinit var mAdapter: MatchUserAdapter
     private lateinit var currentUserId: String
+    private val friendRequestsList = ArrayList<Users>()
     private val db = FirebaseFirestore.getInstance()
+    private lateinit var friendRequestsAdapter: FriendRequestsAdapter
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,7 +49,9 @@ class Matched_Activity : AppCompatActivity() {
 
         // Create adapters
         adapter = ActiveUserAdapter(usersList, this, db)
-        mAdapter = MatchUserAdapter(matchList, applicationContext, db)
+        mAdapter = MatchUserAdapter(matchList, this, db)
+        friendRequestsAdapter = FriendRequestsAdapter(friendRequestsList, this, db)
+
 
         val mLayoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
         val mLayoutManager1 = LinearLayoutManager(applicationContext)
@@ -62,9 +67,51 @@ class Matched_Activity : AppCompatActivity() {
             adapter = mAdapter
         }
 
+        val mLayoutManager2 = LinearLayoutManager(this)
+        val friendRequestsRecyclerView = findViewById<RecyclerView>(R.id.friend_requests_recycler_view)
+        friendRequestsRecyclerView.apply {
+            layoutManager = mLayoutManager2
+            itemAnimator = DefaultItemAnimator()
+            adapter = friendRequestsAdapter
+        }
+
         currentUserId = getCurrentUserId()
         fetchUsersData()
         fetchActiveUsersData()
+        fetchFriendRequests()
+
+    }
+
+    private fun fetchFriendRequests() {
+        val currentUserUid = FirebaseAuth.getInstance().currentUser?.uid
+        if (currentUserUid != null) {
+            val friendRequestsRef = db.collection("friend_requests").document(currentUserUid)
+            friendRequestsRef.get()
+                .addOnSuccessListener { document ->
+                    if (document.exists()) {
+                        val userId = document.getString("userId")
+                        if (userId != null) {
+                            val userRef = db.collection("users").document(userId)
+                            userRef.get()
+                                .addOnSuccessListener { userDocument ->
+                                    if (userDocument.exists()) {
+                                        val userData = userDocument.toObject(Users::class.java)
+                                        if (userData != null) {
+                                            friendRequestsList.add(userData)
+                                            friendRequestsAdapter.notifyDataSetChanged()
+                                        }
+                                    }
+                                }
+                                .addOnFailureListener { e ->
+                                    Log.e(TAG, "Error getting user data", e)
+                                }
+                        }
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Log.e(TAG, "Error getting friend requests", e)
+                }
+        }
     }
 
 

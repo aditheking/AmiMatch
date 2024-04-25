@@ -64,14 +64,12 @@
                 android:textSize="20sp" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/added_recycler_view"
+                android:id="@+id/friend_requests_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="10dp"
-                android:overScrollMode="never">
-            </androidx.recyclerview.widget.RecyclerView>
-
+                android:overScrollMode="never" />
 
             <TextView
                 android:layout_width="wrap_content"

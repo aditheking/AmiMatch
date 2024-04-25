@@ -21,6 +21,9 @@ class Users(
 
 ) : Parcelable {
 
+    constructor() : this(null, null, null, null, null, 0, 0, null, false, false, false, false, "", null)
+
+
     constructor(parcel: Parcel) : this(
         parcel.readString(),
         parcel.readString(),

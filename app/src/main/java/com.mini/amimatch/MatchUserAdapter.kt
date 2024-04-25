@@ -22,6 +22,7 @@ class MatchUserAdapter(private val usersList: List<Users>, private val context: 
         return MyViewHolder(itemView)
     }
 
+
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val user: Users = usersList[position]
 
