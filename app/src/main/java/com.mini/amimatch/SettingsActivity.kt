@@ -37,6 +37,11 @@ class SettingsActivity : AppCompatActivity() {
     private var age_rnge: TextView? = null
     private var firestore: FirebaseFirestore? = null
     private var storage: FirebaseStorage? = null
+    private var switch_private: SwitchCompat? = null
+    private var switch_public: SwitchCompat? = null
+    private var auth: FirebaseAuth? = null
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,6 +69,16 @@ class SettingsActivity : AppCompatActivity() {
         val shareButton = findViewById<Button>(R.id.share_button)
         val legalButton = findViewById<Button>(R.id.legal_button)
         val licensesButton = findViewById<Button>(R.id.licenses_button)
+
+
+
+        firestore = FirebaseFirestore.getInstance()
+        auth = FirebaseAuth.getInstance()
+
+        switch_private = findViewById(R.id.switch_private)
+        switch_public = findViewById(R.id.switch_public)
+
+
 
         distance?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
@@ -126,7 +141,82 @@ class SettingsActivity : AppCompatActivity() {
         licensesButton.setOnClickListener {
             showLicensesInformation()
         }
+
+        switch_public?.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                switch_private?.isChecked = false
+                updatePrivacySettings(isPrivate = false)
+            } else {
+                updatePrivacySettings(isPrivate = true)
+            }
+        }
+
+        switch_private?.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                switch_public?.isChecked = false
+                updatePrivacySettings(isPrivate = true)
+            } else {
+                updatePrivacySettings(isPrivate = false)
+            }
+        }
+
+        retrievePrivacySettings()
     }
+
+    private fun retrievePrivacySettings() {
+        val userId = auth?.currentUser?.uid
+        userId?.let {
+            firestore?.collection("users")?.document(it)?.get()
+                ?.addOnSuccessListener { document ->
+                    if (document != null && document.exists()) {
+                        val isPrivate = document.getBoolean("isPrivate") ?: false
+                        switch_private?.isChecked = isPrivate
+                        switch_public?.isChecked = !isPrivate
+                    } else {
+                        createPrivacySettings()
+                    }
+                }
+                ?.addOnFailureListener { exception ->
+                }
+        }
+    }
+
+    private fun createPrivacySettings() {
+        val userId = auth?.currentUser?.uid
+        userId?.let {
+            val data = hashMapOf<String, Any>(
+                "isPrivate" to false,
+                "isPublic" to true
+            )
+            firestore?.collection("users")?.document(it)
+                ?.set(data)
+                ?.addOnSuccessListener {
+                    switch_private?.isChecked = false
+                    switch_public?.isChecked = true
+                }
+                ?.addOnFailureListener { exception ->
+                }
+        }
+    }
+
+
+    private fun updatePrivacySettings(isPrivate: Boolean) {
+        val userId = auth?.currentUser?.uid
+        userId?.let {
+            val data = hashMapOf<String, Any>(
+                "isPrivate" to isPrivate,
+                "isPublic" to !isPrivate
+            )
+            firestore?.collection("users")?.document(it)
+                ?.update(data as Map<String, Any>)
+                ?.addOnSuccessListener {
+                }
+                ?.addOnFailureListener { exception ->
+                }
+        }
+    }
+
+
 
     private fun checkForUpdates() {
         firestore?.collection("app_info")?.document("latest_version")
