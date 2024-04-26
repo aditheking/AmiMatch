@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.auth.User
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx
 
@@ -36,6 +37,8 @@ class Matched_Activity : AppCompatActivity(), FriendRequestActionListener {
     private val ACCEPTED_FRIEND_REQUESTS_PREF = "accepted_friend_requests"
     private val acceptedFriendRequests = HashSet<String>()
     private lateinit var sharedPreferences: SharedPreferences
+    private var friendRequestsListener: ListenerRegistration? = null
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -97,34 +100,39 @@ class Matched_Activity : AppCompatActivity(), FriendRequestActionListener {
         val currentUserUid = FirebaseAuth.getInstance().currentUser?.uid
         if (currentUserUid != null) {
             val friendRequestsReceivedRef = db.collection("friend_requests").document(currentUserUid).collection("received")
-            friendRequestsReceivedRef.get()
-                .addOnSuccessListener { documents ->
-                    for (document in documents) {
-                        val senderId = document.id
-                        if (!isFriendRequestAccepted(senderId)) {
-                            val senderRef = db.collection("users").document(senderId)
-                            senderRef.get()
-                                .addOnSuccessListener { senderDocument ->
-                                    if (senderDocument.exists()) {
-                                        val senderData = senderDocument.toObject(Users::class.java)
-                                        if (senderData != null) {
-                                            friendRequestsList.add(senderData)
-                                            friendRequestsAdapter.notifyDataSetChanged()
-                                        }
+
+            friendRequestsListener?.remove()
+
+            friendRequestsListener = friendRequestsReceivedRef.addSnapshotListener { snapshots, e ->
+                if (e != null) {
+                    Log.w(TAG, "Listen failed.", e)
+                    return@addSnapshotListener
+                }
+
+                friendRequestsList.clear()
+
+                for (doc in snapshots!!.documents) {
+                    val senderId = doc.id
+                    if (!isFriendRequestAccepted(senderId)) {
+                        val senderRef = db.collection("users").document(senderId)
+                        senderRef.get()
+                            .addOnSuccessListener { senderDocument ->
+                                if (senderDocument.exists()) {
+                                    val senderData = senderDocument.toObject(Users::class.java)
+                                    if (senderData != null) {
+                                        friendRequestsList.add(senderData)
+                                        friendRequestsAdapter.notifyDataSetChanged()
                                     }
                                 }
-                                .addOnFailureListener { e ->
-                                    Log.e(TAG, "Error getting sender data", e)
-                                }
-                        }
+                            }
+                            .addOnFailureListener { ex ->
+                                Log.e(TAG, "Error getting sender data", ex)
+                            }
                     }
                 }
-                .addOnFailureListener { e ->
-                    Log.e(TAG, "Error getting friend requests", e)
-                }
+            }
         }
     }
-
 
     override fun onAcceptFriendRequest(user: Users) {
         val currentUserUid = FirebaseAuth.getInstance().currentUser?.uid
@@ -135,11 +143,20 @@ class Matched_Activity : AppCompatActivity(), FriendRequestActionListener {
             val acceptedFriendRequestsRef = db.collection("accepted_friend_requests").document(currentUserUid).collection("accepted")
             val newFriendRef = user.userId?.let { acceptedFriendRequestsRef.document(it) }
             if (newFriendRef != null) {
-                newFriendRef.set(user)
+                val data = hashMapOf<String, Any>(
+                    user.userId!! to true
+                )
+                newFriendRef.set(data)
                     .addOnSuccessListener {
-                        friendRequestsList.remove(user)
-                        friendRequestsAdapter.notifyDataSetChanged()
-
+                        val currentUserFriendRef = db.collection("accepted_friend_requests").document(user.userId!!).collection("accepted").document(currentUserUid)
+                        currentUserFriendRef.set(mapOf(currentUserUid to true))
+                            .addOnSuccessListener {
+                                friendRequestsList.remove(user)
+                                friendRequestsAdapter.notifyDataSetChanged()
+                            }
+                            .addOnFailureListener { e ->
+                                Log.e(TAG, "Error adding current user to sender's friend list", e)
+                            }
                     }
                     .addOnFailureListener { e ->
                         Log.e(TAG, "Error accepting friend request", e)
@@ -147,6 +164,9 @@ class Matched_Activity : AppCompatActivity(), FriendRequestActionListener {
             }
         }
     }
+
+
+
 
     private fun saveAcceptedFriendRequestsToSharedPreferences() {
         val editor = sharedPreferences.edit()
@@ -287,6 +307,12 @@ class Matched_Activity : AppCompatActivity(), FriendRequestActionListener {
         val intent = Intent(this, PrivateChatActivity::class.java)
         startActivity(intent)
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        friendRequestsListener?.remove()
+    }
+
 
     private fun setupTopNavigationView() {
         Log.d(TAG, "setupTopNavigationView: setting up TopNavigationView")
