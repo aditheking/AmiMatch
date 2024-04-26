@@ -102,23 +102,118 @@ class ProfileCheckinMain : AppCompatActivity() {
     }
 
 
-    private fun retrievePrivacySettings(userId: String?) {
-        userId?.let {
-            firestore.collection("users").document(it).get()
-                .addOnSuccessListener { document ->
-                    val isPrivate = document?.getBoolean("isPrivate") ?: false
-                    val isPublic = document?.getBoolean("isPublic") ?: true
+    private var isUnblurred = false
 
-                    if (isPrivate) {
-                        blurFields()
+
+    private fun retrievePrivacySettings(userId: String?) {
+        userId?.let { uid ->
+            Log.d(TAG, "Retrieving privacy settings for user: $uid")
+            val currentUserUid = FirebaseAuth.getInstance().currentUser?.uid
+            if (currentUserUid != null) {
+                val matchListRef = firestore.collection("match_lists").document(currentUserUid)
+                matchListRef.get()
+                    .addOnSuccessListener { documentSnapshot ->
+                        if (documentSnapshot.exists()) {
+                            val matchListData = documentSnapshot.data
+                            if (matchListData != null) {
+                                val matchList = matchListData.values.toList()
+                                for (value in matchList) {
+                                    val user = value as? Map<String, Any>
+                                    if (user != null && user["userId"] == uid) {
+                                        Log.d(TAG, "User found in match list: $uid")
+                                        if (!isUnblurred) {
+                                            unblurFields()
+                                            isUnblurred = true
+                                            Log.d(TAG, "Fields unblurred for user: $uid")
+                                        }
+                                        return@addOnSuccessListener
+                                    }
+                                }
+                            }
+                        }
+                        if (!isUnblurred) {
+                            fetchPrivacySettings(uid)
+                            Log.d(TAG, "User not found in match list, fetching privacy settings for user: $uid")
+                        }
                     }
-                }
-                .addOnFailureListener { exception ->
-                }
+                    .addOnFailureListener { e ->
+                        Log.e(TAG, "Error fetching match list", e)
+                        if (!isUnblurred) {
+                            fetchPrivacySettings(uid)
+                            Log.d(TAG, "Error fetching match list, fetching privacy settings for user: $uid")
+                        }
+                    }
+            }
         }
     }
 
+
+    private fun unblurFields() {
+        Log.d(TAG, "Unblurring fields")
+
+        val profileBio: TextView = findViewById(R.id.bio_match)
+            val profileInterest: TextView = findViewById(R.id.interests_match)
+            val aboutTextView: TextView = findViewById(R.id.about)
+            val yearSemesterTextView: TextView = findViewById(R.id.year_semester)
+            val courseTextView: TextView = findViewById(R.id.course)
+            val schoolTextView: TextView = findViewById(R.id.school)
+            val emailButton: Button = findViewById(R.id.send_email)
+            val privateChatButton: Button = findViewById(R.id.send_sms)
+            val bioTitle: TextView = findViewById(R.id.bioTitle)
+            val interestsTitle: TextView = findViewById(R.id.interestsTitle)
+            val aboutTitle: TextView = findViewById(R.id.about_text_view)
+            val yearSemesterTitle: TextView = findViewById(R.id.year_semester_text_view)
+            val courseTitle: TextView = findViewById(R.id.course_text_view)
+            val schoolTitle: TextView = findViewById(R.id.school_text_view)
+            val ChatTitle: TextView = findViewById(R.id.chattitle)
+            val emailTitle: TextView = findViewById(R.id.emailtitle)
+
+            profileBio.visibility = View.VISIBLE
+            profileInterest.visibility = View.VISIBLE
+            aboutTextView.visibility = View.VISIBLE
+            yearSemesterTextView.visibility = View.VISIBLE
+            courseTextView.visibility = View.VISIBLE
+            schoolTextView.visibility = View.VISIBLE
+            emailButton.visibility = View.VISIBLE
+            privateChatButton.isEnabled = true
+            bioTitle.visibility = View.VISIBLE
+            interestsTitle.visibility = View.VISIBLE
+            aboutTitle.visibility = View.VISIBLE
+            yearSemesterTitle.visibility = View.VISIBLE
+            courseTitle.visibility = View.VISIBLE
+            schoolTitle.visibility = View.VISIBLE
+            ChatTitle.visibility = View.VISIBLE
+            emailTitle.visibility = View.VISIBLE
+
+            binding.lockIcon.visibility = View.INVISIBLE
+            binding.privateMessage.visibility = View.INVISIBLE
+        }
+
+
+    private fun fetchPrivacySettings(userId: String) {
+        Log.d(TAG, "Fetching privacy settings for user: $userId")
+
+        firestore.collection("users").document(userId).get()
+            .addOnSuccessListener { document ->
+                val isPrivate = document?.getBoolean("isPrivate") ?: false
+                val isPublic = document?.getBoolean("isPublic") ?: true
+
+                if (isPrivate) {
+                    blurFields()
+                    Log.d(TAG, "Fields blurred for user: $userId")
+
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.e(TAG, "Error retrieving privacy settings", exception)
+
+            }
+    }
+
+
     private fun blurFields() {
+        Log.d(TAG, "blurring fields")
+
         val profileBio: TextView = findViewById(R.id.bio_match)
         val profileInterest: TextView = findViewById(R.id.interests_match)
         val aboutTextView: TextView = findViewById(R.id.about)

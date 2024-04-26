@@ -220,6 +220,8 @@ class Matched_Activity : AppCompatActivity(), FriendRequestActionListener {
                                     if (userData != null) {
                                         matchList.add(userData)
                                         mAdapter.notifyDataSetChanged()
+                                        uploadMatchListToFirestore(matchList)
+
                                     }
                                 }
                             }
@@ -233,6 +235,26 @@ class Matched_Activity : AppCompatActivity(), FriendRequestActionListener {
                 }
         }
     }
+
+    private fun uploadMatchListToFirestore(matchList: ArrayList<Users>) {
+        val currentUserUid = FirebaseAuth.getInstance().currentUser?.uid
+        if (currentUserUid != null) {
+            val matchListRef = db.collection("match_lists").document(currentUserUid)
+            val data = HashMap<String, Any>()
+            matchList.forEachIndexed { index, user ->
+                data[user.userId!!] = user
+            }
+            matchListRef.set(data)
+                .addOnSuccessListener {
+                    Log.d(TAG, "Match list uploaded successfully")
+                }
+                .addOnFailureListener { e ->
+                    Log.e(TAG, "Error uploading match list", e)
+                }
+        }
+    }
+
+
 
 
     private fun fetchActiveUsersData() {
