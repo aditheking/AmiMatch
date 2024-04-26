@@ -2,6 +2,7 @@ package com.mini.amimatch
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -15,7 +16,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.auth.User
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx
 
-class Matched_Activity : AppCompatActivity() {
+
+class Matched_Activity : AppCompatActivity(), FriendRequestActionListener {
     private val TAG = "Matched_Activity"
     private val ACTIVITY_NUM = 2
     private val matchList = ArrayList<Users>()
@@ -31,6 +33,9 @@ class Matched_Activity : AppCompatActivity() {
     private val friendRequestsList = ArrayList<Users>()
     private val db = FirebaseFirestore.getInstance()
     private lateinit var friendRequestsAdapter: FriendRequestsAdapter
+    private val ACCEPTED_FRIEND_REQUESTS_PREF = "accepted_friend_requests"
+    private val acceptedFriendRequests = HashSet<String>()
+    private lateinit var sharedPreferences: SharedPreferences
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,13 +49,19 @@ class Matched_Activity : AppCompatActivity() {
         recyclerView = findViewById(R.id.active_recycler_view)
         mRecyclerView = findViewById(R.id.matche_recycler_view)
 
+        sharedPreferences = getSharedPreferences(ACCEPTED_FRIEND_REQUESTS_PREF, Context.MODE_PRIVATE)
+        val acceptedRequestsSet = sharedPreferences.getStringSet(ACCEPTED_FRIEND_REQUESTS_PREF, HashSet<String>())
+        if (acceptedRequestsSet != null) {
+            acceptedFriendRequests.addAll(acceptedRequestsSet)
+        }
+
         // Initialize Firestore
         val db = FirebaseFirestore.getInstance()
 
         // Create adapters
         adapter = ActiveUserAdapter(usersList, this, db)
         mAdapter = MatchUserAdapter(matchList, this, db)
-        friendRequestsAdapter = FriendRequestsAdapter(friendRequestsList, this, db)
+        friendRequestsAdapter = FriendRequestsAdapter(friendRequestsList, this, db, this)
 
 
         val mLayoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
@@ -90,20 +101,22 @@ class Matched_Activity : AppCompatActivity() {
                 .addOnSuccessListener { documents ->
                     for (document in documents) {
                         val senderId = document.id
-                        val senderRef = db.collection("users").document(senderId)
-                        senderRef.get()
-                            .addOnSuccessListener { senderDocument ->
-                                if (senderDocument.exists()) {
-                                    val senderData = senderDocument.toObject(Users::class.java)
-                                    if (senderData != null) {
-                                        friendRequestsList.add(senderData)
-                                        friendRequestsAdapter.notifyDataSetChanged()
+                        if (!isFriendRequestAccepted(senderId)) {
+                            val senderRef = db.collection("users").document(senderId)
+                            senderRef.get()
+                                .addOnSuccessListener { senderDocument ->
+                                    if (senderDocument.exists()) {
+                                        val senderData = senderDocument.toObject(Users::class.java)
+                                        if (senderData != null) {
+                                            friendRequestsList.add(senderData)
+                                            friendRequestsAdapter.notifyDataSetChanged()
+                                        }
                                     }
                                 }
-                            }
-                            .addOnFailureListener { e ->
-                                Log.e(TAG, "Error getting sender data", e)
-                            }
+                                .addOnFailureListener { e ->
+                                    Log.e(TAG, "Error getting sender data", e)
+                                }
+                        }
                     }
                 }
                 .addOnFailureListener { e ->
@@ -112,8 +125,12 @@ class Matched_Activity : AppCompatActivity() {
         }
     }
 
-    private fun acceptFriendRequest(user: Users) {
+
+    override fun onAcceptFriendRequest(user: Users) {
         val currentUserUid = FirebaseAuth.getInstance().currentUser?.uid
+        user.userId?.let { acceptedFriendRequests.add(it) }
+        saveAcceptedFriendRequestsToSharedPreferences()
+
         if (currentUserUid != null) {
             val acceptedFriendRequestsRef = db.collection("accepted_friend_requests").document(currentUserUid).collection("accepted")
             val newFriendRef = user.userId?.let { acceptedFriendRequestsRef.document(it) }
@@ -122,6 +139,7 @@ class Matched_Activity : AppCompatActivity() {
                     .addOnSuccessListener {
                         friendRequestsList.remove(user)
                         friendRequestsAdapter.notifyDataSetChanged()
+
                     }
                     .addOnFailureListener { e ->
                         Log.e(TAG, "Error accepting friend request", e)
@@ -130,7 +148,18 @@ class Matched_Activity : AppCompatActivity() {
         }
     }
 
-    private fun rejectFriendRequest(user: Users) {
+    private fun saveAcceptedFriendRequestsToSharedPreferences() {
+        val editor = sharedPreferences.edit()
+        editor.putStringSet(ACCEPTED_FRIEND_REQUESTS_PREF, acceptedFriendRequests)
+        editor.apply()
+    }
+
+    private fun isFriendRequestAccepted(senderId: String): Boolean {
+        return acceptedFriendRequests.contains(senderId)
+    }
+
+
+    override fun onRejectFriendRequest(user: Users) {
         val currentUserUid = FirebaseAuth.getInstance().currentUser?.uid
         if (currentUserUid != null) {
             val friendRequestsReceivedRef = db.collection("friend_requests").document(currentUserUid).collection("received")
@@ -155,67 +184,36 @@ class Matched_Activity : AppCompatActivity() {
         adapter.handleActivityResult(requestCode, resultCode, data)
     }
 
-
-    private fun prepareActiveData() {
-        var users = Users("1", "Aditya Upreti", "https://i.ibb.co/mtW3zRC/Whats-App-Image-2024-04-06-at-11-29-46.jpg", "Developer of app", "Coding", 21, 1, null, true, false, false, false, "")
-        usersList.add(users)
-        adapter.notifyDataSetChanged()
-    }
-
-
     private fun fetchUsersData() {
-        val usersCollection = db.collection("users")
-        usersCollection.get()
-            .addOnSuccessListener { querySnapshot ->
-                val usersList = mutableListOf<Users>()
-                for (document in querySnapshot.documents) {
-                    val userData = document.data
-                    if (userData != null) {
-                        val userId = userData["userId"] as? String
-                        if (userId != currentUserId) {
-                            val name = userData["name"] as? String
-                            val profileImageUrl = userData["profileImageUrl"] as? String
-                            val bio = userData["bio"] as? String
-                            val interest = userData["interest"] as? String
-                            val age = (userData["age"] as? Long)?.toInt() ?: 0
-                            val distance = (userData["distance"] as? Long)?.toInt() ?: 0
-                            val phoneNumber = userData["phoneNumber"] as? String
-                            val sports = userData["sports"] as? Boolean ?: false
-                            val fishing = userData["fishing"] as? Boolean ?: false
-                            val music = userData["music"] as? Boolean ?: false
-                            val travel = userData["travel"] as? Boolean ?: false
-                            val preferSex = userData["preferSex"] as? String ?: ""
-                            val dateOfBirth = userData["dateOfBirth"] as? String
-
-                            val user = Users(
-                                userId,
-                                name,
-                                profileImageUrl,
-                                bio,
-                                interest,
-                                age,
-                                distance,
-                                phoneNumber,
-                                sports,
-                                fishing,
-                                music,
-                                travel,
-                                preferSex,
-                                dateOfBirth
-                            )
-                            usersList.add(user)
-                        } else {
-                            Log.e(TAG, "User data is null for document ${document.id}")
-                        }
+        val currentUserUid = FirebaseAuth.getInstance().currentUser?.uid
+        if (currentUserUid != null) {
+            val acceptedFriendRequestsRef = db.collection("accepted_friend_requests").document(currentUserUid).collection("accepted")
+            acceptedFriendRequestsRef.get()
+                .addOnSuccessListener { documents ->
+                    for (document in documents) {
+                        val userId = document.id
+                        val userRef = db.collection("users").document(userId)
+                        userRef.get()
+                            .addOnSuccessListener { userDocument ->
+                                if (userDocument.exists()) {
+                                    val userData = userDocument.toObject(Users::class.java)
+                                    if (userData != null) {
+                                        matchList.add(userData)
+                                        mAdapter.notifyDataSetChanged()
+                                    }
+                                }
+                            }
+                            .addOnFailureListener { e ->
+                                Log.e(TAG, "Error getting user data", e)
+                            }
                     }
                 }
-                generateRandomMatches(usersList)
-
-            }
-            .addOnFailureListener { exception ->
-                Log.e(TAG, "Error getting documents: ", exception)
-            }
+                .addOnFailureListener { e ->
+                    Log.e(TAG, "Error fetching accepted friend requests", e)
+                }
+        }
     }
+
 
     private fun fetchActiveUsersData() {
         val usersCollection = db.collection("users")
@@ -276,41 +274,6 @@ class Matched_Activity : AppCompatActivity() {
             }
     }
 
-
-    private fun generateRandomMatches(usersList: List<Users>) {
-        matchList.clear()
-
-        for (i in 0 until usersList.size - 1) {
-            val user1 = usersList[i]
-            for (j in i + 1 until usersList.size) {
-                val user2 = usersList[j]
-                if (user1.userId != user2.userId && haveCommonInterests(user1, user2)) {
-                    matchList.add(user1)
-                    matchList.add(user2)
-                }
-            }
-        }
-
-        for (user in usersList) {
-            if (user.userId != currentUserId && !matchList.contains(user)) {
-                matchList.add(user)
-            }
-        }
-
-        val uniqueMatchList = matchList.distinctBy { it.userId }
-        matchList.clear()
-        matchList.addAll(uniqueMatchList)
-
-        mAdapter.notifyDataSetChanged()
-    }
-
-
-    private fun haveCommonInterests(user1: Users, user2: Users): Boolean {
-        return user1.sports == user2.sports ||
-                user1.fishing == user2.fishing ||
-                user1.music == user2.music ||
-                user1.travel == user2.travel
-    }
 
     private fun searchFunc() {
     }

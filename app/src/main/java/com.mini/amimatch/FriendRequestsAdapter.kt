@@ -6,14 +6,20 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.FirebaseFirestore
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 
-class FriendRequestsAdapter(private val friendRequestsList: ArrayList<Users>, private val context: Context, private val db: FirebaseFirestore) :
+
+class FriendRequestsAdapter(private val friendRequestsList: ArrayList<Users>,
+                            private val context: Context,
+                            private val db: FirebaseFirestore,
+                            private val listener: FriendRequestActionListener) :
     RecyclerView.Adapter<FriendRequestsAdapter.MyViewHolder>() {
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val itemView: View = LayoutInflater.from(parent.context)
@@ -53,14 +59,13 @@ class FriendRequestsAdapter(private val friendRequestsList: ArrayList<Users>, pr
                 }
         }
 
-       // holder.btnAccept.setOnClickListener {
-       //     acceptFriendRequest(user)
-       // }
+        holder.btnAccept.setOnClickListener {
+            listener.onAcceptFriendRequest(user)
+        }
 
-    //    holder.btnReject.setOnClickListener {
-      //      rejectFriendRequest(user)
-      //  }
-
+        holder.btnReject.setOnClickListener {
+            listener.onRejectFriendRequest(user)
+        }
 
         holder.name.text = user.name
     }
@@ -72,5 +77,8 @@ class FriendRequestsAdapter(private val friendRequestsList: ArrayList<Users>, pr
     inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var imageView: CircleImageView = itemView.findViewById(R.id.mui_image)
         var name: TextView = itemView.findViewById(R.id.friend_request_name)
+        var btnAccept: Button = itemView.findViewById(R.id.btnAccept)
+        var btnReject: Button = itemView.findViewById(R.id.btnReject)
     }
-}
+    }
+
