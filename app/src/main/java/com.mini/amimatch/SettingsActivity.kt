@@ -67,6 +67,7 @@ class SettingsActivity : AppCompatActivity() {
         val logoutButton = findViewById<Button>(R.id.logout_button)
         val helpSupportButton = findViewById<Button>(R.id.help_support_button)
         val shareButton = findViewById<Button>(R.id.share_button)
+        val verifyButton = findViewById<Button>(R.id.verify_button)
         val legalButton = findViewById<Button>(R.id.legal_button)
         val licensesButton = findViewById<Button>(R.id.licenses_button)
 
@@ -134,6 +135,10 @@ class SettingsActivity : AppCompatActivity() {
             shareApp()
         }
 
+        verifyButton.setOnClickListener {
+            verification()
+        }
+
         legalButton.setOnClickListener {
             showLegalInformation()
         }
@@ -162,6 +167,11 @@ class SettingsActivity : AppCompatActivity() {
 
         retrievePrivacySettings()
     }
+
+    private fun verification() {
+        val intent = Intent(this, WebViewActivity::class.java)
+        intent.putExtra(WebViewActivity.EXTRA_FILE_NAME, "verify_support.html")
+        startActivity(intent)    }
 
     private fun retrievePrivacySettings() {
         val userId = auth?.currentUser?.uid

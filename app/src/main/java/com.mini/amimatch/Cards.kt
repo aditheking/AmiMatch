@@ -27,6 +27,8 @@ class Cards() : Parcelable {
     var dateOfBirth: String? = null
     var userFishing: Boolean = false
     var userTravel: Boolean = false
+    val isVerified: Boolean = false
+
 
     constructor(parcel: Parcel, userId: String?) : this(parcel) {
         this.userId = userId

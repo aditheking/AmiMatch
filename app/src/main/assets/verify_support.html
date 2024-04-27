@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Verification Application</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        p {
+            color: #666;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .button {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+        .contact-info {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .contact-info p {
+            margin-bottom: 10px;
+        }
+        form {
+            margin-top: 30px;
+            text-align: center;
+        }
+        input[type="text"],
+        input[type="email"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        input[type="submit"] {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Profile Verification Application</h1>
+    <p>Verification adds a checkmark to your profile.</p>
+    <p>Thank you for your interest in verifying your profile. Please fill out the form below to proceed with the verification process.</p>
+    <p>Please note that this is a manual process. Your application will be reviewed, and approval is subject to our discretion. If approved, it may take some time for the changes to reflect. If rejected, you will receive an email notification.</p>
+    <div class="contact-info">
+        <p><strong>For any assistance, contact:</strong> <a href="https://www.instagram.com/adityaupreti__/">Instagram</a></p>
+    </div>
+    <form action="https://formspree.io/f/mayrlegb" method="post">
+        <label for="name">Your Name:</label><br>
+        <input type="text" id="name" name="name" required><br>
+        <label for="email">Your Email:</label><br>
+        <input type="email" id="email" name="email" required><br>
+        <label for="about">Tell us about yourself:</label><br>
+        <textarea id="about" name="about" rows="4" required></textarea><br>
+        <input type="submit" value="Submit">
+    </form>
+</div>
+</body>
+</html>
