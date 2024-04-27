@@ -9,8 +9,8 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!-- Top Navigation Back -->
-        <include layout="@layout/layout_top_navigation_back" />
+        <!-- Top Navigation Back
+        <include layout="@layout/layout_top_navigation_back" /> -->
 
         <!-- Profile Image -->
         <com.mini.amimatch.SquareImageView
@@ -50,7 +50,7 @@
             android:id="@+id/lockIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_lock"
+            android:src="@drawable/user"
             android:layout_gravity="center_horizontal"
             android:visibility="gone" />
 
