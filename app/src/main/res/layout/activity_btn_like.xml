@@ -67,7 +67,7 @@
                 android:layout_alignParentTop="true"
                 android:background="@drawable/round_button_with_border"
                 android:padding="10dp"
-                android:src="@drawable/ic_dislike" />
+                android:src="@drawable/dislike" />
 
             <ImageButton
                 android:id="@+id/commentbtn"
@@ -77,7 +77,7 @@
                 android:layout_centerHorizontal="true"
                 android:background="@drawable/round_button_with_border"
                 android:padding="10dp"
-                android:src="@drawable/ic_comment" />
+                android:src="@drawable/chat" />
 
 
             <ImageButton
@@ -90,7 +90,7 @@
                 android:background="@drawable/round_button_with_border"
                 android:onClick="LikeBtn"
                 android:padding="10dp"
-                android:src="@drawable/ic_like1" />
+                android:src="@drawable/heart" />
 
 
         </RelativeLayout>

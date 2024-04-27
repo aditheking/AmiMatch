@@ -69,7 +69,7 @@
                         android:elevation="7dp"
                         android:onClick="dislikeBtn"
                         android:padding="10dp"
-                        android:src="@drawable/ic_dislike" />
+                        android:src="@drawable/dislike" />
 
                     <ImageButton
                         android:id="@+id/commentbtn"
@@ -82,7 +82,7 @@
                         android:background="@drawable/round_button_with_border"
                         android:elevation="7dp"
                         android:padding="10dp"
-                        android:src="@drawable/ic_comment" />
+                        android:src="@drawable/chat" />
 
 
                     <ImageButton
@@ -97,7 +97,7 @@
                         android:elevation="7dp"
                         android:onClick="confessionBtn"
                         android:padding="10dp"
-                        android:src="@drawable/ic_confession" />
+                        android:src="@drawable/incognito" />
 
 
                     <ImageButton
@@ -111,7 +111,7 @@
                         android:elevation="7dp"
                         android:onClick="likeBtn"
                         android:padding="10dp"
-                        android:src="@drawable/ic_like1" />
+                        android:src="@drawable/heart" />
 
 
 
