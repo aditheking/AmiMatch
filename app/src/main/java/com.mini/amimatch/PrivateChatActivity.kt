@@ -14,6 +14,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.FirebaseFirestore
 import com.mini.amimatch.databinding.ActivityPrivateChatBinding
 import org.json.JSONObject
 
@@ -89,13 +90,36 @@ class PrivateChatActivity : AppCompatActivity() {
             val messageId = database.child("private_messages").child(chatRoomId).push().key
             if (messageId != null) {
                 message.id = messageId
-                database.child("private_messages").child(chatRoomId).child(messageId).setValue(message)
-                sendNotification("New Message", messageText)
+                database.child("private_messages").child(chatRoomId).child(messageId)
+                    .setValue(message)
+
+                val recipientUserId = userId
+                if (recipientUserId != null) {
+                    FirebaseFirestore.getInstance().collection("user_tokens")
+                        .document(recipientUserId)
+                        .get()
+                        .addOnSuccessListener { documentSnapshot ->
+                            val recipientToken = documentSnapshot.getString("token")
+                            if (!recipientToken.isNullOrEmpty()) {
+                                sendNotification("New Message", messageText, recipientToken)
+                            } else {
+                                Log.e("PrivateChatActivity", "Recipient token is null")
+                            }
+                        }
+                        .addOnFailureListener { e ->
+                            Log.e("PrivateChatActivity", "Failed to fetch recipient token: $e")
+                        }
+                } else {
+                    Log.e("PrivateChatActivity", "Recipient user ID is null")
+                }
+
                 binding.etMessage.text.clear()
             } else {
+                Log.e("PrivateChatActivity", "Message ID is null")
             }
         }
     }
+
 
     private fun generateChatRoomId(userId1: String?, userId2: String?): String {
         return if (userId1 != null && userId2 != null) {
@@ -109,20 +133,53 @@ class PrivateChatActivity : AppCompatActivity() {
         }
     }
 
-    private fun sendNotification(title: String, message: String) {
-        Log.d(TAG, "Sending notification: title=$title, message=$message")
+    private fun sendNotification(title: String, message: String, recipientToken: String) {
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        val currentUserId = currentUser?.uid
+        val senderNameRef =
+            FirebaseFirestore.getInstance().collection("users").document(currentUserId!!)
+                .get()
+                .addOnSuccessListener { document ->
+                    if (document != null) {
+                        val senderName = document.getString("name")
+                        if (!senderName.isNullOrEmpty()) {
+                            Log.d(TAG, "Sender name: $senderName")
+                            sendNotification(title, message, recipientToken, senderName)
+                        } else {
+                            Log.e(TAG, "Sender name is null or empty")
+                        }
+                    } else {
+                        Log.e(TAG, "Document doesn't exist")
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Log.e(TAG, "Failed to retrieve sender name: $e")
+                }
+    }
+
+    private fun sendNotification(
+        title: String,
+        message: String,
+        recipientToken: String,
+        senderName: String
+    ) {
+        Log.d(
+            TAG,
+            "Sending notification: title=$title, message=$message, recipientToken=$recipientToken, senderName=$senderName"
+        )
 
         val fcmUrl = "https://fcm.googleapis.com/fcm/send"
         val serverKey = "YOUR_FIREBASE_SERVER_KEY_HERE"
 
         val notification = JSONObject().apply {
-            put("title", title)
+            put("title", "$senderName sent you a message")
             put("message", message)
         }
 
         val body = JSONObject().apply {
-            put("to", "/topics/topic_name")
+            put("to", recipientToken)
             put("data", notification)
+            put("senderName", senderName)
         }
 
         val request = object : JsonObjectRequest(Request.Method.POST, fcmUrl, body,
@@ -142,5 +199,4 @@ class PrivateChatActivity : AppCompatActivity() {
 
         Volley.newRequestQueue(this).add(request)
     }
-
 }

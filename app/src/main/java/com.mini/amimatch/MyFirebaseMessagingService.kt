@@ -42,7 +42,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
 
-        val intent = Intent(this, PrivateChatActivity::class.java)
+        val intent = Intent(this, MainActivity::class.java)
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val notificationID = Random.nextInt(3000)
@@ -59,9 +59,10 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         val notificationSoundUri =
             RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+        val senderName = remoteMessage.data["senderName"] ?: "Unknown"
         val notificationBuilder = NotificationCompat.Builder(this, ADMIN_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_main)
-            .setContentTitle(remoteMessage.data["title"])
+            .setContentTitle("$senderName sent you a message")
             .setContentText(remoteMessage.data["message"])
             .setAutoCancel(true)
             .setSound(notificationSoundUri)
