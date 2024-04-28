@@ -22,8 +22,12 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx
 import com.lorentzos.flingswipe.SwipeFlingAdapterView
 import com.mini.amimatch.Cards
@@ -57,7 +61,38 @@ class MainActivity : Activity() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), MY_PERMISSIONS_REQUEST_POST_NOTIFICATIONS)
         }
+        FirebaseMessaging.getInstance().token
+            .addOnCompleteListener(OnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Log.w(TAG, "Fetching FCM registration token failed", task.exception)
+                    return@OnCompleteListener
+                }
+
+                val token = task.result
+
+                saveTokenToFirestore(token)
+            })
     }
+
+    private fun saveTokenToFirestore(token: String?) {
+        if (token != null) {
+            val userId = FirebaseAuth.getInstance().currentUser?.uid
+            if (userId != null) {
+                val userTokenRef =
+                    FirebaseFirestore.getInstance().collection("user_tokens").document(userId)
+                userTokenRef.set(mapOf("token" to token))
+                    .addOnSuccessListener {
+                        Log.d(TAG, "Token successfully saved to Firestore")
+                    }
+                    .addOnFailureListener { e ->
+                        Log.e(TAG, "Error saving token to Firestore", e)
+                    }
+            }
+        } else {
+            Log.e(TAG, "FCM token is null")
+        }
+    }
+
 
     private fun showPrivacyPolicyDialog() {
         val builder = AlertDialog.Builder(this)
