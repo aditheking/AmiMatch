@@ -69,10 +69,12 @@ class MainActivity : Activity() {
                 }
 
                 val token = task.result
-
+                FirebaseMessaging.getInstance().subscribeToTopic("topic_name")
+                Log.d(TAG, "Subscribed to topic")
                 saveTokenToFirestore(token)
             })
     }
+
 
     private fun saveTokenToFirestore(token: String?) {
         if (token != null) {

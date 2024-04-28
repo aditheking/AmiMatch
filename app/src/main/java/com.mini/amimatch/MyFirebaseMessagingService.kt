@@ -4,15 +4,22 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.media.RingtoneManager
 import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import kotlin.random.Random
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
+
+    private val ADMIN_CHANNEL_ID = "admin_channel"
+
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
@@ -35,48 +42,52 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
 
-        // Check if the message contains data payload.
-        remoteMessage.data.isNotEmpty().let {
-            // Extract message data
-            val messageText = remoteMessage.data["text"]
+        val intent = Intent(this, PrivateChatActivity::class.java)
+        val notificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationID = Random.nextInt(3000)
 
-            // Display notification
-            messageText?.let { text ->
-                sendNotification(text)
-            }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            setupChannels(notificationManager)
         }
-    }
 
-    private fun sendNotification(messageText: String) {
-        val channelId = getString(R.string.default_notification_channel_id)
-        val channelName = getString(R.string.default_notification_channel_name)
-        val intent = Intent(this, ChatActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         val pendingIntent = PendingIntent.getActivity(
             this, 0, intent,
             PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        val notificationBuilder = NotificationCompat.Builder(this, channelId)
+        val notificationSoundUri =
+            RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+        val notificationBuilder = NotificationCompat.Builder(this, ADMIN_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_main)
-            .setContentTitle(getString(R.string.app_name))
-            .setContentText(messageText)
+            .setContentTitle(remoteMessage.data["title"])
+            .setContentText(remoteMessage.data["message"])
             .setAutoCancel(true)
+            .setSound(notificationSoundUri)
             .setContentIntent(pendingIntent)
 
-        val notificationManager =
-            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-        // Create Notification Channel for Android Oreo and above
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                channelId,
-                channelName,
-                NotificationManager.IMPORTANCE_DEFAULT
-            )
-            notificationManager.createNotificationChannel(channel)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            notificationBuilder.color = Color.RED
         }
+        notificationManager.notify(notificationID, notificationBuilder.build())
+    }
 
-        notificationManager.notify(0, notificationBuilder.build())
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun setupChannels(notificationManager: NotificationManager?) {
+        val adminChannelName = "New notification"
+        val adminChannelDescription = "Device to device notification"
+
+        val adminChannel: NotificationChannel
+        adminChannel = NotificationChannel(
+            ADMIN_CHANNEL_ID,
+            adminChannelName,
+            NotificationManager.IMPORTANCE_HIGH
+        )
+        adminChannel.description = adminChannelDescription
+        adminChannel.enableLights(true)
+        adminChannel.lightColor = Color.RED
+        adminChannel.enableVibration(true)
+        notificationManager?.createNotificationChannel(adminChannel)
     }
 }
