@@ -1,20 +1,18 @@
 package com.mini.amimatch
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
+import android.content.ContentValues.TAG
 import android.content.Context
-import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
@@ -26,6 +24,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import com.mini.amimatch.databinding.ActivityChatBinding
+import org.json.JSONObject
 
 class ChatActivity : AppCompatActivity() {
     private lateinit var binding: ActivityChatBinding
@@ -60,7 +59,6 @@ class ChatActivity : AppCompatActivity() {
         val sharedPreferences = getSharedPreferences("com.mini.amimatch.PREFERENCES", Context.MODE_PRIVATE)
         lastSeenMessageTimestamp = sharedPreferences.getLong("lastSeenMessageTimestamp", 0)
 
-        createNotificationChannel()
 
         binding.btnSend.setOnClickListener {
             sendMessage()
@@ -81,7 +79,6 @@ class ChatActivity : AppCompatActivity() {
                     messageList.add(it)
                     messageAdapter.notifyDataSetChanged()
                     if (it.timestamp > lastSeenMessageTimestamp) {
-                        sendNotification("New Chat: ${it.text}",snapshot.key ?: "")
                         updateLastSeenMessageTimestamp(it.timestamp)
                     }
                     binding.rvMessages.scrollToPosition(messageList.size - 1)
@@ -113,7 +110,6 @@ class ChatActivity : AppCompatActivity() {
     private fun sendMessage() {
         val currentUser = FirebaseAuth.getInstance().currentUser
         val messageText = binding.etMessage.text.toString().trim()
-
         if (currentUser != null && messageText.isNotEmpty()) {
             checkUsernameSaved(currentUser.uid) { isUsernameSaved ->
                 if (isUsernameSaved) {
@@ -125,29 +121,41 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
-    private fun sendNotification(message: String, messageId: String) {
-        val sharedPreferences = getSharedPreferences("com.mini.amimatch.NOTIFICATION_PREFS", Context.MODE_PRIVATE)
-        val sentNotificationIds = sharedPreferences.getStringSet("sentNotificationIds", HashSet()) ?: HashSet()
+    private fun sendNotification(title: String, message: String) {
+        Log.d(TAG, "Sending notification: title=$title, message=$message")
 
-        if (!sentNotificationIds.contains(messageId)) {
-            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            val intent = Intent(this, ChatActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-            val notificationBuilder = NotificationCompat.Builder(this, channelId)
-                .setSmallIcon(R.drawable.ic_main)
-                .setContentTitle("AMI-MATCH")
-                .setContentText(message)
-                .setContentIntent(pendingIntent)
-                .setAutoCancel(true)
+        val fcmUrl = "https://fcm.googleapis.com/fcm/send"
+        val serverKey = "YOUR_FIREBASE_SERVER_KEY_HERE"
 
-            NotificationManagerCompat.from(this).notify(System.currentTimeMillis().toInt(), notificationBuilder.build())
-
-            // Update SharedPreferences to store the sentNotificationIds set
-            sentNotificationIds.add(messageId)
-            sharedPreferences.edit().putStringSet("sentNotificationIds", sentNotificationIds).apply()
+        val notification = JSONObject().apply {
+            put("title", title)
+            put("message", message)
         }
+
+        val body = JSONObject().apply {
+            put("to", "/topics/topic_name")
+            put("data", notification)
+        }
+
+        val request = object : JsonObjectRequest(
+            Request.Method.POST, fcmUrl, body,
+            Response.Listener {
+                Log.d(TAG, "Notification sent successfully")
+            },
+            Response.ErrorListener { error ->
+                Log.e(TAG, "Error sending notification: $error")
+            }) {
+            override fun getHeaders(): MutableMap<String, String> {
+                val headers = HashMap<String, String>()
+                headers["Authorization"] = "key=$serverKey"
+                headers["Content-Type"] = "application/json"
+                return headers
+            }
+        }
+
+        Volley.newRequestQueue(this).add(request)
     }
+
 
     private fun showUsernameDialog() {
         val dialog = AlertDialog.Builder(this)
@@ -213,16 +221,10 @@ class ChatActivity : AppCompatActivity() {
         if (messageId != null) {
             message.id = messageId
             database.child("messages").child(messageId).setValue(message)
+            sendNotification("New Message", messageText)
             binding.etMessage.text.clear()
         }
     }
 
-    private fun createNotificationChannel() {
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel(channelId, channelName, importance)
-            notificationManager.createNotificationChannel(channel)
-        }
     }
-}
+

@@ -174,6 +174,8 @@ class PrivateChatActivity : AppCompatActivity() {
         val notification = JSONObject().apply {
             put("title", "$senderName sent you a message")
             put("message", message)
+            put("senderName", senderName)
+
         }
 
         val body = JSONObject().apply {
