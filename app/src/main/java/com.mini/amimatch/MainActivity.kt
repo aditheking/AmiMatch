@@ -156,60 +156,53 @@ class MainActivity : Activity() {
         // Initialize Firebase Firestore
         private fun fetchFirebaseProfiles() {
             val db = Firebase.firestore
-        val usersCollection = db.collection("users")
+            val usersCollection = db.collection("users")
 
-        // Retrieve user data from Firestore
-        usersCollection.get().addOnSuccessListener { querySnapshot ->
-            for (document in querySnapshot.documents) {
-                val userData = document.toObject(Cards::class.java)
-                userData?.let {
-                    rowItems.add(it)
+            // Retrieve user data from Firestore
+            usersCollection.get().addOnSuccessListener { querySnapshot ->
+                val fetchedProfiles = mutableListOf<Cards>()
+                for (document in querySnapshot.documents) {
+                    val userData = document.toObject(Cards::class.java)
+                    userData?.let {
+                        fetchedProfiles.add(it)
+                    }
                 }
+
+                fetchedProfiles.shuffle()
+
+                val predefinedProfiles = rowItems.filter { it.userId == "1" }
+
+                rowItems.clear()
+
+                rowItems.addAll(fetchedProfiles)
+
+                rowItems.addAll(predefinedProfiles)
+
+                arrayAdapter = PhotoAdapter(this, R.layout.item, rowItems)
+                updateSwipeCard()
+                checkRowItem()
+                updateLocation()
+            }.addOnFailureListener { exception ->
+                Log.e(TAG, "Error getting documents: ", exception)
             }
-            arrayAdapter = PhotoAdapter(this, R.layout.item, rowItems)
-            updateSwipeCard()
-            checkRowItem()
-            updateLocation()
-            val flingContainer = findViewById<SwipeFlingAdapterView>(R.id.frame)
-            flingContainer.adapter = arrayAdapter
-        }.addOnFailureListener { exception ->
-            Log.e(TAG, "Error getting documents: ", exception)
         }
-    }
+
 
     private fun addPredefinedProfiles() {
         val cardsList = listOf(
             Cards().apply {
                 userId = "1"
-                name = "Aditya Upreti"
-                age = 21
-                profileImageUrl = "https://i.ibb.co/mtW3zRC/Whats-App-Image-2024-04-06-at-11-29-46.jpg"
-                bio = ":)"
-                interest = "Coding"
-                distance = 1
-                about ="Hi , Im Developer of this app "
-                year_semester ="3rd Year"
-                course = "BtechCSE"
-                school ="ASET"
+                name = "Ami-Match"
+                age = 1
+                profileImageUrl = "https://i.ibb.co/D5NJqZy/ami-match-logo-for-a-app-any-logo-and-below-that-t-9y-Z6-YEwr-S4e-Dr-Jmxkrrd-Dg-Qt-ZF2-HU8-QIqy3-W5.jpg"
+                bio = ""
+                interest = ""
+                distance = 0
+                about ="AmiMatch is a social matching app tailored for the Amity University. Users can swipe through profiles, upload photos, express interest with likes, and engage in private and group chats. Anonymous confessions provide a platform for sharing thoughts and feelings. Notifications keep users updated on matches and messages, fostering connections and interactions within the community. Developed by Aditya Upreti"
+                year_semester =""
+                course = ""
+                school =""
             },
-            Cards().apply {
-                userId = "2"
-                name = "Ashutosh Pandey"
-                age = 20
-                profileImageUrl = "https://i.ibb.co/gMfnGsc/9d2d9510-bc42-4263-b8dc-5a7831476cca.jpg"
-                bio = "Hi, I'm Ashutosh"
-                interest = "travelling"
-                distance = 1
-            },
-            Cards().apply {
-                userId = "3"
-                name = "Hritika Pandey"
-                age = 19
-                profileImageUrl = "https://i.ibb.co/n3SphfW/Whats-App-Image-2024-04-06-at-11-54-12.jpg"
-                bio = "Hi , This is Hritika"
-                interest = "Music and movies"
-                distance = 1
-            }
         )
         rowItems.addAll(cardsList)
     }
