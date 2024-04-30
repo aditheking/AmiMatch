@@ -31,6 +31,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx
 import com.lorentzos.flingswipe.SwipeFlingAdapterView
 import com.mini.amimatch.Cards
+import java.util.Calendar
 
 class MainActivity : Activity() {
     private val TAG = "MainActivity"
@@ -343,19 +344,78 @@ class MainActivity : Activity() {
         }
     }
 
+    private fun hasLikedToday(likedUserId: String, likingUserId: String): Boolean {
+        val lastLikeTimestamp = sharedPref.getLong("$likingUserId-$likedUserId", -1)
+
+        val calendar = Calendar.getInstance()
+
+        val currentDayOfYear = calendar.get(Calendar.DAY_OF_YEAR)
+
+        return lastLikeTimestamp != -1L && calendar.timeInMillis - lastLikeTimestamp < 24 * 60 * 60 * 1000 && currentDayOfYear == calendar.get(Calendar.DAY_OF_YEAR)
+    }
+
     fun likeBtn(v: View?) {
         if (rowItems.isNotEmpty()) {
             val cardItem = rowItems[0]
-            val userId = cardItem.userId
-            //check matches
-            rowItems.removeAt(0)
-            arrayAdapter.notifyDataSetChanged()
-            val btnClick = Intent(mContext, BtnLikeActivity::class.java)
-            btnClick.putExtra("url", cardItem.profileImageUrl)
-            btnClick.putExtra("photo", cardItem.profilePhotoUrl)
-            startActivity(btnClick)
+            val likedUserId = cardItem.userId
+            val likingUserId = FirebaseAuth.getInstance().currentUser?.uid
+
+            if (likingUserId != null) {
+                if (!likedUserId?.let { hasLikedToday(it, likingUserId) }!!) {
+                    val db = FirebaseFirestore.getInstance()
+                    val likesRef = likedUserId.let { db.collection("likes").document(it) }
+                    likesRef.get()
+                        .addOnSuccessListener { document ->
+                            if (document.exists()) {
+                                val likesData = document.data
+                                if (likesData != null) {
+                                    val likesBy = likesData["likedBy"] as? ArrayList<String>
+                                    if (likesBy != null) {
+                                        likesBy.add(likingUserId)
+                                        val likeCount = likesBy.size
+                                        likesData["count"] = likeCount
+                                        likesRef.set(likesData)
+                                            .addOnSuccessListener {
+                                                Log.d(TAG, "Likes updated successfully.")
+                                                rowItems.removeAt(0)
+                                                arrayAdapter.notifyDataSetChanged()
+
+                                                sharedPref.edit().putLong("$likingUserId-$likedUserId", System.currentTimeMillis()).apply()
+
+                                                val btnClick = Intent(mContext, BtnLikeActivity::class.java)
+                                                btnClick.putExtra("url", cardItem.profileImageUrl)
+                                                btnClick.putExtra("photo", cardItem.profilePhotoUrl)
+                                                startActivity(btnClick)
+                                            }
+                                            .addOnFailureListener { e ->
+                                                Log.e(TAG, "Error updating likes: $e")
+                                            }
+                                    }
+                                }
+                            } else {
+                                val newLikesData = hashMapOf(
+                                    "likedBy" to arrayListOf<String>(likingUserId),
+                                    "count" to 1
+                                )
+                                likesRef.set(newLikesData)
+                                    .addOnSuccessListener {
+                                        Log.d(TAG, "New like document created successfully.")
+                                    }
+                                    .addOnFailureListener { e ->
+                                        Log.e(TAG, "Error creating like document: $e")
+                                    }
+                            }
+                        }
+                        .addOnFailureListener { e ->
+                            Log.e(TAG, "Error fetching like document: $e")
+                        }
+                } else {
+                    Toast.makeText(this@MainActivity, "You have already liked this user today.", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
+
 
     private fun setupTopNavigationView() {
         Log.d(TAG, "setupTopNavigationView: setting up TopNavigationView")
