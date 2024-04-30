@@ -393,12 +393,12 @@ class MainActivity : Activity() {
                                                 arrayAdapter.notifyDataSetChanged()
 
                                                 sharedPref.edit().putLong("$likingUserId-$likedUserId", System.currentTimeMillis()).apply()
+                                                sendNotificationToUser(likedUserId, true)
 
                                                 val btnClick = Intent(mContext, BtnLikeActivity::class.java)
                                                 btnClick.putExtra("url", cardItem.profileImageUrl)
                                                 btnClick.putExtra("photo", cardItem.profilePhotoUrl)
                                                 startActivity(btnClick)
-                                                sendNotificationToUser(likedUserId, true)
 
                                             }
                                             .addOnFailureListener { e ->
