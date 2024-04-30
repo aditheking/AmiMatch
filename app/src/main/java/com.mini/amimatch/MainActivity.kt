@@ -22,6 +22,9 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import com.android.volley.Request
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
@@ -32,6 +35,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx
 import com.lorentzos.flingswipe.SwipeFlingAdapterView
 import com.mini.amimatch.Cards
+import org.json.JSONObject
 import java.util.Calendar
 
 class MainActivity : Activity() {
@@ -394,6 +398,8 @@ class MainActivity : Activity() {
                                                 btnClick.putExtra("url", cardItem.profileImageUrl)
                                                 btnClick.putExtra("photo", cardItem.profilePhotoUrl)
                                                 startActivity(btnClick)
+                                                sendNotificationToUser(likedUserId, true)
+
                                             }
                                             .addOnFailureListener { e ->
                                                 Log.e(TAG, "Error updating likes: $e")
@@ -408,6 +414,7 @@ class MainActivity : Activity() {
                                 likesRef.set(newLikesData)
                                     .addOnSuccessListener {
                                         Log.d(TAG, "New like document created successfully.")
+                                        sendNotificationToUser(likedUserId, true)
                                     }
                                     .addOnFailureListener { e ->
                                         Log.e(TAG, "Error creating like document: $e")
@@ -423,6 +430,55 @@ class MainActivity : Activity() {
             }
         }
     }
+
+    private fun sendNotificationToUser(userId: String, isLikeNotification: Boolean) {
+        FirebaseFirestore.getInstance().collection("user_tokens").document(userId).get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val fcmToken = document.getString("token")
+                    if (fcmToken != null) {
+                        val notificationTitle = if (isLikeNotification) "New Like" else "New Message"
+                        val notificationMessage = if (isLikeNotification) "Someone liked your profile" else "You have a new message"
+
+                        sendNotification(fcmToken, notificationTitle, notificationMessage)
+                    }
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.e(TAG, "Error fetching FCM token: $e")
+            }
+    }
+
+    private fun sendNotification(token: String, title: String, message: String) {
+        val url = "https://fcm.googleapis.com/fcm/send"
+        val requestQueue = Volley.newRequestQueue(mContext)
+
+        val jsonObject = JSONObject()
+        jsonObject.put("to", token)
+        val notificationObject = JSONObject()
+        notificationObject.put("title", title)
+        notificationObject.put("body", message)
+        jsonObject.put("notification", notificationObject)
+
+        val request = object : JsonObjectRequest(
+            Request.Method.POST, url, jsonObject,
+            { response ->
+                Log.d(TAG, "Notification sent successfully: $response")
+            },
+            { error ->
+                Log.e(TAG, "Error sending notification: $error")
+            }) {
+            override fun getHeaders(): MutableMap<String, String> {
+                val headers = HashMap<String, String>()
+                headers["Authorization"] = "key=YOUR_FIREBASE_SERVER_KEY_HERE"
+                return headers
+            }
+        }
+
+        requestQueue.add(request)
+    }
+
+
 
 
     private fun setupTopNavigationView() {

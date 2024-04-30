@@ -42,49 +42,68 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
 
-        val intent: Intent
-        val notificationTitle: String
-        val senderName = remoteMessage.data["senderName"] ?: "Unknown"
-        val notificationMessage = remoteMessage.data["message"]
-
-        if (remoteMessage.data.containsKey("privateChat")) {
-            intent = Intent(this, PrivateChatActivity::class.java)
-            notificationTitle = "$senderName sent you a private message"
-        } else {
-            intent = Intent(this, ChatActivity::class.java)
-            notificationTitle = "$senderName sent a message"
-        }
-
-        val notificationManager =
-            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val notificationID = Random.nextInt(3000)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             setupChannels(notificationManager)
         }
 
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        val pendingIntent = PendingIntent.getActivity(
-            this, 0, intent,
-            PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
-        )
-
-        val notificationSoundUri =
-            RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+        val notificationSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
 
         val notificationBuilder = NotificationCompat.Builder(this, ADMIN_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_main)
-            .setContentTitle(notificationTitle)
-            .setContentText(notificationMessage)
             .setAutoCancel(true)
             .setSound(notificationSoundUri)
-            .setContentIntent(pendingIntent)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            notificationBuilder.color = Color.RED
+        if (remoteMessage.data.containsKey("likeNotification")) {
+            val senderName = remoteMessage.data["senderName"] ?: "Unknown"
+            val notificationMessage = "Someone liked your profile"
+
+            val intent = Intent(this, MainActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            val pendingIntent = PendingIntent.getActivity(
+                this, 0, intent,
+                PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
+            )
+
+            notificationBuilder
+                .setContentTitle("New Like")
+                .setContentText(notificationMessage)
+                .setContentIntent(pendingIntent)
+        } else if (remoteMessage.data.containsKey("privateChat")) {
+            val senderName = remoteMessage.data["senderName"] ?: "Unknown"
+            val notificationMessage = remoteMessage.data["message"]
+
+            val intent = Intent(this, PrivateChatActivity::class.java)
+            val pendingIntent = PendingIntent.getActivity(
+                this, 0, intent,
+                PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
+            )
+
+            notificationBuilder
+                .setContentTitle("$senderName sent you a private message")
+                .setContentText(notificationMessage)
+                .setContentIntent(pendingIntent)
+        } else {
+            val senderName = remoteMessage.data["senderName"] ?: "Unknown"
+            val notificationMessage = remoteMessage.data["message"]
+
+            val intent = Intent(this, ChatActivity::class.java)
+            val pendingIntent = PendingIntent.getActivity(
+                this, 0, intent,
+                PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
+            )
+
+            notificationBuilder
+                .setContentTitle("$senderName sent a message")
+                .setContentText(notificationMessage)
+                .setContentIntent(pendingIntent)
         }
+
         notificationManager.notify(notificationID, notificationBuilder.build())
     }
+
 
 
 
