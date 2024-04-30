@@ -9,6 +9,8 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import com.bumptech.glide.Glide
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -21,6 +23,7 @@ class PhotoAdapter(
     private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
     private val checkMarkVisibilityMap = HashMap<String, Boolean>()
     private val likeCountMap = HashMap<String, Long>()
+    private val likedUsersMap = HashMap<String, List<String>>()
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         var convertView = convertView
@@ -35,10 +38,18 @@ class PhotoAdapter(
         val checkVerified = convertView.findViewById<ImageView>(R.id.checkVerified)
         val likeCountTextView = convertView.findViewById<TextView>(R.id.like_count)
 
+        likeCountTextView.isClickable = true
+
+
         if (likeCountMap.containsKey(cardItem?.userId)) {
             likeCountTextView.text = likeCountMap[cardItem?.userId].toString()
         } else {
             fetchLikeCount(cardItem?.userId, likeCountTextView)
+        }
+
+        likeCountTextView.setOnClickListener {
+            Toast.makeText(mContext, "Like clicked", Toast.LENGTH_SHORT).show()
+            showLikedUsersDialog(cardItem?.userId)
         }
 
         if (!checkMarkVisibilityMap.containsKey(cardItem?.userId)) {
@@ -71,6 +82,7 @@ class PhotoAdapter(
         return convertView
     }
 
+
     private fun fetchLikeCount(userId: String?, likeCountTextView: TextView) {
         if (userId != null) {
             val likesRef = firestore.collection("likes").document(userId)
@@ -80,6 +92,9 @@ class PhotoAdapter(
                         val likeCount = documentSnapshot.getLong("count") ?: 0
                         likeCountTextView.text = likeCount.toString()
                         likeCountMap[userId] = likeCount
+
+                        val likedUsers = documentSnapshot.get("likedBy") as? List<String> ?: emptyList()
+                        likedUsersMap[userId] = likedUsers
                     }
                 }
                 .addOnFailureListener { exception ->
@@ -87,6 +102,85 @@ class PhotoAdapter(
                 }
         }
     }
+
+    private fun showLikedUsersDialog(userId: String?) {
+        if (userId != null && likedUsersMap.containsKey(userId)) {
+            val likedUserIds = likedUsersMap[userId] ?: emptyList()
+
+            val dialogBuilder = AlertDialog.Builder(mContext)
+            dialogBuilder.setTitle("Users who liked your profile")
+
+            if (likedUserIds.isNotEmpty()) {
+                val userLikesMap = mutableMapOf<String, Int>()
+                val fetchNamesCount = likedUserIds.size
+                var fetchedNamesCount = 0
+
+                likedUserIds.forEachIndexed { _, likedUserId ->
+                    firestore.collection("users").document(likedUserId).get()
+                        .addOnSuccessListener { documentSnapshot ->
+                            val userName = documentSnapshot.getString("name")
+                            if (userName != null) {
+                                userLikesMap[userName] = (userLikesMap[userName] ?: 0) + 1
+                            }
+                            fetchedNamesCount++
+
+                            if (fetchedNamesCount == fetchNamesCount) {
+                                val usersLikedStringBuilder = StringBuilder()
+                                userLikesMap.forEach { (name, likeCount) ->
+                                    usersLikedStringBuilder.append("$name : $likeCount\n")
+                                }
+
+                                if (usersLikedStringBuilder.isNotEmpty()) {
+                                    dialogBuilder.setMessage(usersLikedStringBuilder.toString())
+                                } else {
+                                    dialogBuilder.setMessage("No users liked your profile yet.")
+                                }
+
+                                dialogBuilder.setPositiveButton("OK") { dialog, _ ->
+                                    dialog.dismiss()
+                                }
+
+                                val dialog = dialogBuilder.create()
+                                dialog.show()
+                            }
+                        }
+                        .addOnFailureListener { exception ->
+                            Log.e(TAG, "Error fetching user name: $exception")
+                            fetchedNamesCount++
+
+                            if (fetchedNamesCount == fetchNamesCount) {
+                                val usersLikedStringBuilder = StringBuilder()
+                                userLikesMap.forEach { (name, likeCount) ->
+                                    usersLikedStringBuilder.append("$name : $likeCount\n")
+                                }
+
+                                if (usersLikedStringBuilder.isNotEmpty()) {
+                                    dialogBuilder.setMessage(usersLikedStringBuilder.toString())
+                                } else {
+                                    dialogBuilder.setMessage("No users liked your profile yet.")
+                                }
+
+                                dialogBuilder.setPositiveButton("OK") { dialog, _ ->
+                                    dialog.dismiss()
+                                }
+
+                                val dialog = dialogBuilder.create()
+                                dialog.show()
+                            }
+                        }
+                }
+            } else {
+                dialogBuilder.setMessage("No users liked your profile yet.")
+                dialogBuilder.setPositiveButton("OK") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                val dialog = dialogBuilder.create()
+                dialog.show()
+            }
+        }
+    }
+
+
 
 
     private fun setCheckMarkVisibility(checkVerified: ImageView, isVisible: Boolean) {
