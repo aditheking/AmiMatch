@@ -24,6 +24,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -158,34 +159,48 @@ class MainActivity : Activity() {
             val db = Firebase.firestore
             val usersCollection = db.collection("users")
 
-            // Retrieve user data from Firestore
-            usersCollection.get().addOnSuccessListener { querySnapshot ->
-                val fetchedProfiles = mutableListOf<Cards>()
-                for (document in querySnapshot.documents) {
-                    val userData = document.toObject(Cards::class.java)
-                    userData?.let {
+            // get own profile data first
+            val userId = FirebaseAuth.getInstance().currentUser?.uid
+            userId?.let { uid ->
+                val userDocRef = usersCollection.document(uid)
+                userDocRef.get().addOnSuccessListener { documentSnapshot ->
+                    val userCard = documentSnapshot.toObject(Cards::class.java)
+                    userCard?.let {
+                        rowItems.add(it)
+
+                        fetchOtherProfiles(usersCollection, userId)
+                    }
+                }.addOnFailureListener { exception ->
+                    Log.e(TAG, "Error retrieving user's own profile: ", exception)
+                }
+            }
+        }
+
+    private fun fetchOtherProfiles(usersCollection: CollectionReference, userId: String) {
+        usersCollection.get().addOnSuccessListener { querySnapshot ->
+            val fetchedProfiles = mutableListOf<Cards>()
+            for (document in querySnapshot.documents) {
+                val userData = document.toObject(Cards::class.java)
+                userData?.let {
+                    if (it.userId != userId) {
                         fetchedProfiles.add(it)
                     }
                 }
-
-                fetchedProfiles.shuffle()
-
-                val predefinedProfiles = rowItems.filter { it.userId == "1" }
-
-                rowItems.clear()
-
-                rowItems.addAll(fetchedProfiles)
-
-                rowItems.addAll(predefinedProfiles)
-
-                arrayAdapter = PhotoAdapter(this, R.layout.item, rowItems)
-                updateSwipeCard()
-                checkRowItem()
-                updateLocation()
-            }.addOnFailureListener { exception ->
-                Log.e(TAG, "Error getting documents: ", exception)
             }
+
+            fetchedProfiles.shuffle()
+
+            rowItems.addAll(fetchedProfiles)
+
+            arrayAdapter = PhotoAdapter(this, R.layout.item, rowItems)
+            updateSwipeCard()
+            checkRowItem()
+            updateLocation()
+        }.addOnFailureListener { exception ->
+            Log.e(TAG, "Error getting documents: ", exception)
         }
+    }
+
 
 
     private fun addPredefinedProfiles() {
