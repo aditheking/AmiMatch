@@ -1,27 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginTop="10dp"
-    android:background="@color/white">
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    android:background="@color/white"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="16dp"
+    android:paddingTop="8dp"
+    android:paddingEnd="16dp"
+    android:paddingBottom="8dp">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/mui_image"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:src="@drawable/monkey"
-        android:padding="4dp"/>
+        android:padding="2dp" />
 
     <TextView
         android:id="@+id/friend_request_name"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginLeft="10dp"
         android:layout_weight="1"
         android:textColor="@color/textColor"
-        android:textSize="10sp" />
+        android:textSize="12sp"
+        android:text="Friend Request Name"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"/>
 
     <Button
         android:id="@+id/btnAccept"
@@ -30,7 +36,8 @@
         android:text="Accept"
         android:textColor="@color/black"
         android:textSize="10sp"
-        android:background="@android:color/transparent"/>
+        android:background="@android:color/transparent"
+        android:layout_marginStart="8dp"/>
 
     <Button
         android:id="@+id/btnReject"
@@ -39,7 +46,7 @@
         android:text="Reject"
         android:textColor="@color/black"
         android:textSize="10sp"
-        android:background="@android:color/transparent"/>
-
+        android:background="@android:color/transparent"
+        android:layout_marginStart="8dp"/>
 
 </LinearLayout>
