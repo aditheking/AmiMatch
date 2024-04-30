@@ -122,14 +122,46 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private fun sendNotification(title: String, message: String) {
-        Log.d(TAG, "Sending notification: title=$title, message=$message")
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        val currentUserId = currentUser?.uid
+        val senderNameRef =
+            FirebaseFirestore.getInstance().collection("users").document(currentUserId!!)
+                .get()
+                .addOnSuccessListener { document ->
+                    if (document != null) {
+                        val senderName = document.getString("name")
+                        if (!senderName.isNullOrEmpty()) {
+                            Log.d(TAG, "Sender name: $senderName")
+                            sendNotification(title, message, senderName)
+                        } else {
+                            Log.e(TAG, "Sender name is null or empty")
+                        }
+                    } else {
+                        Log.e(TAG, "Document doesn't exist")
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Log.e(TAG, "Failed to retrieve sender name: $e")
+                }
+    }
+
+    private fun sendNotification(
+        title: String,
+        message: String,
+        senderName: String
+    ) {
+        Log.d(
+            TAG,
+            "Sending notification: title=$title, message=$message, senderName=$senderName"
+        )
 
         val fcmUrl = "https://fcm.googleapis.com/fcm/send"
         val serverKey = "YOUR_FIREBASE_SERVER_KEY_HERE"
 
         val notification = JSONObject().apply {
-            put("title", title)
+            put("title", "$senderName sent you a message")
             put("message", message)
+            put("senderName", senderName)
         }
 
         val body = JSONObject().apply {
@@ -137,8 +169,7 @@ class ChatActivity : AppCompatActivity() {
             put("data", notification)
         }
 
-        val request = object : JsonObjectRequest(
-            Request.Method.POST, fcmUrl, body,
+        val request = object : JsonObjectRequest(Request.Method.POST, fcmUrl, body,
             Response.Listener {
                 Log.d(TAG, "Notification sent successfully")
             },
@@ -155,6 +186,7 @@ class ChatActivity : AppCompatActivity() {
 
         Volley.newRequestQueue(this).add(request)
     }
+
 
 
     private fun showUsernameDialog() {
