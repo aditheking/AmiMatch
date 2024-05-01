@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.EditText
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -45,7 +46,16 @@ class Matched_Activity : AppCompatActivity(), FriendRequestActionListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_matched)
 
-        mContext = this
+        val floatingActionButton = findViewById<ImageView>(R.id.floatingActionButton)
+        floatingActionButton.setOnClickListener {
+            openNewPage()
+
+        }
+
+
+
+
+    mContext = this
         setupTopNavigationView()
         searchFunc()
 
@@ -96,6 +106,11 @@ class Matched_Activity : AppCompatActivity(), FriendRequestActionListener {
 
     }
 
+    private fun openNewPage() {
+        val intent = Intent(this, LikeMatchActivity::class.java)
+        startActivity(intent)
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+    }
     private fun fetchFriendRequests() {
         val currentUserUid = FirebaseAuth.getInstance().currentUser?.uid
         if (currentUserUid != null) {

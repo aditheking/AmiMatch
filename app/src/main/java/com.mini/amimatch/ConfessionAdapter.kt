@@ -28,7 +28,7 @@ class ConfessionAdapter(private var confessions: List<Confession>) :
     override fun onBindViewHolder(holder: ConfessionViewHolder, position: Int) {
         val confession = confessions[position]
         holder.textViewConfession.text = confession.confessionText
-        holder.textViewTimestamp.text = "Posted on ${confession.getFormattedTimestamp()}"
+        holder.textViewTimestamp.text = "Confessed on ${confession.getFormattedTimestamp()}"
     }
 
     override fun getItemCount(): Int {
