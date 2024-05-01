@@ -2,6 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white">
 
     <LinearLayout
@@ -78,6 +79,27 @@
             android:background="@android:color/transparent"
             android:textSize="10sp"
             android:layout_gravity="center_horizontal" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/animation_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:lottie_autoPlay="true"
+                app:lottie_fileName="sent.json"
+                app:lottie_loop="false"
+                android:background="@android:color/transparent" />
+
+        </LinearLayout>
+
+
 
         <!-- About -->
         <TextView

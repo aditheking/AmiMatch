@@ -3,6 +3,7 @@ package com.mini.amimatch
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
@@ -11,6 +12,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.airbnb.lottie.LottieAnimationView
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -95,8 +97,13 @@ class ProfileCheckinMain : AppCompatActivity() {
         retrievePrivacySettings(userId)
 
         val sendRequestButton: Button = findViewById(R.id.send_friend_request_button)
+        val animationView: LottieAnimationView = findViewById(R.id.animation_view)
 
         sendRequestButton.setOnClickListener {
+            animationView.visibility = View.VISIBLE
+            animationView.setBackgroundColor(Color.TRANSPARENT)
+
+            animationView.playAnimation()
             sendFriendRequest(userId)
         }
     }
