@@ -12,8 +12,13 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -146,11 +151,47 @@ class ConfessionActivity : AppCompatActivity() {
 
                 confessionCount++
                 loadConfessions()
+                sendNotification(confessionText)
+
             }
             .addOnFailureListener { e ->
                 Log.e(TAG, "Error submitting confession", e)
                 Toast.makeText(this, "Failed to submit confession", Toast.LENGTH_SHORT).show()
             }
+    }
+
+    private fun sendNotification(confessionText: String) {
+        val fcmUrl = "https://fcm.googleapis.com/fcm/send"
+        val serverKey = "YOUR_FIREBASE_SERVER_KEY_HERE"
+
+        val notification = JSONObject().apply {
+            put("title", "New Confession")
+            put("message", confessionText)
+            put("confession", true)
+        }
+
+        val body = JSONObject().apply {
+            put("to", "/topics/new_confession")
+            put("data", notification)
+        }
+
+        val request = object : JsonObjectRequest(
+            Request.Method.POST, fcmUrl, body,
+            Response.Listener {
+                Log.d(TAG, "Notification sent successfully")
+            },
+            Response.ErrorListener { error ->
+                Log.e(TAG, "Error sending notification: $error")
+            }) {
+            override fun getHeaders(): MutableMap<String, String> {
+                val headers = HashMap<String, String>()
+                headers["Authorization"] = "key=$serverKey"
+                headers["Content-Type"] = "application/json"
+                return headers
+            }
+        }
+
+        Volley.newRequestQueue(this).add(request)
     }
 
     private fun loadConfessions() {

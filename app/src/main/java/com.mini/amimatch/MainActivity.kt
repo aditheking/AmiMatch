@@ -76,6 +76,7 @@ class MainActivity : Activity() {
 
                 val token = task.result
                 FirebaseMessaging.getInstance().subscribeToTopic("topic_name")
+                FirebaseMessaging.getInstance().subscribeToTopic("new_confession")
                 Log.d(TAG, "Subscribed to topic")
                 saveTokenToFirestore(token)
             })

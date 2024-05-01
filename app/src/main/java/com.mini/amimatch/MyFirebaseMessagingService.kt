@@ -57,8 +57,9 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             .setSound(notificationSoundUri)
 
         if (remoteMessage.data.containsKey("likeNotification")) {
-            val senderName = remoteMessage.data["senderName"] ?: "Unknown"
-            val notificationMessage = "Someone liked your profile"
+            // like notification
+            val senderName = remoteMessage.data["senderName"] ?: "Someone"
+            val notificationMessage = "$senderName liked your profile"
 
             val intent = Intent(this, MainActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -71,6 +72,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 .setContentTitle("New Like")
                 .setContentText(notificationMessage)
                 .setContentIntent(pendingIntent)
+                // private chat notification
         } else if (remoteMessage.data.containsKey("privateChat")) {
             val senderName = remoteMessage.data["senderName"] ?: "Unknown"
             val notificationMessage = remoteMessage.data["message"]
@@ -85,6 +87,21 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 .setContentTitle("$senderName sent you a private message")
                 .setContentText(notificationMessage)
                 .setContentIntent(pendingIntent)
+                // confession notification
+        } else if (remoteMessage.data.containsKey("confession")) {
+            val notificationMessage = remoteMessage.data["message"]
+
+            val intent = Intent(this, ConfessionActivity::class.java)
+            val pendingIntent = PendingIntent.getActivity(
+                this, 0, intent,
+                PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
+            )
+
+            notificationBuilder
+                .setContentTitle("New Confession!")
+                .setContentText(notificationMessage)
+                .setContentIntent(pendingIntent)
+                // group chat notification
         } else {
             val senderName = remoteMessage.data["senderName"] ?: "Unknown"
             val notificationMessage = remoteMessage.data["message"]
@@ -103,6 +120,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         notificationManager.notify(notificationID, notificationBuilder.build())
     }
+
 
 
 
