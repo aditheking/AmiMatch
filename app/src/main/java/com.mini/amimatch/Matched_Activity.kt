@@ -341,9 +341,43 @@ class Matched_Activity : AppCompatActivity(), FriendRequestActionListener {
     }
 
     fun chat(view: View) {
-        val intent = Intent(this, PrivateChatActivity::class.java)
-        startActivity(intent)
+        val parentView = view.parent as View
+
+        val recyclerView = parentView.parent as RecyclerView
+
+        val clickedPosition = recyclerView.getChildViewHolder(parentView).adapterPosition
+
+        val matchedUserId = getUserIdOfMatchedUser(clickedPosition)
+
+        if (!matchedUserId.isNullOrEmpty()) {
+            val intent = Intent(this, PrivateChatActivity::class.java).apply {
+                putExtra("userId", matchedUserId)
+                putExtra("currentUserId", currentUserId)
+            }
+            startActivity(intent)
+        } else {
+            Log.e(TAG, "No matched user found")
+        }
     }
+
+
+    private fun getUserIdOfMatchedUser(position: Int): String? {
+        var matchedUserId: String? = null
+
+        val currentUserUid = FirebaseAuth.getInstance().currentUser?.uid
+
+        if (currentUserUid != null && position >= 0 && position < matchList.size) {
+            val matchedUser = matchList[position]
+
+            if (!matchedUser.userId.isNullOrEmpty() && matchedUser.userId != currentUserUid) {
+                matchedUserId = matchedUser.userId
+            }
+        }
+
+        return matchedUserId
+    }
+
+
 
     override fun onDestroy() {
         super.onDestroy()

@@ -120,7 +120,8 @@
                     android:layout_marginTop="5dp"
                     android:layout_marginBottom="5dp"
                     android:gravity="bottom"
-                    app:passwordToggleEnabled="true">
+                    app:passwordToggleEnabled="true"
+                    app:passwordToggleTint="@color/grey">
 
                     <EditText
                         android:id="@+id/input_password"
@@ -157,7 +158,8 @@
                 android:layout_centerHorizontal="true"
                 android:onClick="onLoginClicked"
                 android:padding="15dp"
-                android:text="Existing User? Please Login" />
+                android:text="Existing User? Please Login"
+                android:textColor="@color/transparentPink" />
 
         </RelativeLayout>
     </ScrollView>

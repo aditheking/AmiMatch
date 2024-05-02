@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:padding="16dp"
     android:gravity="center_vertical">
@@ -39,12 +40,15 @@
 
     </LinearLayout>
 
-    <ImageButton
+    <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/videoCalBtn"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:src="@drawable/ic_comment"
+        android:layout_width="126dp"
+        android:layout_height="46dp"
+        android:background="@android:color/transparent"
         android:onClick="chat"
-        android:background="@android:color/transparent"/>
+        app:lottie_autoPlay="true"
+        app:lottie_fileName="chat.json"
+        app:lottie_loop="true" />
+
 
 </LinearLayout>
