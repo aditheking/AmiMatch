@@ -13,114 +13,115 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/white"
             android:orientation="vertical"
             android:paddingLeft="25dp"
             android:paddingTop="55dp"
             android:paddingRight="25dp">
 
-            <RelativeLayout
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:layout_gravity="center"
                 android:layout_marginBottom="30dp"
                 android:orientation="horizontal">
 
                 <ImageView
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    android:layout_gravity="center_horizontal"
                     android:background="@drawable/logo" />
 
                 <com.mini.amimatch.MyTextView_Roboto_Bold
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginLeft="40dp"
-                    android:text="AMI MATCH"
-                    android:textColor="#ff0b00"
+                    android:text="AMI-MATCH"
+                    android:textColor="@color/transparentPink"
                     android:textSize="30dp" />
 
-            </RelativeLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:orientation="vertical">
-
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="70dp"
-                    android:layout_marginBottom="8dp"
-                    android:gravity="bottom">
-
-                    <EditText
-                        android:id="@+id/input_email"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/edit_text_focused_bg"
-                        android:hint="Email"
-                        android:textColorHint="@android:color/black"
-                        android:inputType="textEmailAddress"
-                        android:textColor="@android:color/black"
-                        android:padding="15dp" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="70dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:gravity="bottom"
-                    app:passwordToggleEnabled="true">
-
-                    <EditText
-                        android:id="@+id/input_password"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/edit_text_focused_bg"
-                        android:hint="Password"
-                        android:textColorHint="@android:color/black"
-                        android:inputType="textPassword"
-                        android:textColor="@android:color/black"
-                        android:padding="15dp" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btn_login"
-                    android:layout_width="match_parent"
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/lottie_animation_view"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="25dp"
-                    android:layout_marginBottom="25dp"
-                    android:background="@drawable/white_rounded_button"
-                    android:padding="12dp"
-                    android:text="Login"
-                    android:textColor="@color/white"
-                    android:textStyle="bold" />z
-
-                <TextView
-                    android:id="@+id/link_signup"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="25dp"
-                    android:gravity="center"
-                    android:text="No accout yet? Create one"
-                    android:textColor="@color/transparentPink"
-                    android:textSize="16dp" />
-
-                <TextView
-                    android:id="@+id/link_reset_password"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="25dp"
-                    android:gravity="center"
-                    android:text="Forgot your password? Reset it"
-                    android:textColor="@color/transparentPink"
-                    android:textSize="16dp" />
+                    android:layout_marginLeft="10dp"
+                    android:layout_gravity="center_vertical"
+                    app:lottie_autoPlay="true"
+                    app:lottie_fileName="login2.json"
+                    app:lottie_loop="true"
+                    app:lottie_speed="1" />
 
             </LinearLayout>
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:layout_marginBottom="8dp"
+                android:gravity="bottom">
+
+                <EditText
+                    android:id="@+id/input_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/edit_text_focused_bg"
+                    android:hint="Email"
+                    android:textColorHint="@color/bottomNavIconColor"
+                    android:inputType="textEmailAddress"
+                    android:textColor="@android:color/black"
+                    android:padding="15dp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:gravity="bottom"
+                app:passwordToggleEnabled="true"
+                app:passwordToggleTint="@color/grey">
+
+                <EditText
+                    android:id="@+id/input_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/edit_text_focused_bg"
+                    android:hint="Password"
+                    android:textColorHint="@color/bottomNavIconColor"
+                    android:inputType="textPassword"
+                    android:textColor="@android:color/black"
+                    android:padding="15dp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_login"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:layout_marginBottom="25dp"
+                android:background="@drawable/white_rounded_button"
+                android:padding="12dp"
+                android:text="Login"
+                android:textColor="@color/white"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/link_signup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="25dp"
+                android:gravity="center"
+                android:text="No account yet? Create one"
+                android:textColor="@color/transparentPink"
+                android:textSize="16dp" />
+
+            <TextView
+                android:id="@+id/link_reset_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="25dp"
+                android:gravity="center"
+                android:text="Forgot your password? Reset it"
+                android:textColor="@color/transparentPink"
+                android:textSize="16dp" />
 
         </LinearLayout>
     </ScrollView>

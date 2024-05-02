@@ -50,7 +50,7 @@
                     android:layout_alignParentBottom="true"
                     android:layout_marginLeft="40dp"
                     android:text="AMI MATCH"
-                    android:textColor="#ff0b00"
+                    android:textColor="@color/transparentPink"
                     android:textSize="30dp" />
 
             </RelativeLayout>
