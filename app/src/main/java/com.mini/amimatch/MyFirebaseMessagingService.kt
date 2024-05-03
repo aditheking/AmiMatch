@@ -101,8 +101,25 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 .setContentTitle("New Confession!")
                 .setContentText(notificationMessage)
                 .setContentIntent(pendingIntent)
-                // group chat notification
-        } else {
+
+                // match notification
+        } else if (remoteMessage.data.containsKey("matchnotification")) {
+            val senderName = remoteMessage.data["senderName"] ?: "Unknown"
+            val notificationMessage = "$senderName matched with you!"
+
+            val intent = Intent(this, MainActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            val pendingIntent = PendingIntent.getActivity(
+                this, 0, intent,
+                PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
+            )
+
+            notificationBuilder
+                .setContentTitle("New Match")
+                .setContentText(notificationMessage)
+                .setContentIntent(pendingIntent)
+        } // group chat
+        else {
             val senderName = remoteMessage.data["senderName"] ?: "Unknown"
             val notificationMessage = remoteMessage.data["message"]
 
@@ -120,9 +137,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         notificationManager.notify(notificationID, notificationBuilder.build())
     }
-
-
-
 
 
     @RequiresApi(Build.VERSION_CODES.O)
