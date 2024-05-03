@@ -108,7 +108,7 @@ class PhotoAdapter(
             val likedUserIds = likedUsersMap[userId] ?: emptyList()
 
             val dialogBuilder = AlertDialog.Builder(mContext)
-            dialogBuilder.setTitle("Users who liked your profile")
+            dialogBuilder.setTitle("Users who liked this profile")
 
             if (likedUserIds.isNotEmpty()) {
                 val userLikesMap = mutableMapOf<String, Int>()
@@ -133,7 +133,7 @@ class PhotoAdapter(
                                 if (usersLikedStringBuilder.isNotEmpty()) {
                                     dialogBuilder.setMessage(usersLikedStringBuilder.toString())
                                 } else {
-                                    dialogBuilder.setMessage("No users liked your profile yet.")
+                                    dialogBuilder.setMessage("No users liked this profile yet.")
                                 }
 
                                 dialogBuilder.setPositiveButton("OK") { dialog, _ ->
@@ -157,7 +157,7 @@ class PhotoAdapter(
                                 if (usersLikedStringBuilder.isNotEmpty()) {
                                     dialogBuilder.setMessage(usersLikedStringBuilder.toString())
                                 } else {
-                                    dialogBuilder.setMessage("No users liked your profile yet.")
+                                    dialogBuilder.setMessage("No users liked this profile yet.")
                                 }
 
                                 dialogBuilder.setPositiveButton("OK") { dialog, _ ->
@@ -170,7 +170,7 @@ class PhotoAdapter(
                         }
                 }
             } else {
-                dialogBuilder.setMessage("No users liked your profile yet.")
+                dialogBuilder.setMessage("No users liked this profile yet.")
                 dialogBuilder.setPositiveButton("OK") { dialog, _ ->
                     dialog.dismiss()
                 }
