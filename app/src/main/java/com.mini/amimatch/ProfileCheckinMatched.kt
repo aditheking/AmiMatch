@@ -37,12 +37,12 @@ class ProfileCheckinMatched : AppCompatActivity() {
         toolbar.text = "Matched"
 
         sendSMSButton = findViewById(R.id.send_sms)
-        sendEmailButton = findViewById(R.id.send_email)
+    //    sendEmailButton = findViewById(R.id.send_email)
 
         val profileName = findViewById<TextView>(R.id.profile_name)
         val profileDistance = findViewById<TextView>(R.id.profile_distance)
         val profileNumbers = findViewById<TextView>(R.id.profile_number)
-        val profileEmail = findViewById<TextView>(R.id.profile_email)
+      //  val profileEmail = findViewById<TextView>(R.id.profile_email)
         val imageView = findViewById<ImageView>(R.id.image_matched)
         val profileBio = findViewById<TextView>(R.id.bio_match)
         val profileInterest = findViewById<TextView>(R.id.interests_match)
@@ -50,7 +50,7 @@ class ProfileCheckinMatched : AppCompatActivity() {
         val age = user.age
 
         profileName.text = "${user.name}, $age"
-        profileEmail.text = user.userId
+      //  profileEmail.text = user.userId
 
         val append = if (distance == 1) "mile away" else "miles away"
         profileDistance.text = "$distance $append"

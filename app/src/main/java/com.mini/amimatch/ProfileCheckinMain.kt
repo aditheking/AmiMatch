@@ -164,7 +164,7 @@ class ProfileCheckinMain : AppCompatActivity() {
             val yearSemesterTextView: TextView = findViewById(R.id.year_semester)
             val courseTextView: TextView = findViewById(R.id.course)
             val schoolTextView: TextView = findViewById(R.id.school)
-            val emailButton: Button = findViewById(R.id.send_email)
+         //   val emailButton: Button = findViewById(R.id.send_email)
             val privateChatButton: Button = findViewById(R.id.send_sms)
             val bioTitle: TextView = findViewById(R.id.bioTitle)
             val interestsTitle: TextView = findViewById(R.id.interestsTitle)
@@ -173,7 +173,7 @@ class ProfileCheckinMain : AppCompatActivity() {
             val courseTitle: TextView = findViewById(R.id.course_text_view)
             val schoolTitle: TextView = findViewById(R.id.school_text_view)
             val ChatTitle: TextView = findViewById(R.id.chattitle)
-            val emailTitle: TextView = findViewById(R.id.emailtitle)
+        //    val emailTitle: TextView = findViewById(R.id.emailtitle)
 
             profileBio.visibility = View.VISIBLE
             profileInterest.visibility = View.VISIBLE
@@ -181,7 +181,7 @@ class ProfileCheckinMain : AppCompatActivity() {
             yearSemesterTextView.visibility = View.VISIBLE
             courseTextView.visibility = View.VISIBLE
             schoolTextView.visibility = View.VISIBLE
-            emailButton.visibility = View.VISIBLE
+        //    emailButton.visibility = View.VISIBLE
             privateChatButton.isEnabled = true
             bioTitle.visibility = View.VISIBLE
             interestsTitle.visibility = View.VISIBLE
@@ -190,7 +190,7 @@ class ProfileCheckinMain : AppCompatActivity() {
             courseTitle.visibility = View.VISIBLE
             schoolTitle.visibility = View.VISIBLE
             ChatTitle.visibility = View.VISIBLE
-            emailTitle.visibility = View.VISIBLE
+       //     emailTitle.visibility = View.VISIBLE
 
             binding.lockIcon.visibility = View.INVISIBLE
             binding.privateMessage.visibility = View.INVISIBLE
@@ -227,7 +227,7 @@ class ProfileCheckinMain : AppCompatActivity() {
         val yearSemesterTextView: TextView = findViewById(R.id.year_semester)
         val courseTextView: TextView = findViewById(R.id.course)
         val schoolTextView: TextView = findViewById(R.id.school)
-        val emailButton: Button = findViewById(R.id.send_email)
+      //  val emailButton: Button = findViewById(R.id.send_email)
         val privateChatButton: Button = findViewById(R.id.send_sms)
         val bioTitle: TextView = findViewById(R.id.bioTitle)
         val interestsTitle: TextView = findViewById(R.id.interestsTitle)
@@ -236,7 +236,7 @@ class ProfileCheckinMain : AppCompatActivity() {
         val courseTitle: TextView = findViewById(R.id.course_text_view)
         val schoolTitle: TextView = findViewById(R.id.school_text_view)
         val ChatTitle: TextView = findViewById(R.id.chattitle)
-        val emailTitle: TextView = findViewById(R.id.emailtitle)
+     //   val emailTitle: TextView = findViewById(R.id.emailtitle)
 
 
 
@@ -246,7 +246,7 @@ class ProfileCheckinMain : AppCompatActivity() {
         yearSemesterTextView.visibility = View.INVISIBLE
         courseTextView.visibility = View.INVISIBLE
         schoolTextView.visibility = View.INVISIBLE
-        emailButton.visibility = View.INVISIBLE
+      //  emailButton.visibility = View.INVISIBLE
         privateChatButton.isEnabled = false
         bioTitle.visibility = View.INVISIBLE
         interestsTitle.visibility = View.INVISIBLE
@@ -255,7 +255,7 @@ class ProfileCheckinMain : AppCompatActivity() {
         courseTitle.visibility = View.INVISIBLE
         schoolTitle.visibility = View.INVISIBLE
         ChatTitle.visibility = View.INVISIBLE
-        emailTitle.visibility = View.INVISIBLE
+    //    emailTitle.visibility = View.INVISIBLE
 
 
 

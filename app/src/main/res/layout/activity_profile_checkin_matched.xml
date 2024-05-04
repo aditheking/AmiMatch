@@ -239,7 +239,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="Phone Number is not updated!!!"
+                android:hint="Private Chat room!"
                 android:textColor="@android:color/black"
                 android:textSize="16sp" />
 
@@ -256,44 +256,6 @@
                 android:textAllCaps="false" />
         </LinearLayout>
 
-        <!-- Email -->
-        <TextView
-            android:id="@+id/emailtitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/light_grey"
-            android:padding="10dp"
-            android:text="Email:"
-            android:textColor="@android:color/black"
-            android:textSize="18sp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="10dp">
-
-            <TextView
-                android:id="@+id/profile_email"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:hint="Email is not updated!!!"
-                android:textColor="@android:color/black"
-                android:textSize="16sp" />
-
-            <Button
-                android:id="@+id/send_email"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/white_rounded_button"
-                android:onClick="sendEmail"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:text="Send Email"
-                android:textColor="@android:color/black"
-                android:textAllCaps="false" />
-        </LinearLayout>
 
         <!-- RecyclerView for Images -->
         <androidx.recyclerview.widget.RecyclerView
