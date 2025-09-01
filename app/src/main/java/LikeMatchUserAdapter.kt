@@ -131,8 +131,15 @@ class LikeMatchUserAdapter(
     private fun sendNotification(userToken: String, senderName: String) {
         Log.d(TAG, "Sending notification for $senderName")
 
-        val url = "https://fcm.googleapis.com/fcm/send"
-        val serverKey = "YOUR_FIREBASE_SERVER_KEY_HERE"
+        val url = Constants.FCM_API_URL
+        // TODO: Replace with secure server key management
+        // For production, use Firebase Admin SDK or secure backend service
+        val serverKey = Constants.FCM_SERVER_KEY
+        
+        if (serverKey == "YOUR_FIREBASE_SERVER_KEY_HERE") {
+            Log.e(TAG, "Firebase server key not configured. Please set your server key in Constants.kt")
+            return
+        }
 
         val notificationData = JSONObject().apply {
             put("title", "New Match")

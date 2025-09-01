@@ -155,8 +155,14 @@ class ChatActivity : AppCompatActivity() {
             "Sending notification: title=$title, message=$message, senderName=$senderName"
         )
 
-        val fcmUrl = "https://fcm.googleapis.com/fcm/send"
-        val serverKey = "YOUR_FIREBASE_SERVER_KEY_HERE"
+        val fcmUrl = Constants.FCM_API_URL
+        // TODO: Replace with secure server key management
+        val serverKey = Constants.FCM_SERVER_KEY
+        
+        if (serverKey == "YOUR_FIREBASE_SERVER_KEY_HERE") {
+            Log.e(TAG, "Firebase server key not configured. Please set your server key in Constants.kt")
+            return
+        }
 
         val notification = JSONObject().apply {
             put("title", "$senderName sent you a message")

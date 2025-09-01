@@ -169,7 +169,12 @@ class PrivateChatActivity : AppCompatActivity() {
         )
 
         val fcmUrl = "https://fcm.googleapis.com/fcm/send"
-        val serverKey = "YOUR_FIREBASE_SERVER_KEY_HERE"
+        val serverKey = Constants.FCM_SERVER_KEY
+        
+        if (serverKey == "YOUR_FIREBASE_SERVER_KEY_HERE") {
+            Log.e(TAG, "Firebase server key not configured. Please set your server key in Constants.kt")
+            return
+        }
 
         val notification = JSONObject().apply {
             put("title", "$senderName sent you a message")

@@ -471,7 +471,7 @@ class MainActivity : Activity() {
             }) {
             override fun getHeaders(): MutableMap<String, String> {
                 val headers = HashMap<String, String>()
-                headers["Authorization"] = "key=YOUR_FIREBASE_SERVER_KEY_HERE"
+                headers["Authorization"] = "key=${Constants.FCM_SERVER_KEY}"
                 return headers
             }
         }
