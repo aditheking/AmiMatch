@@ -77,7 +77,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             val senderName = remoteMessage.data["senderName"] ?: "Unknown"
             val notificationMessage = remoteMessage.data["message"]
 
-            val intent = Intent(this, PrivateChatActivity::class.java)
+            val intent = Intent(this, Matched_Activity::class.java)
             val pendingIntent = PendingIntent.getActivity(
                 this, 0, intent,
                 PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
