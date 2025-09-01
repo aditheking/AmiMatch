@@ -10,7 +10,7 @@ package com.mini.amimatch
  * 3. Remote configuration (Firebase Remote Config)
  * 4. Build-time injection from secure sources
  * 
- * Never hardcode production keys in your source code!
+ *
  */
 object Constants {
     

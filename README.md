@@ -1,6 +1,6 @@
 # AmiMatch 💕
 
-> A university-focused matchmaking application designed to help students connect and build meaningful relationships.
+> A university-focused connectivity (social) application designed to help students connect and build meaningful relationships.
 
 [![Version](https://img.shields.io/badge/version-1.0_Beta-orange.svg)]()
 [![Platform](https://img.shields.io/badge/platform-Android-green.svg)]()
@@ -9,7 +9,7 @@
 
 ## 📱 About AmiMatch
 
-AmiMatch is a modern, intuitive matchmaking application specifically designed for university students. Built with the latest Android technologies and powered by Firebase, it provides a secure and engaging platform for students to discover and connect with like-minded peers within their academic community.
+AmiMatch is a modern, intuitive application specifically designed for university students. Built with the latest Android technologies and powered by Firebase, it provides a secure and engaging platform for students to discover and connect with like-minded peers within their academic community.
 
 ### ✨ Key Features
 

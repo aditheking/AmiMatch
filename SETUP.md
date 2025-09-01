@@ -76,5 +76,4 @@ If you encounter issues:
 
 - This is a Beta version of the application
 - The project uses AndroidX libraries
-- Kotlin is the primary programming language
-- The app targets university students for matchmaking functionality
+- The app targets university students for connectivity functionality
