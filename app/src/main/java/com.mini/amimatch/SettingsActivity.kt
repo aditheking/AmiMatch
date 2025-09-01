@@ -268,7 +268,7 @@ class SettingsActivity : AppCompatActivity() {
         createNotificationChannel(notificationManager)
 
         val downloadIntent = Intent(Intent.ACTION_VIEW).apply {
-            data = Uri.parse("https://drive.google.com/drive/folders/1p_wBeXQqgU6CwZlSsjp6iZMPXotudgT3?usp=sharing")
+            data = Uri.parse("YOUR_APP_DOWNLOAD_LINK_HERE")
             flags = Intent.FLAG_ACTIVITY_NEW_TASK
         }
 
